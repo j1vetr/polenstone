@@ -88,19 +88,19 @@ function wrapTemplate(content: string): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HANK</title>
+  <title>POLEN STONE</title>
   <style>${baseStyles}</style>
 </head>
 <body>
   <div style="padding: 20px; background-color: #0a0a0a;">
     <div class="container">
       <div class="header">
-        <h1 class="logo">HANK</h1>
+        <h1 class="logo">POLEN STONE</h1>
       </div>
       ${content}
       <div class="footer">
-        <p>HANK - Premium Fitness Giyim</p>
-        <p>Bu e-posta HANK tarafından gönderilmiştir.</p>
+        <p>Polen Stone — Doğal Taş & Mermer</p>
+        <p>Bu e-posta Polen Stone tarafından gönderilmiştir.</p>
       </div>
     </div>
   </div>
@@ -113,7 +113,7 @@ function welcomeEmailTemplate(userName: string): string {
   return wrapTemplate(`
     <div class="content">
       <h1>Hoş Geldin, ${userName}!</h1>
-      <p>HANK ailesine katıldığın için çok mutluyuz. Artık premium fitness giyim koleksiyonumuza tam erişimin var.</p>
+      <p>Polen Stone ailesine katıldığın için çok mutluyuz. Artık premium doğal taş koleksiyonumuza tam erişimin var.</p>
       
       <div class="info-box">
         <h2 style="margin-top: 0;">Seni Neler Bekliyor?</h2>
@@ -125,7 +125,7 @@ function welcomeEmailTemplate(userName: string): string {
       </div>
       
       <div style="text-align: center;">
-        <a href="https://hank.com.tr" class="btn">Alışverişe Başla</a>
+        <a href="https://polenstone.com.tr" class="btn">Alışverişe Başla</a>
       </div>
       
       <p style="text-align: center; color: #71717a; font-size: 13px;">
@@ -136,7 +136,7 @@ function welcomeEmailTemplate(userName: string): string {
 }
 
 // Order Confirmation Template
-function orderConfirmationTemplate(order: Order, items: OrderItem[], siteUrl: string = 'https://hank.com.tr'): string {
+function orderConfirmationTemplate(order: Order, items: OrderItem[], siteUrl: string = 'https://polenstone.com.tr'): string {
   const itemsHtml = items.map(item => `
     <div class="product-item">
       <div class="product-info">
@@ -204,7 +204,7 @@ function orderConfirmationTemplate(order: Order, items: OrderItem[], siteUrl: st
       </div>
       
       <p style="text-align: center; color: #71717a; font-size: 13px; margin-top: 20px;">
-        Sorularınız için <a href="mailto:destek@hank.com.tr" style="color: #ffffff;">destek@hank.com.tr</a> adresinden bize ulaşabilirsiniz.
+        Sorularınız için <a href="mailto:destek@polenstone.com.tr" style="color: #ffffff;">destek@polenstone.com.tr</a> adresinden bize ulaşabilirsiniz.
       </p>
     </div>
   `);
@@ -348,7 +348,7 @@ function adminOrderNotificationTemplate(order: Order, items: OrderItem[]): strin
       </div>
       
       <div style="text-align: center; margin-top: 25px;">
-        <a href="https://hank.com.tr/toov-admin" class="btn">Siparişi Görüntüle</a>
+        <a href="https://polenstone.com.tr/toov-admin" class="btn">Siparişi Görüntüle</a>
       </div>
     </div>
   `);
@@ -404,7 +404,7 @@ function reviewRequestTemplate(userName: string, orderNumber: string, products: 
       <p>Değerlendirmeleriniz, hem bize gelişmemiz için yardımcı oluyor hem de diğer müşterilerimize doğru seçim yapmalarında rehberlik ediyor.</p>
       
       <div style="text-align: center;">
-        <a href="https://hank.com.tr/profilim" class="btn">Değerlendirme Yap</a>
+        <a href="https://polenstone.com.tr/profilim" class="btn">Değerlendirme Yap</a>
       </div>
       
       <p style="text-align: center; color: #71717a; font-size: 13px;">
@@ -423,7 +423,7 @@ interface CartItem {
   imageUrl?: string;
 }
 
-function abandonedCartTemplate(userName: string, cartItems: CartItem[], cartTotal: number, siteUrl: string = 'https://hank.com.tr'): string {
+function abandonedCartTemplate(userName: string, cartItems: CartItem[], cartTotal: number, siteUrl: string = 'https://polenstone.com.tr'): string {
   const itemsHtml = cartItems.map(item => `
     <div class="product-item">
       <div class="product-info">
@@ -478,14 +478,14 @@ export async function sendWelcomeEmail(user: User): Promise<EmailResult> {
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
     
     const userName = user.firstName || 'Değerli Müşterimiz';
     
     await transporter.sendMail({
-      from: `"HANK" <${fromEmail}>`,
+      from: `"Polen Stone" <${fromEmail}>`,
       to: user.email,
-      subject: 'HANK\'a Hoş Geldiniz!',
+      subject: 'Polen Stone\'a Hoş Geldiniz!',
       html: welcomeEmailTemplate(userName),
     });
     
@@ -505,10 +505,10 @@ export async function sendOrderConfirmationEmail(order: Order, items: OrderItem[
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
     
     await transporter.sendMail({
-      from: `"HANK" <${fromEmail}>`,
+      from: `"Polen Stone" <${fromEmail}>`,
       to: order.customerEmail,
       subject: `Siparişiniz Alındı - #${order.orderNumber}`,
       html: orderConfirmationTemplate(order, items),
@@ -530,10 +530,10 @@ export async function sendPreparingNotificationEmail(order: Order): Promise<Emai
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
     
     await transporter.sendMail({
-      from: `"HANK" <${fromEmail}>`,
+      from: `"Polen Stone" <${fromEmail}>`,
       to: order.customerEmail,
       subject: `Siparişiniz Hazırlanıyor - #${order.orderNumber}`,
       html: preparingNotificationTemplate(order),
@@ -555,10 +555,10 @@ export async function sendShippingNotificationEmail(order: Order): Promise<Email
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
     
     await transporter.sendMail({
-      from: `"HANK" <${fromEmail}>`,
+      from: `"Polen Stone" <${fromEmail}>`,
       to: order.customerEmail,
       subject: `Siparişiniz Kargoya Verildi - #${order.orderNumber}`,
       html: shippingNotificationTemplate(order),
@@ -580,7 +580,7 @@ export async function sendAdminOrderNotificationEmail(order: Order, items: Order
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
     const adminEmail = settings.admin_email;
     
     if (!adminEmail) {
@@ -589,7 +589,7 @@ export async function sendAdminOrderNotificationEmail(order: Order, items: Order
     }
     
     await transporter.sendMail({
-      from: `"HANK Sistem" <${fromEmail}>`,
+      from: `"Polen Stone Sistem" <${fromEmail}>`,
       to: adminEmail,
       subject: `Yeni Sipariş - #${order.orderNumber} - ${order.total}₺`,
       html: adminOrderNotificationTemplate(order, items),
@@ -611,14 +611,14 @@ export async function sendPasswordResetEmail(user: User, resetToken: string): Pr
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
-    const siteUrl = settings.site_url || 'https://hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
+    const siteUrl = settings.site_url || 'https://polenstone.com.tr';
     
     const resetLink = `${siteUrl}/sifre-sifirla?token=${resetToken}`;
     const userName = user.firstName || 'Değerli Müşterimiz';
     
     await transporter.sendMail({
-      from: `"HANK" <${fromEmail}>`,
+      from: `"Polen Stone" <${fromEmail}>`,
       to: user.email,
       subject: 'Şifre Sıfırlama Talebi',
       html: passwordResetTemplate(userName, resetLink),
@@ -645,10 +645,10 @@ export async function sendReviewRequestEmail(
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
     
     await transporter.sendMail({
-      from: `"HANK" <${fromEmail}>`,
+      from: `"Polen Stone" <${fromEmail}>`,
       to: userEmail,
       subject: 'Deneyiminizi Paylaşın',
       html: reviewRequestTemplate(userName, orderNumber, products),
@@ -670,12 +670,12 @@ export async function sendTestEmail(toEmail: string): Promise<EmailResult> {
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
     
     await transporter.sendMail({
-      from: `"HANK" <${fromEmail}>`,
+      from: `"Polen Stone" <${fromEmail}>`,
       to: toEmail,
-      subject: 'HANK - Test E-postası',
+      subject: 'Polen Stone - Test E-postası',
       html: wrapTemplate(`
         <div class="content">
           <h1>Test E-postası</h1>
@@ -708,11 +708,11 @@ export async function sendAbandonedCartEmail(
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
-    const siteUrl = settings.site_url || 'https://hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
+    const siteUrl = settings.site_url || 'https://polenstone.com.tr';
     
     await transporter.sendMail({
-      from: `"HANK" <${fromEmail}>`,
+      from: `"Polen Stone" <${fromEmail}>`,
       to: userEmail,
       subject: 'Sepetiniz Sizi Bekliyor! 🛒',
       html: abandonedCartTemplate(userName, cartItems, cartTotal, siteUrl),
@@ -773,12 +773,12 @@ function quoteEmailTemplate(data: QuoteEmailData): string {
       <p>Teklif hakkında herhangi bir sorunuz varsa veya değişiklik talep etmek isterseniz, lütfen bizimle iletişime geçmekten çekinmeyin.</p>
       
       <div style="text-align: center; margin: 30px 0;">
-        <a href="https://hank.com.tr" class="btn">Web Sitemizi Ziyaret Edin</a>
+        <a href="https://polenstone.com.tr" class="btn">Web Sitemizi Ziyaret Edin</a>
       </div>
       
       <p style="text-align: center; color: #71717a; font-size: 13px;">
         Bizi tercih ettiğiniz için teşekkür ederiz.<br>
-        HANK Ekibi
+        Polen Stone Ekibi
       </p>
     </div>
   `);
@@ -796,12 +796,12 @@ export async function sendQuoteEmail(
     }
     
     const settings = await storage.getSiteSettings();
-    const fromEmail = settings.smtp_user || 'no-reply@hank.com.tr';
+    const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
     
     await transporter.sendMail({
-      from: `"HANK B2B" <${fromEmail}>`,
+      from: `"Polen Stone B2B" <${fromEmail}>`,
       to: dealerEmail,
-      subject: `HANK Teklif - ${quoteData.quoteNumber}`,
+      subject: `Polen Stone Teklif - ${quoteData.quoteNumber}`,
       html: quoteEmailTemplate(quoteData),
       attachments: [
         {

@@ -6,75 +6,88 @@ export function Footer() {
   const { data: categories = [] } = useCategories();
 
   return (
-    <footer className="bg-black text-white py-16 lg:py-20 px-6">
+    <footer className="bg-[hsl(var(--polen-stone))] text-white py-16 lg:py-20 px-6" data-testid="footer">
       <div className="max-w-[1400px] mx-auto">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-16 mb-16">
           <div className="col-span-2 lg:col-span-1">
-            <img
-              src="/uploads/branding/hank-logo.svg"
-              alt="HANK"
-              className="h-10 mb-8"
-              loading="lazy"
-            />
-            <p className="text-white/50 text-sm leading-relaxed mb-6">
-              Premium fitness ve bodybuilding giyim markası.
-              Güç, performans ve stil bir arada.
+            <div className="mb-8">
+              <span
+                className="font-display text-3xl tracking-[0.18em] text-white block leading-none"
+                data-testid="text-footer-logo"
+              >
+                POLEN <span className="text-polen-orange">STONE</span>
+              </span>
+              <span className="text-[10px] tracking-[0.32em] uppercase text-white/45 mt-2 block">
+                Doğal Taş & Mermer
+              </span>
+            </div>
+            <p className="text-white/55 text-sm leading-relaxed mb-6">
+              Türkiye'nin en zengin doğal taş mirasını, modern mekânlara taşıyoruz.
+              Mermer, granit, traverten ve oniks koleksiyonumuzla doğanın ihtişamı evinizde.
             </p>
             <a
-              href="https://www.instagram.com/hankathletics"
+              href="https://www.instagram.com/polenstone"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors text-sm"
+              className="inline-flex items-center gap-2 text-white/55 hover:text-polen-orange transition-colors text-sm"
+              data-testid="link-instagram-footer"
             >
               <Instagram className="w-4 h-4" />
-              @hankathletics
+              @polenstone
             </a>
-            <div className="mt-6 text-xs text-white/30 space-y-1">
-              <p>ATIFBEY MAH. 67 SK. No:33/27</p>
-              <p>İZMİR / GAZİEMİR</p>
+            <div className="mt-6 text-xs text-white/35 space-y-1">
+              <p>Polen Stone Doğal Taş & Mermer</p>
+              <p>İletişim için bize ulaşın</p>
               <p className="mt-2">
-                <a href="tel:+905321350391" className="hover:text-white transition-colors">0532 135 03 91</a>
+                <a href="tel:+905000000000" className="hover:text-polen-orange transition-colors">0500 000 00 00</a>
               </p>
               <p>
-                <a href="mailto:info@hank.com.tr" className="hover:text-white transition-colors">info@hank.com.tr</a>
+                <a href="mailto:info@polenstone.com.tr" className="hover:text-polen-orange transition-colors">info@polenstone.com.tr</a>
               </p>
             </div>
           </div>
 
           <div>
-            <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/40 mb-6">Alışveriş</h4>
-            <ul className="space-y-4 text-sm text-white/60">
-              {categories.slice(0, 4).map(cat => (
-                <li key={cat.id}>
-                  <Link href={`/kategori/${cat.slug}`} className="hover:text-white transition-colors">
-                    {cat.name}
-                  </Link>
-                </li>
-              ))}
+            <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/40 mb-6">Koleksiyon</h4>
+            <ul className="space-y-4 text-sm text-white/65">
+              {categories.length > 0 ? (
+                categories.slice(0, 5).map(cat => (
+                  <li key={cat.id}>
+                    <Link href={`/kategori/${cat.slug}`} className="hover:text-polen-orange transition-colors" data-testid={`link-footer-cat-${cat.slug}`}>
+                      {cat.name}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li><Link href="/kategori/mermer" className="hover:text-polen-orange transition-colors">Mermer</Link></li>
+                  <li><Link href="/magaza" className="hover:text-polen-orange transition-colors">Tüm Ürünler</Link></li>
+                </>
+              )}
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/40 mb-6">Destek</h4>
-            <ul className="space-y-4 text-sm text-white/60">
-              <li><Link href="/teslimat-kosullari" className="hover:text-white transition-colors">Teslimat Koşulları</Link></li>
-              <li><Link href="/iptal-ve-iade" className="hover:text-white transition-colors">İptal ve İade</Link></li>
-              <li><Link href="/mesafeli-satis-sozlesmesi" className="hover:text-white transition-colors">Mesafeli Satış</Link></li>
+            <ul className="space-y-4 text-sm text-white/65">
+              <li><Link href="/teslimat-kosullari" className="hover:text-polen-orange transition-colors">Teslimat Koşulları</Link></li>
+              <li><Link href="/iptal-ve-iade" className="hover:text-polen-orange transition-colors">İptal ve İade</Link></li>
+              <li><Link href="/mesafeli-satis-sozlesmesi" className="hover:text-polen-orange transition-colors">Mesafeli Satış</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/40 mb-6">Kurumsal</h4>
-            <ul className="space-y-4 text-sm text-white/60">
-              <li><Link href="/hakkimizda" className="hover:text-white transition-colors">Hakkımızda</Link></li>
-              <li><Link href="/kvkk" className="hover:text-white transition-colors">KVKK</Link></li>
+            <ul className="space-y-4 text-sm text-white/65">
+              <li><Link href="/hakkimizda" className="hover:text-polen-orange transition-colors">Hakkımızda</Link></li>
+              <li><Link href="/kvkk" className="hover:text-polen-orange transition-colors">KVKK</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/30">© 2025 HANK. Tüm hakları saklıdır.</p>
-          <div className="flex items-center gap-2 text-xs text-white/30">
+          <p className="text-xs text-white/40">© 2026 Polen Stone. Tüm hakları saklıdır.</p>
+          <div className="flex items-center gap-2 text-xs text-white/35">
             <span>Geliştirici & Tasarım:</span>
             <a href="https://toov.com.tr" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
               <img src="https://toov.com.tr/assets/toov_logo-DODYNPrj.png" alt="TOOV" className="h-4" loading="lazy" />

@@ -27,7 +27,7 @@ interface Message {
 
 const initialMessage: Message = {
   role: "assistant",
-  content: "Merhaba! HANK Giyim Asistanı olarak size yardımcı olmak için buradayım. Ürünler hakkında sorularınızı yanıtlayabilir, size en uygun ürünleri önerebilirim. Size nasıl yardımcı olabilirim?",
+  content: "Merhaba! Polen Stone Doğal Taş Asistanı olarak size yardımcı olmak için buradayım. Mermer, granit, traverten ve diğer doğal taş ürünlerimiz hakkında sorularınızı yanıtlayabilir, mekânınıza uygun seçimler önerebilirim. Size nasıl yardımcı olabilirim?",
 };
 
 export default function Chatbot() {
@@ -170,16 +170,14 @@ export default function Chatbot() {
           >
             <div className="bg-black px-4 py-3 flex items-center justify-between border-b border-zinc-700">
               <div className="flex items-center gap-3">
-                <img 
-                  src="/uploads/branding/hank-icon.png" 
-                  alt="HANK" 
-                  className="w-8 h-8 object-contain"
-                />
+                <div className="w-8 h-8 rounded-full bg-polen-orange flex items-center justify-center text-white text-xs font-bold tracking-wide" data-testid="chatbot-logo">
+                  PS
+                </div>
                 <div>
-                  <span className="font-semibold text-white block text-sm">HANK Giyim Asistanı</span>
+                  <span className="font-semibold text-white block text-sm">Polen Stone Asistanı</span>
                   <div className="flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-violet-400" />
-                    <span className="text-xs text-violet-400">AI Destekli</span>
+                    <Sparkles className="w-3 h-3 text-polen-orange" />
+                    <span className="text-xs text-polen-orange">AI Destekli</span>
                   </div>
                 </div>
               </div>
@@ -296,11 +294,7 @@ export default function Chatbot() {
             {isOpen ? (
               <X className="w-6 h-6 text-white" />
             ) : (
-              <img 
-                src="/uploads/branding/hank-icon.png" 
-                alt="HANK Asistan" 
-                className="w-8 h-8 object-contain"
-              />
+              <span className="text-white text-xs font-bold tracking-wider" data-testid="chatbot-toggle-label">PS</span>
             )}
           </motion.button>
         </div>

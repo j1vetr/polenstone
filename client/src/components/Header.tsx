@@ -111,20 +111,20 @@ export function Header() {
   return (
     <>
       {/* ── Announcement bar ── */}
-      <div className="hidden lg:flex bg-black h-9 items-center justify-center gap-0">
+      <div className="hidden lg:flex bg-[hsl(var(--polen-stone))] h-9 items-center justify-center gap-0">
         <div className="flex items-center gap-8 px-10">
           <div className="flex items-center gap-2.5">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50 shrink-0">
-              <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-polen-orange shrink-0">
+              <path d="M12 2 4 7v10l8 5 8-5V7l-8-5z"/><path d="M4 7l8 5 8-5"/><path d="M12 12v10"/>
             </svg>
-            <span className="text-[10px] tracking-[0.28em] uppercase text-white/70 font-medium">World Wide Shipping</span>
+            <span className="text-[10px] tracking-[0.28em] uppercase text-white/75 font-medium">Türkiye Geneli Kargo</span>
           </div>
           <span className="w-px h-3 bg-white/15" />
           <div className="flex items-center gap-2.5">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50 shrink-0">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-polen-orange shrink-0">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-            <span className="text-[10px] tracking-[0.28em] uppercase text-white/70 font-medium">2.500 TL Üstü Ücretsiz Kargo</span>
+            <span className="text-[10px] tracking-[0.28em] uppercase text-white/75 font-medium">Ücretsiz Numune Talebi</span>
           </div>
         </div>
       </div>
@@ -158,8 +158,8 @@ export function Header() {
                   ? topItems.map(item => <DesktopNavLink key={item.id} item={item} />)
                   : (
                     <>
-                      <Link href="/magaza" className={`relative text-[11px] font-medium tracking-[0.18em] uppercase nav-link-hover ${location === '/magaza' ? 'text-black' : 'text-black/70 hover:text-black'}`}>Mağaza</Link>
-                      <Link href="/kategori/tshirt" className="relative text-[11px] font-medium tracking-[0.18em] uppercase text-black/70 hover:text-black transition-colors nav-link-hover">T-Shirt</Link>
+                      <Link href="/magaza" className={`relative text-[11px] font-medium tracking-[0.18em] uppercase nav-link-hover ${location === '/magaza' ? 'text-black' : 'text-black/70 hover:text-black'}`}>Koleksiyon</Link>
+                      <Link href="/kategori/mermer" className="relative text-[11px] font-medium tracking-[0.18em] uppercase text-black/70 hover:text-black transition-colors nav-link-hover">Mermer</Link>
                     </>
                   )
                 }
@@ -168,13 +168,16 @@ export function Header() {
 
             {/* Center: Logo */}
             <Link href="/" data-testid="link-logo" className="shrink-0">
-              <motion.div whileHover={{ opacity: 0.75 }} transition={{ duration: 0.2 }}>
-                <img
-                  src="/uploads/branding/hank-logo.svg"
-                  alt="HANK"
-                  className="h-8 lg:h-11"
-                  data-testid="img-logo"
-                />
+              <motion.div whileHover={{ opacity: 0.75 }} transition={{ duration: 0.2 }} className="flex flex-col items-center leading-none">
+                <span
+                  className="font-display text-xl lg:text-2xl tracking-[0.22em] text-black"
+                  data-testid="text-logo"
+                >
+                  POLEN <span className="text-polen-orange">STONE</span>
+                </span>
+                <span className="hidden lg:block text-[8px] tracking-[0.42em] uppercase text-black/40 mt-1">
+                  Doğal Taş & Mermer
+                </span>
               </motion.div>
             </Link>
 
@@ -185,8 +188,8 @@ export function Header() {
                   ? bottomItems.map(item => <DesktopNavLink key={item.id} item={item} />)
                   : (
                     <>
-                      <Link href="/kategori/esofman" className="relative text-[11px] font-medium tracking-[0.18em] uppercase text-black/70 hover:text-black transition-colors nav-link-hover">Eşofman</Link>
-                      <Link href="/kategori/sort" className="relative text-[11px] font-medium tracking-[0.18em] uppercase text-black/70 hover:text-black transition-colors nav-link-hover">Şort</Link>
+                      <Link href="/kategori/granit" className="relative text-[11px] font-medium tracking-[0.18em] uppercase text-black/70 hover:text-black transition-colors nav-link-hover">Granit</Link>
+                      <Link href="/kategori/traverten" className="relative text-[11px] font-medium tracking-[0.18em] uppercase text-black/70 hover:text-black transition-colors nav-link-hover">Traverten</Link>
                     </>
                   )
                 }
@@ -262,17 +265,22 @@ export function Header() {
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden"
           >
-            {/* Background HANK watermark */}
+            {/* Background Polen Stone watermark */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-              <span className="font-display text-[280px] leading-none text-white/[0.025] tracking-tighter">
-                HANK
+              <span className="font-display text-[180px] leading-none text-white/[0.025] tracking-tighter">
+                POLEN
               </span>
             </div>
 
             {/* Top bar */}
             <div className="relative z-10 flex items-center justify-between px-6 pt-5 pb-6 border-b border-white/8">
-              <Link href="/" onClick={() => setMobileOpen(false)}>
-                <img src="/uploads/branding/hank-logo.svg" alt="HANK" className="h-8 invert" />
+              <Link href="/" onClick={() => setMobileOpen(false)} className="flex flex-col leading-none">
+                <span className="font-display text-xl tracking-[0.22em] text-white">
+                  POLEN <span className="text-polen-orange">STONE</span>
+                </span>
+                <span className="text-[8px] tracking-[0.42em] uppercase text-white/40 mt-1">
+                  Doğal Taş & Mermer
+                </span>
               </Link>
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -319,6 +327,30 @@ export function Header() {
                     </span>
                   </Link>
                 </motion.div>
+
+                {menuItems.length === 0 && (
+                  <>
+                    {[
+                      { id: 'fb-mermer', href: '/kategori/mermer', label: 'MERMER' },
+                      { id: 'fb-granit', href: '/kategori/granit', label: 'GRANİT' },
+                      { id: 'fb-traverten', href: '/kategori/traverten', label: 'TRAVERTEN' },
+                      { id: 'fb-oniks', href: '/kategori/oniks', label: 'ONİKS' },
+                    ].map(fb => (
+                      <motion.div key={fb.id} variants={stagger.item}>
+                        <Link
+                          href={fb.href}
+                          onClick={() => setMobileOpen(false)}
+                          className="block py-5 border-b border-white/8 group"
+                          data-testid={`link-mobile-${fb.id}`}
+                        >
+                          <span className="font-display text-[44px] leading-none text-white/70 group-hover:text-white transition-colors tracking-wide">
+                            {fb.label}
+                          </span>
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </>
+                )}
 
                 {menuItems.map((item, i) => {
                   const href = getHref(item);

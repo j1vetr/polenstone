@@ -34,49 +34,64 @@
 }
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 5%;
-  --card: 0 0% 98%;
-  --card-foreground: 0 0% 5%;
+  --background: 35 25% 98%;
+  --foreground: 24 10% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 24 10% 12%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 5%;
-  --primary: 0 0% 8%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 96%;
-  --secondary-foreground: 0 0% 10%;
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 45%;
-  --accent: 0 0% 96%;
-  --accent-foreground: 0 0% 10%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
-  --ring: 0 0% 5%;
+  --popover-foreground: 24 10% 12%;
+  --primary: 24 10% 12%;
+  --primary-foreground: 35 25% 98%;
+  --secondary: 32 18% 94%;
+  --secondary-foreground: 24 10% 16%;
+  --muted: 32 18% 94%;
+  --muted-foreground: 24 6% 42%;
+  --accent: 22 92% 53%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 78% 52%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 30 16% 88%;
+  --input: 30 16% 88%;
+  --ring: 22 92% 53%;
   --radius: 0.5rem;
+
+  /* Polen Stone brand tokens */
+  --polen-orange: 22 92% 53%;
+  --polen-orange-deep: 18 88% 46%;
+  --polen-stone: 30 8% 22%;
+  --polen-cream: 35 30% 96%;
+  --polen-vein: 30 12% 78%;
 }
 
 .dark {
-  --background: 0 0% 3%;
-  --foreground: 0 0% 98%;
-  --card: 0 0% 6%;
-  --card-foreground: 0 0% 98%;
-  --popover: 0 0% 6%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 0 0% 98%;
-  --primary-foreground: 0 0% 5%;
-  --secondary: 0 0% 12%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 12%;
-  --muted-foreground: 0 0% 60%;
-  --accent: 0 0% 15%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62% 50%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 15%;
-  --input: 0 0% 15%;
-  --ring: 0 0% 80%;
+  --background: 24 10% 6%;
+  --foreground: 35 20% 96%;
+  --card: 24 10% 9%;
+  --card-foreground: 35 20% 96%;
+  --popover: 24 10% 9%;
+  --popover-foreground: 35 20% 96%;
+  --primary: 35 20% 96%;
+  --primary-foreground: 24 10% 8%;
+  --secondary: 24 8% 14%;
+  --secondary-foreground: 35 20% 96%;
+  --muted: 24 8% 14%;
+  --muted-foreground: 30 6% 60%;
+  --accent: 22 92% 55%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 24 6% 18%;
+  --input: 24 6% 18%;
+  --ring: 22 92% 55%;
 }
+
+/* Polen Stone utility classes */
+.text-polen-orange { color: hsl(var(--polen-orange)); }
+.bg-polen-orange { background-color: hsl(var(--polen-orange)); }
+.border-polen-orange { border-color: hsl(var(--polen-orange)); }
+.bg-polen-cream { background-color: hsl(var(--polen-cream)); }
+.text-polen-stone { color: hsl(var(--polen-stone)); }
+.bg-polen-stone { background-color: hsl(var(--polen-stone)); }
 
 @layer base {
   * {

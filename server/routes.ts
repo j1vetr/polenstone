@@ -142,9 +142,9 @@ async function generateQuotePdfBuffer(quote: any, dealer: any, items: any[]): Pr
       const fontRegular = fs.existsSync(regularFontPath) ? 'Inter' : 'Helvetica';
       const fontBold = fs.existsSync(boldFontPath) ? 'Inter-Bold' : 'Helvetica-Bold';
       
-      // Header with HANK logo - convert SVG to PNG using sharp
-      const svgLogoPath = path.join(process.cwd(), 'client', 'public', 'uploads', 'branding', 'hank-logo.svg');
-      const pngLogoPath = path.join(process.cwd(), 'client', 'public', 'uploads', 'branding', 'hank-icon.png');
+      // Header logo - convert SVG to PNG using sharp
+      const svgLogoPath = path.join(process.cwd(), 'client', 'public', 'uploads', 'branding', 'polen-logo.svg');
+      const pngLogoPath = path.join(process.cwd(), 'client', 'public', 'uploads', 'branding', 'polen-icon.png');
       
       let logoAdded = false;
       if (fs.existsSync(svgLogoPath)) {
@@ -163,7 +163,7 @@ async function generateQuotePdfBuffer(quote: any, dealer: any, items: any[]): Pr
       }
       
       if (!logoAdded) {
-        doc.fontSize(28).font(fontBold).fillColor('#000000').text('HANK', 50, 50);
+        doc.fontSize(28).font(fontBold).fillColor('#000000').text('Polen Stone', 50, 50);
       }
       
       // Quote title
@@ -284,7 +284,7 @@ async function generateQuotePdfBuffer(quote: any, dealer: any, items: any[]): Pr
       
       // Footer
       doc.fontSize(8).font(fontRegular).fillColor('#999999');
-      doc.text('HANK Spor Giyim | www.hank.com.tr | info@hank.com.tr', 50, 780, { align: 'center', width: 495 });
+      doc.text('Polen Stone Doğal Taş & Mermer | www.polenstone.com.tr | info@polenstone.com.tr', 50, 780, { align: 'center', width: 495 });
       
       doc.end();
     } catch (error) {
@@ -357,14 +357,14 @@ export async function registerRoutes(
       const price = parseFloat(product.basePrice || '0');
       const description = product.description 
         ? escapeHtml(product.description.substring(0, 200))
-        : `${escapeHtml(product.name)} - HANK premium fitness giyim`;
+        : `${escapeHtml(product.name)} - Polen Stone premium doğal taş ve mermer`;
 
       const html = `<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(product.name)} | HANK</title>
+  <title>${escapeHtml(product.name)} | Polen Stone</title>
   <meta name="description" content="${description}">
   
   <!-- Open Graph -->
@@ -375,7 +375,7 @@ export async function registerRoutes(
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="${pageUrl}">
-  <meta property="og:site_name" content="HANK">
+  <meta property="og:site_name" content="Polen Stone">
   <meta property="og:locale" content="tr_TR">
   <meta property="product:price:amount" content="${price}">
   <meta property="product:price:currency" content="TRY">
@@ -424,30 +424,30 @@ export async function registerRoutes(
       const mainImage = category.image 
         ? normalizeImageUrl(baseUrl, category.image)
         : `${baseUrl}/logo.png`;
-      const description = `${escapeHtml(category.name)} koleksiyonu - HANK premium fitness ve bodybuilding giyim`;
+      const description = `${escapeHtml(category.name)} koleksiyonu - Polen Stone premium doğal taş ve mermer`;
 
       const html = `<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(category.name)} | HANK</title>
+  <title>${escapeHtml(category.name)} | Polen Stone</title>
   <meta name="description" content="${description}">
   
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="${escapeHtml(category.name)} | HANK">
+  <meta property="og:title" content="${escapeHtml(category.name)} | Polen Stone">
   <meta property="og:description" content="${description}">
   <meta property="og:image" content="${mainImage}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="${pageUrl}">
-  <meta property="og:site_name" content="HANK">
+  <meta property="og:site_name" content="Polen Stone">
   <meta property="og:locale" content="tr_TR">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="${escapeHtml(category.name)} | HANK">
+  <meta name="twitter:title" content="${escapeHtml(category.name)} | Polen Stone">
   <meta name="twitter:description" content="${description}">
   <meta name="twitter:image" content="${mainImage}">
   
@@ -1244,7 +1244,7 @@ export async function registerRoutes(
     try {
       const { style } = req.body as { style: DescriptionStyle };
       
-      if (!style || !['professional', 'energetic', 'minimal', 'luxury', 'sporty'].includes(style)) {
+      if (!style || !['professional', 'energetic', 'minimal', 'luxury', 'natural'].includes(style)) {
         return res.status(400).json({ error: "Geçerli bir stil seçin" });
       }
 
@@ -1289,7 +1289,7 @@ export async function registerRoutes(
         { id: 'energetic', name: 'Enerjik', description: 'Dinamik ve motive edici' },
         { id: 'minimal', name: 'Minimal', description: 'Kısa ve öz' },
         { id: 'luxury', name: 'Lüks', description: 'Premium ve sofistike' },
-        { id: 'sporty', name: 'Sportif', description: 'Atletik ve performans odaklı' },
+        { id: 'natural', name: 'Doğal', description: 'Anadolu mirası ve el işçiliği vurgusu' },
       ]
     });
   });
@@ -1298,7 +1298,7 @@ export async function registerRoutes(
   app.post("/api/admin/products/bulk-ai-description", requireAdmin, async (req, res) => {
     try {
       const bulkAISchema = z.object({
-        style: z.enum(['professional', 'energetic', 'minimal', 'luxury', 'sporty']),
+        style: z.enum(['professional', 'energetic', 'minimal', 'luxury', 'natural']),
         categoryId: z.string().optional(),
         onlyEmpty: z.boolean().optional().default(false),
         overwrite: z.boolean().optional().default(false),
@@ -1932,7 +1932,7 @@ export async function registerRoutes(
 
       // Get base URL for success/fail URLs - use production domain for PayTR
       const baseUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://hank.com.tr' 
+        ? 'https://polenstone.com.tr' 
         : `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host || 'localhost:5000'}`;
 
       // Create pending payment record
@@ -2141,7 +2141,7 @@ export async function registerRoutes(
           await sendCapiEvent({
             eventName: 'Purchase',
             eventId: purchaseEventId,
-            eventSourceUrl: 'https://hank.com.tr/odeme-basarili',
+            eventSourceUrl: 'https://polenstone.com.tr/odeme-basarili',
             userData: {
               email: pendingPayment.customerEmail,
               phone: pendingPayment.customerPhone,
@@ -4588,9 +4588,9 @@ Sitemap: ${baseUrl}/sitemap.xml
       
       doc.pipe(res);
       
-      // Header with HANK logo - convert SVG to PNG using sharp
-      const svgLogoPath = path.join(process.cwd(), 'client', 'public', 'uploads', 'branding', 'hank-logo.svg');
-      const pngLogoPath = path.join(process.cwd(), 'client', 'public', 'uploads', 'branding', 'hank-icon.png');
+      // Header logo - convert SVG to PNG using sharp
+      const svgLogoPath = path.join(process.cwd(), 'client', 'public', 'uploads', 'branding', 'polen-logo.svg');
+      const pngLogoPath = path.join(process.cwd(), 'client', 'public', 'uploads', 'branding', 'polen-icon.png');
       
       let logoAdded = false;
       if (fs.existsSync(svgLogoPath)) {
@@ -4609,7 +4609,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       }
       
       if (!logoAdded) {
-        doc.fontSize(28).font(fontBold).fillColor('#000000').text('HANK', 50, 50);
+        doc.fontSize(28).font(fontBold).fillColor('#000000').text('Polen Stone', 50, 50);
       }
       
       // Quote title
@@ -4681,7 +4681,7 @@ Sitemap: ${baseUrl}/sitemap.xml
           try {
             let imageUrl = item.productImage;
             if (imageUrl.startsWith('/uploads/')) {
-              imageUrl = `https://hank.com.tr${imageUrl}`;
+              imageUrl = `https://polenstone.com.tr${imageUrl}`;
             }
             
             if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -4752,7 +4752,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       
       // Footer
       doc.fontSize(8).font(fontRegular).fillColor('#999999');
-      doc.text('HANK Spor Giyim | www.hank.com.tr | info@hank.com.tr', 50, 780, { align: 'center', width: 495 });
+      doc.text('Polen Stone Doğal Taş & Mermer | www.polenstone.com.tr | info@polenstone.com.tr', 50, 780, { align: 'center', width: 495 });
       
       doc.end();
     } catch (error) {
@@ -5459,7 +5459,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       sendCapiEvent({
         eventName: 'ViewContent',
         eventId,
-        eventSourceUrl: sourceUrl || 'https://hank.com.tr',
+        eventSourceUrl: sourceUrl || 'https://polenstone.com.tr',
         userData,
         customData: {
           value,
@@ -5485,7 +5485,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       sendCapiEvent({
         eventName: 'AddToCart',
         eventId,
-        eventSourceUrl: sourceUrl || 'https://hank.com.tr',
+        eventSourceUrl: sourceUrl || 'https://polenstone.com.tr',
         userData,
         customData: {
           value,
@@ -5512,7 +5512,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       sendCapiEvent({
         eventName: 'InitiateCheckout',
         eventId,
-        eventSourceUrl: sourceUrl || 'https://hank.com.tr',
+        eventSourceUrl: sourceUrl || 'https://polenstone.com.tr',
         userData,
         customData: {
           value,
@@ -5540,7 +5540,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       sendCapiEvent({
         eventName: 'Purchase',
         eventId,
-        eventSourceUrl: sourceUrl || 'https://hank.com.tr/odeme-basarili',
+        eventSourceUrl: sourceUrl || 'https://polenstone.com.tr/odeme-basarili',
         userData,
         customData: {
           value,
@@ -5567,7 +5567,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       sendCapiEvent({
         eventName: 'AddPaymentInfo',
         eventId,
-        eventSourceUrl: sourceUrl || 'https://hank.com.tr',
+        eventSourceUrl: sourceUrl || 'https://polenstone.com.tr',
         userData,
         customData: {
           value,
@@ -5591,7 +5591,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       const allCategories = await storage.getCategories();
       const categoryMap = new Map(allCategories.map(c => [c.id, c.name]));
 
-      const baseUrl = "https://hank.com.tr";
+      const baseUrl = "https://polenstone.com.tr";
       const items: string[] = [];
 
       for (const product of allProducts) {
@@ -5643,7 +5643,7 @@ Sitemap: ${baseUrl}/sitemap.xml
 ${additionalImages}
       <g:price>${Number(variantPrice).toFixed(2)} TRY</g:price>
       <g:availability>${availability}</g:availability>
-      <g:brand>HANK</g:brand>
+      <g:brand>POLEN STONE</g:brand>
       <g:condition>new</g:condition>
       <g:google_product_category>Giyim ve Aksesuar > Giyim</g:google_product_category>
       <g:product_type>${escapeXml(categoryName)}</g:product_type>
@@ -5668,7 +5668,7 @@ ${colorAttr}
 ${additionalImages}
       <g:price>${Number(product.basePrice).toFixed(2)} TRY</g:price>
       <g:availability>${availability}</g:availability>
-      <g:brand>HANK</g:brand>
+      <g:brand>POLEN STONE</g:brand>
       <g:condition>new</g:condition>
       <g:google_product_category>Giyim ve Aksesuar > Giyim</g:google_product_category>
       <g:product_type>${escapeXml(categoryName)}</g:product_type>
@@ -5685,9 +5685,9 @@ ${additionalImages}
       const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>HANK - Fitness &amp; Bodybuilding Giyim</title>
+    <title>Polen Stone — Doğal Taş &amp; Mermer</title>
     <link>${baseUrl}</link>
-    <description>Premium fitness ve bodybuilding giyim markası</description>
+    <description>Polen Stone — Premium doğal taş ve mermer markası</description>
 ${items.join("\n")}
   </channel>
 </rss>`;

@@ -71,7 +71,7 @@ export async function sendInvoiceToBizimHesap(
 
       // Get SKU from variant if available, otherwise use a unique ID
       const sku = item.variantId && variantSkus?.get(item.variantId);
-      const productCode = sku || `HANK-${order.orderNumber}-${index + 1}`;
+      const productCode = sku || `POLEN-${order.orderNumber}-${index + 1}`;
 
       return {
         productId: productCode,
@@ -119,7 +119,7 @@ export async function sendInvoiceToBizimHesap(
       firmId: FIRM_ID,
       invoiceNo: order.orderNumber,
       invoiceType: 3,
-      note: `HANK Online Sipariş - ${order.orderNumber}`,
+      note: `Polen Stone Online Sipariş - ${order.orderNumber}`,
       dates: {
         invoiceDate: invoiceDate,
         dueDate: invoiceDate,

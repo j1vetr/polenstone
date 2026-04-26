@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "5ovonepTWwMTYCZvE4_I9"
+uri = "file://attached_assets/generated_images/polen-hero-1.png"
+type = "image"
+title = "polen hero marble slab"
+
+[[generated]]
+id = "pspcT90LVIB4bq_8NUWAg"
+uri = "file://attached_assets/generated_images/polen-hero-2.png"
+type = "image"
+title = "polen hero marble interior"
+
+[[generated]]
+id = "eapS_1N1ZvWKJHObEOpAP"
+uri = "file://attached_assets/generated_images/polen-category-mermer.png"
+type = "image"
+title = "polen mermer category"

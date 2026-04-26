@@ -15,8 +15,8 @@ export default function KVKK() {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <SEO 
-        title="KVKK Aydınlatma Metni - HANK Athletics"
-        description="HANK Athletics kişisel verilerin korunması kanunu aydınlatma metni."
+        title="KVKK Aydınlatma Metni - Polen Stone Doğal Taş & Mermer"
+        description="Polen Stone Doğal Taş & Mermer kişisel verilerin korunması kanunu aydınlatma metni."
       />
       <Header />
       
@@ -79,15 +79,15 @@ export default function KVKK() {
                 <p>
                   KVKK (Kişisel Verilerin Korunması Kanunu) kapsamında kişisel verilerinizi işleyen veri sorumlusu aşağıdaki şekildedir:
                 </p>
-                <p><strong>Hank Athletics</strong></p>
-                <p><strong>Web Sitesi:</strong> <a href="https://www.hank.com.tr">www.hank.com.tr</a></p>
-                <p><strong>E-posta:</strong> <a href="mailto:info@hank.com.tr">info@hank.com.tr</a></p>
+                <p><strong>Polen Stone Doğal Taş & Mermer</strong></p>
+                <p><strong>Web Sitesi:</strong> <a href="https://www.polenstone.com.tr">www.polenstone.com.tr</a></p>
+                <p><strong>E-posta:</strong> <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a></p>
                 <p><strong>Telefon:</strong> <a href="tel:+905321350391">0532 135 03 91</a></p>
                 <p><strong>Adres:</strong> ATIFBEY MAH. 67 SK. Dış kapı no: 33 İç kapı no: 27 İZMİR/GAZİEMİR</p>
 
                 <h2>2) Kişisel Verilerin Toplanma Yöntemi</h2>
                 <p>
-                  Kişisel verileriniz; <strong>www.hank.com.tr</strong> web sitesi, sosyal medya hesaplarımız, müşteri destek hattı, e-posta veya fiziksel formlar aracılığıyla tamamen veya kısmen otomatik yollarla toplanmaktadır.
+                  Kişisel verileriniz; <strong>www.polenstone.com.tr</strong> web sitesi, sosyal medya hesaplarımız, müşteri destek hattı, e-posta veya fiziksel formlar aracılığıyla tamamen veya kısmen otomatik yollarla toplanmaktadır.
                 </p>
 
                 <h2>3) Kişisel Verilerin İşlenme Amaçları</h2>
@@ -127,7 +127,7 @@ export default function KVKK() {
 
                 <h2>7) Kişisel Verilerin Güvenliği</h2>
                 <p>
-                  Hank Athletics, kişisel verilerinizi korumak için gerekli tüm teknik ve idari tedbirleri almaktadır. Verileriniz SSL sertifikaları, güvenli sunucular ve erişim yetkilendirme sistemleriyle korunmaktadır.
+                  Polen Stone, kişisel verilerinizi korumak için gerekli tüm teknik ve idari tedbirleri almaktadır. Verileriniz SSL sertifikaları, güvenli sunucular ve erişim yetkilendirme sistemleriyle korunmaktadır.
                 </p>
 
                 <h2>8) İlgili Kişi Olarak Haklarınız</h2>
@@ -150,7 +150,7 @@ export default function KVKK() {
                   KVKK kapsamındaki haklarınızı kullanmak için, kimliğinizi doğrulayacak belgelerle birlikte aşağıdaki yöntemlerle başvuru yapabilirsiniz:
                 </p>
                 <ul>
-                  <li><strong>E-posta:</strong> <a href="mailto:info@hank.com.tr">info@hank.com.tr</a></li>
+                  <li><strong>E-posta:</strong> <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a></li>
                   <li><strong>Adres:</strong> ATIFBEY MAH. 67 SK. Dış kapı no: 33 İç kapı no: 27 İZMİR/GAZİEMİR</li>
                 </ul>
                 <p>
@@ -164,7 +164,7 @@ export default function KVKK() {
 
                 <h2>11) Güncellemeler ve Değişiklikler</h2>
                 <p>
-                  Bu Aydınlatma Metni, mevzuat değişiklikleri ve şirket politikalarına uygun olarak güncellenebilir. Güncel versiyon her zaman <strong>www.hank.com.tr</strong> adresinde yayınlanır.
+                  Bu Aydınlatma Metni, mevzuat değişiklikleri ve şirket politikalarına uygun olarak güncellenebilir. Güncel versiyon her zaman <strong>www.polenstone.com.tr</strong> adresinde yayınlanır.
                 </p>
               </div>
             </div>

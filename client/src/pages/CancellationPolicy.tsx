@@ -7,15 +7,15 @@ import { ChevronRight, RotateCcw, Clock, Package, AlertCircle, CheckCircle, XCir
 const highlights = [
   { icon: RotateCcw, label: '14 Gün Cayma Hakkı', desc: 'Hiçbir gerekçe göstermeden iade', color: 'text-green-400', bg: 'bg-green-500/20' },
   { icon: Clock, label: '7 İş Günü', desc: 'Ücret iadesi süresi', color: 'text-blue-400', bg: 'bg-blue-500/20' },
-  { icon: Package, label: 'Kolay Değişim', desc: 'Beden ve renk değişimi', color: 'text-purple-400', bg: 'bg-purple-500/20' },
+  { icon: Package, label: 'Kolay Değişim', desc: 'Renk ve ölçü değişimi', color: 'text-purple-400', bg: 'bg-purple-500/20' },
 ];
 
 export default function CancellationPolicy() {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <SEO 
-        title="İptal ve İade Politikası - HANK Athletics"
-        description="HANK Athletics ürün iade, değişim ve iptal koşulları."
+        title="İptal ve İade Politikası - Polen Stone Doğal Taş & Mermer"
+        description="Polen Stone Doğal Taş & Mermer ürün iade, değişim ve iptal koşulları."
       />
       <Header />
       
@@ -112,15 +112,15 @@ export default function CancellationPolicy() {
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="text-red-400 mt-1">•</span>
-                    Kullanılmış veya yıkanmış ürünler
+                    Projeye özel ölçüde kesilmiş veya işlenmiş plaka, fayans ve tezgâh ürünleri
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-400 mt-1">•</span>
-                    İç çamaşırı, çorap gibi hijyenik ürünler
+                    Yerine monte edilmiş, yapıştırılmış veya işlem görmüş doğal taşlar
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-400 mt-1">•</span>
-                    Kişiselleştirilmiş/özel üretim ürünler
+                    Doğal taşın yapısından kaynaklanan ton, damar ve desen farklılıkları (kusur sayılmaz)
                   </li>
                 </ul>
               </div>
@@ -132,12 +132,12 @@ export default function CancellationPolicy() {
                 <ul>
                   <li>İade/iptal işlemleri 6502 sayılı Kanun ve Mesafeli Satış Sözleşmeleri Yönetmeliği'ne uygun şekilde yürütülür.</li>
                   <li>İşlem için sipariş numaranızı hazır bulundurunuz.</li>
-                  <li>Tüm başvurular <a href="mailto:info@hank.com.tr">info@hank.com.tr</a> adresine yazılı olarak yapılmalıdır.</li>
+                  <li>Tüm başvurular <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresine yazılı olarak yapılmalıdır.</li>
                 </ul>
 
                 <h2>2) Sipariş İptali</h2>
                 <ul>
-                  <li><strong>Kargo çıkışından önce:</strong> Sipariş numaranızla birlikte <a href="mailto:info@hank.com.tr">info@hank.com.tr</a> adresine yazarak iptal talebinde bulunabilirsiniz. Mümkünse aynı gün işleme alınır.</li>
+                  <li><strong>Kargo çıkışından önce:</strong> Sipariş numaranızla birlikte <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresine yazarak iptal talebinde bulunabilirsiniz. Mümkünse aynı gün işleme alınır.</li>
                   <li><strong>Kargo çıkışından sonra:</strong> İptal yapılamaz. Bu durumda <strong>iade</strong> süreci uygulanır.</li>
                 </ul>
 
@@ -148,13 +148,13 @@ export default function CancellationPolicy() {
                 <ul>
                   <li>Ürün kullanılmamış, orijinal ambalajında, etiketleri tam ve yeniden satılabilir durumda olmalıdır.</li>
                   <li>Fatura, aksesuar, hediye/promosyon ürünleri ve tüm parçalar eksiksiz gönderilmelidir.</li>
-                  <li>Cayma hakkı bildirimi <a href="mailto:info@hank.com.tr">info@hank.com.tr</a> adresine yazılı olarak yapılmalıdır.</li>
+                  <li>Cayma hakkı bildirimi <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresine yazılı olarak yapılmalıdır.</li>
                 </ul>
 
                 <h2>4) İade Süreci</h2>
                 <p>İade süreci şu şekilde işler:</p>
                 <ol>
-                  <li>İade talebinizi <a href="mailto:info@hank.com.tr">info@hank.com.tr</a> adresine iletin ve <strong>sipariş numaranızı</strong> belirtin.</li>
+                  <li>İade talebinizi <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresine iletin ve <strong>sipariş numaranızı</strong> belirtin.</li>
                   <li>Onay sonrası ürünü <strong>orijinal ambalajında</strong>, fatura ve aksesuarlarıyla birlikte paketleyin.</li>
                   <li>Belirtilen adrese kargo ile gönderin.</li>
                   <li>Ürün tarafımıza ulaştığında kontrol edilir.</li>
@@ -170,12 +170,12 @@ export default function CancellationPolicy() {
 
                 <h2>6) Ürün Değişimi</h2>
                 <p>
-                  Beden veya renk değişikliği için yine <a href="mailto:info@hank.com.tr">info@hank.com.tr</a> adresinden bilgi verebilirsiniz. Değişim için mevcut ürünün iade koşullarını karşılaması gerekir.
+                  Renk, ton veya ölçü değişikliği için <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresinden bilgi verebilirsiniz. Değişim için ürünün orijinal ambalajında ve işlem görmemiş halde olması, ayrıca iade koşullarını karşılaması gerekir.
                 </p>
 
                 <h2>7) Hasarlı veya Hatalı Ürün</h2>
                 <p>
-                  Teslimat sırasında veya açılışta fark edilen hasar ya da üretim hatasını <strong>24 saat</strong> içinde <a href="mailto:info@hank.com.tr">info@hank.com.tr</a> adresine bildirin. Fotoğraflı belge gönderilmesi süreci hızlandırır.
+                  Teslimat sırasında veya açılışta fark edilen hasar ya da üretim hatasını <strong>24 saat</strong> içinde <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresine bildirin. Fotoğraflı belge gönderilmesi süreci hızlandırır.
                 </p>
 
                 <h2>8) Kargo Ücreti</h2>
@@ -187,7 +187,7 @@ export default function CancellationPolicy() {
                 <h2>9) İletişim</h2>
                 <p>İade ve iptal işlemleri için destek ekibimize ulaşabilirsiniz:</p>
                 <ul>
-                  <li><strong>E-posta:</strong> <a href="mailto:info@hank.com.tr">info@hank.com.tr</a></li>
+                  <li><strong>E-posta:</strong> <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a></li>
                   <li><strong>Telefon:</strong> <a href="tel:+905321350391">0532 135 03 91</a></li>
                 </ul>
               </div>

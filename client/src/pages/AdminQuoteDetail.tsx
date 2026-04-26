@@ -189,7 +189,7 @@ export default function AdminQuoteDetail() {
               <div>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center print:bg-black">
-                    <span className="text-2xl font-black text-black print:text-white tracking-tighter">HANK</span>
+                    <span className="text-2xl font-black text-black print:text-white tracking-tighter">POLEN STONE</span>
                   </div>
                   <div>
                     <h1 className="text-3xl font-bold text-white print:text-black">TEKLİF</h1>
@@ -421,8 +421,8 @@ export default function AdminQuoteDetail() {
         </div>
 
         <div className="mt-8 text-center text-zinc-600 text-sm print:mt-12">
-          <p>HANK Spor Giyim</p>
-          <p>www.hank.com.tr • info@hank.com.tr</p>
+          <p>Polen Stone Doğal Taş &amp; Mermer</p>
+          <p>www.polenstone.com.tr • info@polenstone.com.tr</p>
         </div>
       </div>
 

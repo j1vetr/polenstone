@@ -278,7 +278,7 @@ export default function ProductDetail() {
   const category = product ? categories.find(c => c.id === product.categoryId) : null;
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const shareText = product ? `${product.name} - HANK` : 'HANK';
+  const shareText = product ? `${product.name} - Polen Stone` : 'Polen Stone';
 
   const socialLinks = [
     {
@@ -377,7 +377,7 @@ export default function ProductDetail() {
     <div className="min-h-screen bg-white overflow-x-hidden">
       <SEO 
         title={product.name}
-        description={product.description || `${product.name} - HANK premium fitness giyim`}
+        description={product.description || `${product.name} - Polen Stone premium doğal taş ve mermer`}
         image={images[0]}
         url={`/urun/${product.slug}`}
         type="product"
@@ -387,7 +387,7 @@ export default function ProductDetail() {
           currency: 'TRY',
           availability: 'InStock',
           sku: product.sku || undefined,
-          brand: 'HANK',
+          brand: 'Polen Stone',
           category: categoryName,
           images: images
         }}

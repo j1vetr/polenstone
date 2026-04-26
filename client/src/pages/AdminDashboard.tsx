@@ -232,7 +232,7 @@ export default function AdminDashboard() {
   const [showBulkPriceModal, setShowBulkPriceModal] = useState(false);
   const [showBulkBadgeModal, setShowBulkBadgeModal] = useState(false);
   const [showBulkAIModal, setShowBulkAIModal] = useState(false);
-  const [bulkAIStyle, setBulkAIStyle] = useState('sporty');
+  const [bulkAIStyle, setBulkAIStyle] = useState('natural');
   const [bulkAICategory, setBulkAICategory] = useState('');
   const [bulkAIOnlyEmpty, setBulkAIOnlyEmpty] = useState(true);
   const [bulkAIOverwrite, setBulkAIOverwrite] = useState(false);
@@ -1190,7 +1190,7 @@ export default function AdminDashboard() {
                     <option value="energetic">Enerjik - Dinamik ve motive edici</option>
                     <option value="minimal">Minimal - Kısa ve öz</option>
                     <option value="luxury">Lüks - Premium ve sofistike</option>
-                    <option value="sporty">Sportif - Atletik ve performans odaklı</option>
+                    <option value="natural">Doğal - Anadolu mirası ve el işçiliği vurgusu</option>
                   </select>
                 </div>
 
@@ -2162,7 +2162,7 @@ function ProductModal({
     { id: 'energetic', name: 'Enerjik', description: 'Dinamik ve motive edici' },
     { id: 'minimal', name: 'Minimal', description: 'Kısa ve öz' },
     { id: 'luxury', name: 'Lüks', description: 'Premium ve sofistike' },
-    { id: 'sporty', name: 'Sportif', description: 'Atletik ve performans odaklı' },
+    { id: 'natural', name: 'Doğal', description: 'Anadolu mirası ve el işçiliği vurgusu' },
   ];
   
   const generateAIDescription = async () => {
@@ -2386,7 +2386,7 @@ function ProductModal({
               placeholder="urun-adi-slug"
               data-testid="input-product-slug"
             />
-            <p className="text-xs text-zinc-500 mt-1">Site URL'sinde görünecek: hank.com.tr/urun/{formData.slug || 'slug'}</p>
+            <p className="text-xs text-zinc-500 mt-1">Site URL'sinde görünecek: polenstone.com.tr/urun/{formData.slug || 'slug'}</p>
           </div>
           
           <div>
@@ -6710,7 +6710,7 @@ function SettingsPanel() {
               type="text"
               value={settings.site_url}
               onChange={(e) => setSettings(s => ({ ...s, site_url: e.target.value }))}
-              placeholder="https://hank.com.tr"
+              placeholder="https://polenstone.com.tr"
               className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white transition-colors"
               data-testid="input-site-url"
             />
@@ -8049,7 +8049,7 @@ function AIDescriptionsPanel({ products, categories }: { products: Product[], ca
     { value: 'energetic', label: 'Enerjik' },
     { value: 'minimal', label: 'Minimal' },
     { value: 'luxury', label: 'Lüks' },
-    { value: 'sporty', label: 'Sportif' },
+    { value: 'natural', label: 'Doğal' },
   ];
 
   const filteredProducts = products.filter(p => {

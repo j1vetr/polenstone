@@ -157,7 +157,7 @@ export default function Store() {
     <div className="min-h-screen bg-background overflow-x-hidden">
       <SEO 
         title="Mağaza"
-        description="HANK fitness ve bodybuilding giyim koleksiyonu - Tüm ürünleri keşfedin"
+        description="Polen Stone doğal taş ve mermer koleksiyonu - Tüm ürünleri keşfedin"
         url="/magaza"
         breadcrumbs={[
           { name: 'Ana Sayfa', url: '/' },

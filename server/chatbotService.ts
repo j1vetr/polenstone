@@ -384,10 +384,10 @@ async function getProductDetails(productIds: string[]): Promise<ProductWithDetai
 }
 
 function extractIntent(message: string): {
-  intent: 'search' | 'size_check' | 'recommendation' | 'general' | 'more' | 'outfit';
+  intent: 'search' | 'stock_check' | 'recommendation' | 'general' | 'more' | 'outfit';
   productType?: string;
   productTypes?: string[];
-  clothingCategory?: string;
+  useCategory?: string;
   fit?: string;
   season?: string;
   usage?: string;
@@ -399,60 +399,59 @@ function extractIntent(message: string): {
   const lowerMsg = message.toLowerCase();
 
   const productTypes: Record<string, string> = {
-    'tişört': 'tshirt',
-    'tshirt': 'tshirt',
-    't-shirt': 'tshirt',
-    'eşofman': 'esofman',
-    'şort': 'sort',
-    'atlet': 'atlet',
-    'şalvar': 'salvar',
-    'sweatshirt': 'sweatshirt',
-    'hoodie': 'sweatshirt',
-    'kapşonlu': 'sweatshirt',
-    'pantolon': 'pantolon',
-    'tayt': 'tayt',
-    'ceket': 'ceket',
-    'mont': 'mont',
+    'mermer': 'mermer',
+    'granit': 'granit',
+    'traverten': 'traverten',
+    'oniks': 'oniks',
+    'onyx': 'oniks',
+    'bazalt': 'bazalt',
+    'kuvars': 'kuvars',
+    'andezit': 'andezit',
+    'doğal taş': 'dogaltas',
+    'dogal tas': 'dogaltas',
   };
 
-  // Clothing category concepts
-  const clothingCategories: Record<string, string[]> = {
-    'üst giyim': ['tshirt', 'atlet', 'sweatshirt', 'ceket', 'mont'],
-    'üst': ['tshirt', 'atlet', 'sweatshirt', 'ceket', 'mont'],
-    'alt giyim': ['esofman', 'sort', 'salvar', 'pantolon', 'tayt'],
-    'alt': ['esofman', 'sort', 'salvar', 'pantolon', 'tayt'],
-    'kombin': ['tshirt', 'atlet', 'sweatshirt', 'esofman', 'sort', 'salvar'],
+  // Use-case (project area) concepts mapped to stone families
+  const useCategories: Record<string, string[]> = {
+    'iç mekan': ['mermer', 'oniks', 'traverten'],
+    'dış mekan': ['granit', 'bazalt', 'andezit'],
+    'mutfak': ['granit', 'kuvars', 'mermer'],
+    'banyo': ['mermer', 'traverten', 'oniks'],
+    'cephe': ['traverten', 'andezit', 'bazalt'],
+    'döşeme': ['granit', 'traverten', 'mermer'],
   };
 
   const fits: Record<string, string> = {
-    'oversize': 'oversize',
-    'slim': 'slimfit',
-    'slimfit': 'slimfit',
-    'slim fit': 'slimfit',
-    'dar': 'slimfit',
-    'regular': 'regular',
-    'normal': 'regular',
+    'cilalı': 'cilali',
+    'parlak': 'cilali',
+    'honlu': 'honlu',
+    'mat': 'honlu',
+    'fırçalı': 'fircali',
+    'eskitme': 'eskitme',
+    'patine': 'patine',
   };
 
   const seasons: Record<string, string> = {
-    'yaz': 'yaz',
-    'yazlık': 'yaz',
-    'kış': 'kis',
-    'kışlık': 'kis',
+    'sıcak ton': 'sicak',
+    'sıcak': 'sicak',
+    'soğuk ton': 'soguk',
+    'soğuk': 'soguk',
   };
 
   const usages: Record<string, string> = {
-    'spor': 'spor',
-    'antrenman': 'antrenman',
-    'fitness': 'fitness',
-    'günlük': 'gunluk',
-    'gündelik': 'gunluk',
+    'iç mekan': 'ic_mekan',
+    'dış mekan': 'dis_mekan',
+    'mutfak': 'mutfak',
+    'banyo': 'banyo',
+    'cephe': 'cephe',
+    'döşeme': 'doseme',
+    'tezgah': 'tezgah',
   };
 
-  let intent: 'search' | 'size_check' | 'recommendation' | 'general' | 'more' | 'outfit' = 'general';
+  let intent: 'search' | 'stock_check' | 'recommendation' | 'general' | 'more' | 'outfit' = 'general';
   let productType: string | undefined;
   let detectedProductTypes: string[] = [];
-  let clothingCategory: string | undefined;
+  let useCategory: string | undefined;
   let fit: string | undefined;
   let season: string | undefined;
   let usage: string | undefined;
@@ -461,38 +460,39 @@ function extractIntent(message: string): {
   let priceMax: number | undefined;
   let isOutfitRequest = false;
 
-  // Detect outfit/combination requests
+  // Detect combination/pairing requests (stone + complementary stone for a project)
   if (lowerMsg.includes('kombin') || lowerMsg.includes('kombinle') || lowerMsg.includes('set') ||
       lowerMsg.includes('takım') || lowerMsg.includes('birlikte') || lowerMsg.includes('eşleştir') ||
-      lowerMsg.includes('ne giyeyim') || lowerMsg.includes('ne giysem') || lowerMsg.includes('altına ne') ||
-      lowerMsg.includes('üstüne ne') || lowerMsg.includes('yanına ne')) {
+      lowerMsg.includes('ne kullanayım') || lowerMsg.includes('hangisi uyar') ||
+      lowerMsg.includes('yanında ne') || lowerMsg.includes('uyumlu') || lowerMsg.includes('uyar mı')) {
     intent = 'outfit';
     isOutfitRequest = true;
-  } else if (lowerMsg.includes('beden') || lowerMsg.includes('stok') || lowerMsg.includes('kaldı mı')) {
-    intent = 'size_check';
+  } else if (lowerMsg.includes('stok') || lowerMsg.includes('kaldı mı') ||
+             lowerMsg.includes('mevcut mu') || lowerMsg.includes('var mı stokta')) {
+    intent = 'stock_check';
   } else if (lowerMsg.includes('öneri') || lowerMsg.includes('tavsiye') || lowerMsg.includes('ne önerirsin')) {
     intent = 'recommendation';
-  } else if (lowerMsg.includes('daha fazla') || lowerMsg.includes('başka') || lowerMsg.includes('devam') || 
+  } else if (lowerMsg.includes('daha fazla') || lowerMsg.includes('başka') || lowerMsg.includes('devam') ||
              lowerMsg.includes('diğer') || lowerMsg.includes('daha var mı') || lowerMsg.includes('evet')) {
     intent = 'more';
-  } else if (lowerMsg.includes('arıyorum') || lowerMsg.includes('istiyorum') || lowerMsg.includes('bakıyorum') || 
+  } else if (lowerMsg.includes('arıyorum') || lowerMsg.includes('istiyorum') || lowerMsg.includes('bakıyorum') ||
              lowerMsg.includes('lazım') || lowerMsg.includes('var mı') || lowerMsg.includes('göster') ||
              lowerMsg.includes('ister') || lowerMsg.includes('almak') || lowerMsg.includes('alacağım') ||
              lowerMsg.includes('ne var') || lowerMsg.includes('neler var')) {
     intent = 'search';
   }
 
-  // Detect clothing categories (alt giyim, üst giyim, etc.)
-  for (const [key, types] of Object.entries(clothingCategories)) {
+  // Detect use-case categories (iç mekan, dış mekan, mutfak, banyo, cephe, döşeme)
+  for (const [key, types] of Object.entries(useCategories)) {
     if (lowerMsg.includes(key)) {
-      clothingCategory = key;
+      useCategory = key;
       detectedProductTypes = types;
       if (intent === 'general') intent = 'search';
       break;
     }
   }
 
-  // Detect specific product types
+  // Detect specific stone types (mermer, granit, traverten, oniks, vb.)
   for (const [key, value] of Object.entries(productTypes)) {
     if (lowerMsg.includes(key)) {
       productType = value;
@@ -525,15 +525,13 @@ function extractIntent(message: string): {
     }
   }
 
-  // Better size extraction for Turkish - handles "L beden", "XL beden", etc.
-  const sizeMatch = lowerMsg.match(/\b(xs|s|m|l|xl|xxl|3xl)\s*beden/i) ||
-                    lowerMsg.match(/beden[:\s]*(xs|s|m|l|xl|xxl|3xl)/i) ||
-                    lowerMsg.match(/\b(xs|s|m|l|xl|xxl|3xl)\b/i);
-  if (sizeMatch) {
-    size = sizeMatch[1].toUpperCase();
+  // Slab/plate dimension extraction (e.g., "60x60", "30x60 cm")
+  const dimMatch = lowerMsg.match(/(\d{2,3})\s*[x×]\s*(\d{2,3})/);
+  if (dimMatch) {
+    size = `${dimMatch[1]}x${dimMatch[2]}`;
   }
 
-  const colorKeywords = ['siyah', 'beyaz', 'gri', 'lacivert', 'mavi', 'kırmızı', 'yeşil', 'kahve', 'bej'];
+  const colorKeywords = ['siyah', 'beyaz', 'gri', 'krem', 'bej', 'kahve', 'antrasit', 'altın', 'yeşil', 'mavi'];
   for (const c of colorKeywords) {
     if (lowerMsg.includes(c)) {
       color = c;
@@ -546,18 +544,18 @@ function extractIntent(message: string): {
     priceMax = parseInt(priceMatch[1]);
   }
 
-  return { 
-    intent, 
-    productType, 
+  return {
+    intent,
+    productType,
     productTypes: detectedProductTypes.length > 0 ? detectedProductTypes : undefined,
-    clothingCategory,
-    fit, 
-    season, 
-    usage, 
-    size, 
-    color, 
+    useCategory,
+    fit,
+    season,
+    usage,
+    size,
+    color,
     priceMax,
-    isOutfitRequest 
+    isOutfitRequest
   };
 }
 
@@ -577,7 +575,7 @@ export async function processMessage(
     }
     if (contentCheck.reason === 'competitor') {
       return { 
-        response: 'Ben sadece HANK ürünleri hakkında yardımcı olabiliyorum. Size HANK koleksiyonumuzdan harika alternatifler önerebilirim! Nasıl yardımcı olabilirim?', 
+        response: 'Ben sadece Polen Stone doğal taş ürünleri hakkında yardımcı olabiliyorum. Size Polen Stone koleksiyonumuzdan harika alternatifler önerebilirim! Nasıl yardımcı olabilirim?', 
         products: [] 
       };
     }
@@ -614,31 +612,27 @@ export async function processMessage(
   const intent = extractIntent(userMessage);
   let relevantProducts: ProductWithDetails[] = [];
 
-  // Turkish keywords for product type search
+  // Turkish keywords for stone type search
   const turkishKeywords: Record<string, string[]> = {
-    'sort': ['şort', 'sort'],
-    'tshirt': ['tişört', 'tshirt', 't-shirt'],
-    'esofman': ['eşofman', 'esofman', 'eşofman altı', 'eşofman üstü'],
-    'atlet': ['atlet'],
-    'salvar': ['şalvar', 'salvar'],
-    'sweatshirt': ['sweatshirt', 'hoodie', 'kapşonlu'],
-    'pantolon': ['pantolon'],
-    'tayt': ['tayt', 'legging'],
-    'ceket': ['ceket'],
-    'mont': ['mont'],
+    'mermer': ['mermer'],
+    'granit': ['granit'],
+    'traverten': ['traverten'],
+    'oniks': ['oniks', 'onyx'],
+    'bazalt': ['bazalt'],
+    'kuvars': ['kuvars', 'quartz'],
+    'andezit': ['andezit'],
+    'dogaltas': ['doğal taş', 'doğaltaş'],
   };
 
-  // For outfit requests, get products from multiple categories
+  // For outfit/combination requests, surface a mix of complementary stone categories
   if (intent.isOutfitRequest || intent.intent === 'outfit') {
-    // Get both tops and bottoms for outfit suggestions
-    const topTerms = ['tişört', 'atlet', 'sweatshirt'];
-    const bottomTerms = ['şort', 'eşofman', 'şalvar', 'pantolon'];
-    
-    const topIds = await searchByNameOrCategory(topTerms);
-    const bottomIds = await searchByNameOrCategory(bottomTerms);
-    
-    // Get some from each category
-    const combinedOutfitIds = [...topIds.slice(0, 5), ...bottomIds.slice(0, 5)];
+    const warmTerms = ['traverten', 'oniks', 'mermer'];
+    const coolTerms = ['granit', 'bazalt', 'andezit'];
+
+    const warmIds = await searchByNameOrCategory(warmTerms);
+    const coolIds = await searchByNameOrCategory(coolTerms);
+
+    const combinedOutfitIds = [...warmIds.slice(0, 5), ...coolIds.slice(0, 5)];
     relevantProducts = await getProductDetails(combinedOutfitIds);
   } else {
     // Regular search
@@ -711,12 +705,12 @@ export async function processMessage(
   // Determine if this is an outfit request for special handling
   const isOutfit = intent.isOutfitRequest || intent.intent === 'outfit';
   
-  const systemPrompt = `Sen HANK fitness giyim markasının profesyonel stil danışmanı ve satış asistanısın. Türkçe konuşuyorsun.
+  const systemPrompt = `Sen Polen Stone doğal taş ve mermer markasının profesyonel danışmanı ve satış asistanısın. Türkçe konuşuyorsun.
 
 SEN KİMSİN:
-- HANK markasının uzman stil danışmanısın
-- Fitness giyim konusunda uzmansın
-- Müşterilere kombin önerileri yapabilirsin
+- Polen Stone markasının uzman doğal taş danışmanısın
+- Mermer, granit, traverten, oniks gibi doğal taşlar konusunda uzmansın
+- Müşterilere mekânlarına uygun taş önerileri yapabilirsin
 - Samimi ama profesyonel bir dil kullan
 
 TEMEL KURALLAR:
@@ -726,24 +720,25 @@ TEMEL KURALLAR:
 4. Gerçek fiyatları kullan
 5. Özür dileme, "yanlış bilgi verdim" gibi ifadeler YASAK
 6. Kısa ve net ol
-7. FORMATLAMA: Markdown kullanma (**, ##, vb. yasak). Düz metin yaz. Başlıklar için "Üst Giyim:" gibi iki nokta kullan
+7. FORMATLAMA: Markdown kullanma (**, ##, vb. yasak). Düz metin yaz. Başlıklar için "Mermer:" gibi iki nokta kullan
 
-KOMBİN ÖNERİSİ YAPARKEN:
-- Üst ve alt giyimi birlikte öner
-- Renk uyumunu düşün (örn: siyah üst + gri alt, beyaz üst + siyah alt)
-- "Bu üstün altına şunu önerebilirim" gibi doğal cümleler kur
-- Hem spor hem günlük kullanım için uygun seçenekler sun
+ÖNERİ YAPARKEN:
+- Müşterinin mekân türünü (banyo, mutfak, salon, dış cephe) ve estetik tercihini düşün
+- Renk ve doku uyumunu vurgula
+- "Bu mekâna şunu önerebilirim" gibi doğal cümleler kur
+- Doğal taşın kendine özgü karakterini ve dayanıklılığını ön plana çıkar
 
-RENK KAVRAMLARI:
-- "Beyaz tonlar" = beyaz, krem, ekru içeren ürünler
-- "Koyu tonlar" = siyah, lacivert, koyu gri içeren ürünler
-- "Açık tonlar" = beyaz, açık gri, bej içeren ürünler
+RENK & DOKU KAVRAMLARI:
+- "Sıcak tonlar" = krem, bej, kahverengi, traverten doğallığı
+- "Soğuk tonlar" = beyaz, gri, siyah mermer ve granit
+- "Damarlı" = belirgin damar deseni olan mermerler
+- "Düz" = homojen renkli, sade görünümlü taşlar
 
-GİYİM KATEGORİLERİ:
-- "Üst giyim" = tişört, atlet, sweatshirt, hoodie
-- "Alt giyim" = şort, eşofman, şalvar, pantolon
-- Müşteri "alt giyim" derse şort, eşofman, şalvar öner
-- Müşteri "üst giyim" derse tişört, atlet, sweatshirt öner
+TAŞ KATEGORİLERİ:
+- "Mermer" = klasik mermer, damarlı, parlak yüzeyli
+- "Granit" = dayanıklı, dış mekâna uygun, sert taş
+- "Traverten" = sıcak tonlu, doğal gözenekli, rustik
+- "Oniks" = yarı saydam, dekoratif, lüks görünümlü
 
 DEVAM İSTEKLERİ:
 - "Evet", "daha fazla", "başka" = sohbet geçmişinde ÖNERMEDİĞİN ürünleri göster
@@ -756,17 +751,17 @@ ${index + 1}. ${p.name}
    Fiyat: ${p.basePrice} TL
    ${p.categoryName ? `Kategori: ${p.categoryName}` : ''}
    Renkler: ${Array.from(new Set(p.variants.filter(v => v.stock > 0).map(v => v.color))).join(', ') || 'Belirtilmemiş'}
-   ${p.attributes?.fit ? `Kesim: ${p.attributes.fit}` : ''}
-   Stokta bedenler: ${p.variants.filter(v => v.stock > 0).map(v => v.size).join(', ') || 'Stokta yok'}
+   ${p.attributes?.fit ? `Tip: ${p.attributes.fit}` : ''}
+   Stokta seçenekler: ${p.variants.filter(v => v.stock > 0).map(v => v.size).join(', ') || 'Stokta yok'}
 `).join('\n')}
 
 ${isOutfit ? `
-Müşteri kombin istiyor. Yukarıdaki listeden uyumlu üst ve alt giyim kombinasyonları öner. Renk uyumuna dikkat et.
+Müşteri kombin/öneri istiyor. Yukarıdaki listeden uyumlu taş kombinasyonları öner. Renk ve doku uyumuna dikkat et.
 ` : `
 Bu listeden müşterinin ihtiyacına en uygun ürünleri öner. Ürün numaralarını kullanabilirsin.
 `}
 ` : `
-UYARI: Müşterinin kriterlerine uygun ürün bulunamadı. Ürün adı veya fiyat UYDURMA. "Şu an bu kriterlere uygun ürünümüz bulunmuyor, ancak tüm ürünlerimizi sitemizde inceleyebilirsiniz" de.
+UYARI: Müşterinin kriterlerine uygun ürün bulunamadı. Ürün adı veya fiyat UYDURMA. "Şu an bu kriterlere uygun ürünümüz bulunmuyor, ancak tüm doğal taş koleksiyonumuzu sitemizde inceleyebilirsiniz" de.
 `}`;
 
   const messages: OpenAI.ChatCompletionMessageParam[] = [

@@ -6,22 +6,18 @@ import { ArrowRight, Truck, RotateCcw, Shield, Zap } from 'lucide-react';
 import { Link } from 'wouter';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
-import heroImage1 from '@assets/hero-1.webp';
-import heroImage2 from '@assets/hero-2.webp';
-import categoryTshirt from '@assets/category-tshirt.webp';
-import categorySort from '@assets/category-sort.webp';
-import categoryAtlet from '@assets/category-atlet.webp';
-import categorySalvar from '@assets/category-salvar.webp';
-import categoryEsofman from '@assets/category-esofman.webp';
+import heroImage1 from '@assets/generated_images/polen-hero-1.png';
+import heroImage2 from '@assets/generated_images/polen-hero-2.png';
+import categoryMermer from '@assets/generated_images/polen-category-mermer.png';
 import { useProducts, useCategories } from '@/hooks/useProducts';
 import { getOriginalPrice } from '@/lib/discountPrice';
 
 const defaultCategoryImages: Record<string, string> = {
-  'esofman': categoryEsofman,
-  'salvar-pantolon': categorySalvar,
-  'sifir-kol-atlet': categoryAtlet,
-  'sort': categorySort,
-  'tshirt': categoryTshirt,
+  'mermer': categoryMermer,
+  'granit': categoryMermer,
+  'traverten': categoryMermer,
+  'oniks': categoryMermer,
+  'bazalt': categoryMermer,
 };
 
 const heroSlides = [
@@ -30,14 +26,14 @@ const heroSlides = [
 ];
 
 const tickerWords = Array(12).fill(
-  ['FITNESS', 'STYLE', 'HANK']
+  ['MERMER', 'GRANİT', 'POLEN STONE', 'TRAVERTEN', 'DOĞAL TAŞ']
 ).flat();
 
 const features = [
-  { icon: Truck, label: 'Ücretsiz Kargo', sub: '2.500₺ üzeri' },
-  { icon: RotateCcw, label: 'Kolay İade', sub: '14 gün ücretsiz' },
+  { icon: Truck, label: 'Türkiye Geneli Kargo', sub: 'Özenli paketleme' },
+  { icon: RotateCcw, label: 'Numune Talebi', sub: 'Karar vermeden önce' },
   { icon: Shield, label: 'Güvenli Ödeme', sub: 'SSL korumalı' },
-  { icon: Zap, label: 'Hızlı Teslimat', sub: '1 iş günü' },
+  { icon: Zap, label: 'Uzman Danışmanlık', sub: 'Mekânınıza özel öneri' },
 ];
 
 /* ── Editorial Product Card (for featured grid) ── */
@@ -347,7 +343,7 @@ export default function Home() {
     <div className="min-h-screen bg-white overflow-x-hidden">
       <SEO
         title="Ana Sayfa"
-        description="Premium fitness ve bodybuilding giyim markası. Güç, performans ve stil bir arada."
+        description="Polen Stone — Premium doğal taş ve mermer markası. Mermer, granit, traverten ve oniks koleksiyonu."
         url="/"
       />
       <Header />
@@ -370,8 +366,8 @@ export default function Home() {
             >
               <img
                 src={slide.img}
-                alt="HANK"
-                className="w-full h-full object-cover object-top"
+                alt="Polen Stone"
+                className="w-full h-full object-cover object-center"
                 style={{ transform: 'scale(1.05)' }}
                 data-testid={`img-hero-${i}`}
               />
@@ -401,7 +397,7 @@ export default function Home() {
               className="font-display text-white leading-[1.05] tracking-wide"
               style={{ fontSize: 'clamp(3.2rem, 8.5vw, 8rem)' }}
             >
-              GÜCÜNÜ
+              DOĞANIN
             </motion.h1>
           </div>
           <div className="overflow-hidden mb-6 lg:mb-10 pt-3">
@@ -413,10 +409,10 @@ export default function Home() {
               style={{
                 fontSize: 'clamp(3.2rem, 8.5vw, 8rem)',
                 color: 'transparent',
-                WebkitTextStroke: '2px rgba(255,255,255,0.8)',
+                WebkitTextStroke: '2px hsl(var(--polen-orange))',
               }}
             >
-              GÖSTER
+              İHTİŞAMI
             </motion.h1>
           </div>
 
@@ -425,10 +421,10 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-white/50 text-sm font-body leading-relaxed mb-8 max-w-xs lg:max-w-sm"
+            className="text-white/55 text-sm font-body leading-relaxed mb-8 max-w-xs lg:max-w-md"
           >
-            Premium fitness ve bodybuilding giyim koleksiyonu.
-            Her harekette güç, her anda stil.
+            Mermer, granit, traverten ve oniks koleksiyonumuzla
+            mekânlarınıza Anadolu'nun bin yıllık taş mirasını taşıyoruz.
           </motion.p>
 
           {/* CTAs */}
@@ -442,14 +438,14 @@ export default function Home() {
               <motion.span
                 whileHover={{ x: 4 }}
                 whileTap={{ scale: 0.97 }}
-                className="group inline-flex items-center gap-3 bg-white text-black text-[10px] tracking-[0.22em] uppercase font-bold px-6 py-3.5 lg:px-8 lg:py-4 cursor-pointer hover:bg-stone-100 transition-colors"
+                className="group inline-flex items-center gap-3 bg-polen-orange text-white text-[10px] tracking-[0.22em] uppercase font-bold px-6 py-3.5 lg:px-8 lg:py-4 cursor-pointer hover:bg-[hsl(var(--polen-orange-deep))] transition-colors"
               >
                 Koleksiyonu Keşfet
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1.5" />
               </motion.span>
             </Link>
             <Link href="/magaza">
-              <span className="text-[10px] tracking-[0.18em] uppercase text-white/40 hover:text-white transition-colors font-medium underline underline-offset-4 decoration-white/20">
+              <span className="text-[10px] tracking-[0.18em] uppercase text-white/55 hover:text-white transition-colors font-medium underline underline-offset-4 decoration-white/25">
                 Tüm Ürünler
               </span>
             </Link>
@@ -512,8 +508,8 @@ export default function Home() {
             {/* Section header */}
             <div className="flex items-center justify-between py-5 lg:py-8 border-b border-black/8 mb-0">
               <div className="flex items-center gap-4">
-                <span className="text-[9px] tracking-[0.35em] uppercase text-black/25 font-medium tabular-nums">01</span>
-                <h2 className="font-display text-2xl lg:text-4xl tracking-wide text-black">ÖZEL SEÇKİLER</h2>
+                <span className="text-[9px] tracking-[0.35em] uppercase text-polen-orange font-medium tabular-nums">01</span>
+                <h2 className="font-display text-2xl lg:text-4xl tracking-wide text-black">SEÇKİN KOLEKSİYON</h2>
               </div>
               <Link href="/magaza" className="group flex items-center gap-2 text-[10px] tracking-[0.18em] uppercase text-black/35 hover:text-black transition-colors font-medium">
                 <span>Tümünü Gör</span>
@@ -601,11 +597,11 @@ export default function Home() {
       {/* ════════════════════════════════════════════
           TICKER STRIP
       ════════════════════════════════════════════ */}
-      <div className="bg-black overflow-hidden h-10 flex items-center mt-5 lg:mt-8">
+      <div className="bg-[hsl(var(--polen-stone))] overflow-hidden h-10 flex items-center mt-5 lg:mt-8">
         <div className="flex animate-marquee-fast whitespace-nowrap">
           {tickerWords.map((word, i) => (
-            <span key={i} className="inline-flex items-center gap-5 text-[10px] tracking-[0.4em] uppercase text-white font-medium px-6">
-              {word}
+            <span key={i} className="inline-flex items-center gap-5 text-[10px] tracking-[0.4em] uppercase font-medium px-6 text-white">
+              <span className={i % 3 === 1 ? 'text-polen-orange' : 'text-white'}>{word}</span>
               <span className="inline-block w-4 h-px bg-white/30" />
             </span>
           ))}
@@ -621,8 +617,8 @@ export default function Home() {
           {/* Header */}
           <div className="flex items-center justify-between mb-5 lg:mb-8 border-b border-black/8 pb-5 lg:pb-8">
             <div className="flex items-center gap-4">
-              <span className="text-[9px] tracking-[0.35em] uppercase text-black/25 font-medium tabular-nums">02</span>
-              <h2 className="font-display text-2xl lg:text-4xl tracking-wide text-black">KATEGORİLER</h2>
+              <span className="text-[9px] tracking-[0.35em] uppercase text-polen-orange font-medium tabular-nums">02</span>
+              <h2 className="font-display text-2xl lg:text-4xl tracking-wide text-black">TAŞ KATEGORİLERİ</h2>
             </div>
             <Link href="/magaza" className="group hidden lg:flex items-center gap-2 text-[10px] tracking-[0.18em] uppercase text-black/35 hover:text-black transition-colors font-medium">
               Tümünü Gör <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
@@ -708,12 +704,13 @@ export default function Home() {
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.7, delay: 0.3 }}
-                  className="text-white/40 text-sm font-body leading-relaxed mb-8"
+                  className="text-white/45 text-sm font-body leading-relaxed mb-8"
                 >
-                  1000'den fazla sporcu HANK ile güçleniyor. Her koleksiyon, sınırları zorlamak için tasarlandı.
+                  Anadolu'nun zengin doğal taş mirasını, modern mekânlara taşıyoruz.
+                  Her bir blok, milyonlarca yılın izini ve eşsiz bir hikâyeyi barındırır.
                 </motion.p>
                 <div className="grid grid-cols-2 gap-px bg-white/8 mb-8">
-                  {[['1000+', 'Mutlu Sporcu'], ['5+', 'Yıl Deneyim'], ['%100', 'Türk Üretimi'], ['1 Gün', 'Teslimat']].map(([n, l], i) => (
+                  {[['500+', 'Proje'], ['10+', 'Yıl Deneyim'], ['%100', 'Türk Mermeri'], ['81', 'İl Teslimat']].map(([n, l], i) => (
                     <motion.div
                       key={i}
                       initial={{ opacity: 0 }}

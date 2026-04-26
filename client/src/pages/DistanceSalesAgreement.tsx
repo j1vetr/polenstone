@@ -15,8 +15,8 @@ export default function DistanceSalesAgreement() {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <SEO 
-        title="Mesafeli Satış Sözleşmesi - HANK Athletics"
-        description="HANK Athletics mesafeli satış sözleşmesi ve alışveriş koşulları."
+        title="Mesafeli Satış Sözleşmesi - Polen Stone Doğal Taş & Mermer"
+        description="Polen Stone Doğal Taş & Mermer mesafeli satış sözleşmesi ve alışveriş koşulları."
       />
       <Header />
       
@@ -76,16 +76,16 @@ export default function DistanceSalesAgreement() {
             <div className="bg-gradient-to-b from-zinc-900/80 to-zinc-900/40 border border-zinc-800 rounded-2xl p-6 sm:p-8 lg:p-10">
               <div className="prose prose-invert prose-zinc max-w-none prose-headings:font-display prose-headings:tracking-wide prose-h2:text-xl prose-h2:border-b prose-h2:border-zinc-800 prose-h2:pb-3 prose-h2:mb-4">
                 <h2>1) Taraflar</h2>
-                <p><strong>Satıcı:</strong> Hank Athletics</p>
+                <p><strong>Satıcı:</strong> Polen Stone Doğal Taş & Mermer</p>
                 <p><strong>Adres:</strong> ATIFBEY MAH. 67 SK. Dış kapı no: 33 İç kapı no: 27 İZMİR/GAZİEMİR</p>
                 <p><strong>Telefon:</strong> <a href="tel:+905321350391">0532 135 03 91</a></p>
-                <p><strong>E-posta:</strong> <a href="mailto:info@hank.com.tr">info@hank.com.tr</a></p>
-                <p><strong>Web Sitesi:</strong> <a href="https://www.hank.com.tr">www.hank.com.tr</a></p>
-                <p><strong>Alıcı:</strong> Hank.com.tr üzerinden sipariş veren müşteridir. Alıcının adı, soyadı, adresi ve iletişim bilgileri sipariş formunda yer alır.</p>
+                <p><strong>E-posta:</strong> <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a></p>
+                <p><strong>Web Sitesi:</strong> <a href="https://www.polenstone.com.tr">www.polenstone.com.tr</a></p>
+                <p><strong>Alıcı:</strong> Polenstone.com.tr üzerinden sipariş veren müşteridir. Alıcının adı, soyadı, adresi ve iletişim bilgileri sipariş formunda yer alır.</p>
 
                 <h2>2) Sözleşmenin Konusu</h2>
                 <p>
-                  Bu sözleşmenin konusu, alıcının <strong>www.hank.com.tr</strong> web sitesinden elektronik ortamda sipariş verdiği ürünün satışı, teslimatı, ödemesi ve tarafların 6502 sayılı Kanun ile Mesafeli Satışlar Yönetmeliği hükümleri doğrultusunda hak ve yükümlülüklerinin belirlenmesidir.
+                  Bu sözleşmenin konusu, alıcının <strong>www.polenstone.com.tr</strong> web sitesinden elektronik ortamda sipariş verdiği ürünün satışı, teslimatı, ödemesi ve tarafların 6502 sayılı Kanun ile Mesafeli Satışlar Yönetmeliği hükümleri doğrultusunda hak ve yükümlülüklerinin belirlenmesidir.
                 </p>
 
                 <h2>3) Ürün/Hizmet Bilgileri</h2>
@@ -108,25 +108,25 @@ export default function DistanceSalesAgreement() {
                   <strong>Alıcı, ürünü teslim aldığı tarihten itibaren 14 gün içinde</strong> herhangi bir gerekçe göstermeksizin cayma hakkını kullanabilir. Bu hakkın kullanılabilmesi için ürünün kullanılmamış, orijinal ambalajında ve yeniden satılabilir durumda olması gerekir.
                 </p>
                 <p>
-                  Cayma hakkını kullanmak isteyen alıcılar bu süre içinde <a href="mailto:info@hank.com.tr">info@hank.com.tr</a> adresine yazılı olarak bildirmelidir.
+                  Cayma hakkını kullanmak isteyen alıcılar bu süre içinde <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresine yazılı olarak bildirmelidir.
                 </p>
 
                 <h2>7) Cayma Hakkının Kullanılamayacağı Durumlar</h2>
                 <ul>
-                  <li>Alıcının isteği üzerine özel olarak üretilen veya kişiselleştirilmiş ürünlerde,</li>
-                  <li>İç çamaşırı, çorap, aksesuar vb. hijyen veya sağlık nedeniyle iade edilemeyecek ürünlerde,</li>
-                  <li>Ambalajı açılmış, etiketi çıkarılmış, kullanılmış veya yeniden satılamayacak duruma gelmiş ürünlerde,</li>
-                  <li>Çabuk bozulabilecek veya son kullanma tarihi geçebilecek ürünlerde cayma hakkı kullanılamaz.</li>
+                  <li>Alıcının isteği üzerine özel ölçü, kesim, yüzey işlemi veya işleme ile üretilen plaka, fayans ve tezgâh ürünlerinde,</li>
+                  <li>Yerine monte edilmiş, yapıştırılmış veya işçilik uygulanmış doğal taş ürünlerinde,</li>
+                  <li>Ambalajı açılmış, kullanılmış veya yeniden satılamayacak duruma gelmiş ürünlerde,</li>
+                  <li>Doğal taşın yapısından kaynaklanan ton, damar ve desen farklılıkları cayma hakkı gerekçesi olarak kabul edilmez.</li>
                 </ul>
 
                 <h2>8) İade Süreci</h2>
                 <p>
-                  Alıcı cayma hakkını kullandığında, ürünün fatura, kutu, aksesuar ve tüm parçalarıyla birlikte eksiksiz olarak Hank Athletics'e iade edilmesi gerekir. Ürün tarafımıza ulaştıktan sonra <strong>en geç 7 iş günü</strong> içinde, alıcının ödeme yaptığı yönteme ücret iadesi yapılır.
+                  Alıcı cayma hakkını kullandığında, ürünün fatura, kutu, aksesuar ve tüm parçalarıyla birlikte eksiksiz olarak Polen Stone'a iade edilmesi gerekir. Ürün tarafımıza ulaştıktan sonra <strong>en geç 7 iş günü</strong> içinde, alıcının ödeme yaptığı yönteme ücret iadesi yapılır.
                 </p>
 
                 <h2>9) Garanti ve Ürün Sorumluluğu</h2>
                 <p>
-                  Satıcı, satılan ürünlerdeki üretim kaynaklı hatalardan sorumludur. Kullanıcı hatası (yıkama talimatlarına uyulmaması, fiziksel hasar, yanlış kullanım vb.) kaynaklı arızalar garanti kapsamı dışındadır. Garanti süreleri ve koşulları ürüne göre değişebilir.
+                  Satıcı, satılan doğal taş ürünlerdeki üretim ve işleme kaynaklı hatalardan sorumludur. Kullanıcı hatası (uygun olmayan kimyasal ve aşındırıcı temizleyici kullanımı, hatalı montaj veya derz uygulaması, ağır darbe, yanlış uygulama alanında kullanım vb.) ile doğal taşın yapısından kaynaklanan ton, damar ve desen farklılıkları garanti kapsamı dışındadır. Garanti süreleri ve koşulları ürüne göre değişebilir.
                 </p>
 
                 <h2>10) Gizlilik ve Kişisel Verilerin Korunması</h2>
@@ -146,7 +146,7 @@ export default function DistanceSalesAgreement() {
 
                 <h2>13) Yürürlük</h2>
                 <p>
-                  Alıcı, <strong>www.hank.com.tr</strong> üzerinden sipariş vererek bu sözleşmenin tüm şartlarını elektronik olarak kabul etmiş sayılır. Bu sözleşme, siparişin tamamlanmasıyla yürürlüğe girer.
+                  Alıcı, <strong>www.polenstone.com.tr</strong> üzerinden sipariş vererek bu sözleşmenin tüm şartlarını elektronik olarak kabul etmiş sayılır. Bu sözleşme, siparişin tamamlanmasıyla yürürlüğe girer.
                 </p>
               </div>
             </div>

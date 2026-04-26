@@ -15,8 +15,8 @@ export default function DeliveryTerms() {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <SEO 
-        title="Teslimat Koşulları - HANK Athletics"
-        description="HANK Athletics teslimat koşulları, kargo süreleri ve ücretsiz kargo bilgileri."
+        title="Teslimat Koşulları - Polen Stone Doğal Taş & Mermer"
+        description="Polen Stone Doğal Taş & Mermer teslimat koşulları, kargo süreleri ve ücretsiz kargo bilgileri."
       />
       <Header />
       
@@ -78,7 +78,7 @@ export default function DeliveryTerms() {
               <div className="prose prose-invert prose-zinc max-w-none prose-headings:font-display prose-headings:tracking-wide prose-h2:text-xl prose-h2:border-b prose-h2:border-zinc-800 prose-h2:pb-3 prose-h2:mb-4">
                 <h2>1) Genel Bilgiler</h2>
                 <p>
-                  Hank Athletics olarak siparişlerinizi güvenli, hızlı ve eksiksiz şekilde teslim etmeyi hedefliyoruz. 
+                  Polen Stone olarak siparişlerinizi güvenli, hızlı ve eksiksiz şekilde teslim etmeyi hedefliyoruz. 
                   Web sitemiz üzerinden yapılan tüm alışverişlerde aşağıdaki koşullar geçerlidir.
                 </p>
 
@@ -111,12 +111,12 @@ export default function DeliveryTerms() {
                 <ul>
                   <li>Ürünü teslim alırken paketi mutlaka kontrol edin.</li>
                   <li>Hasar veya eksiklik durumunda kargo görevlisi eşliğinde <strong>tutanak</strong> tutturun.</li>
-                  <li>Hasarlı ürünler için 24 saat içinde <a href="mailto:info@hank.com.tr">info@hank.com.tr</a> adresine bilgi verin.</li>
+                  <li>Hasarlı ürünler için 24 saat içinde <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresine bilgi verin.</li>
                 </ul>
 
                 <h2>7) Adres Değişikliği</h2>
                 <p>
-                  Siparişiniz henüz kargoya verilmediyse, teslimat adresinizi değiştirmek için <a href="mailto:info@hank.com.tr">info@hank.com.tr</a> adresi üzerinden bizimle iletişime geçebilirsiniz.
+                  Siparişiniz henüz kargoya verilmediyse, teslimat adresinizi değiştirmek için <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresi üzerinden bizimle iletişime geçebilirsiniz.
                 </p>
 
                 <h2>8) Alıcı Bulunamadığında</h2>
@@ -129,7 +129,7 @@ export default function DeliveryTerms() {
                   Kargo ve teslimatla ilgili sorularınız için bizimle iletişime geçebilirsiniz:
                 </p>
                 <ul>
-                  <li><strong>E-posta:</strong> <a href="mailto:info@hank.com.tr">info@hank.com.tr</a></li>
+                  <li><strong>E-posta:</strong> <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a></li>
                   <li><strong>Telefon:</strong> <a href="tel:+905321350391">0532 135 03 91</a></li>
                 </ul>
               </div>

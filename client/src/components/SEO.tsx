@@ -19,9 +19,9 @@ interface SEOProps {
   breadcrumbs?: Array<{ name: string; url: string }>;
 }
 
-const DEFAULT_TITLE = 'HANK - Fitness & Bodybuilding Giyim';
-const DEFAULT_DESCRIPTION = 'Premium fitness ve bodybuilding giyim markası. Güç, performans ve stil bir arada.';
-const SITE_NAME = 'HANK';
+const DEFAULT_TITLE = 'Polen Stone — Doğal Taş & Mermer';
+const DEFAULT_DESCRIPTION = 'Polen Stone — Premium doğal taş ve mermer markası. Mekânlarınıza doğanın ihtişamını taşıyın.';
+const SITE_NAME = 'Polen Stone';
 const BASE_URL = typeof window !== 'undefined' ? window.location.origin : '';
 
 export function SEO({ 
@@ -67,16 +67,15 @@ export function SEO({
     schemas.push({
       '@context': 'https://schema.org',
       '@type': 'Organization',
-      name: 'HANK',
+      name: 'Polen Stone',
       url: BASE_URL,
       logo: `${BASE_URL}/logo.png`,
       sameAs: [
-        'https://instagram.com/hanktr',
-        'https://facebook.com/hanktr'
+        'https://instagram.com/polenstone',
       ],
       contactPoint: {
         '@type': 'ContactPoint',
-        email: 'info@hank.com.tr',
+        email: 'info@polenstone.com.tr',
         contactType: 'customer service'
       }
     });
@@ -101,7 +100,7 @@ export function SEO({
         sku: product.sku,
         brand: {
           '@type': 'Brand',
-          name: product.brand || 'HANK'
+          name: product.brand || 'Polen Stone'
         },
         category: product.category,
         offers: {
@@ -112,7 +111,7 @@ export function SEO({
           availability: `https://schema.org/${product.availability || 'InStock'}`,
           seller: {
             '@type': 'Organization',
-            name: 'HANK'
+            name: 'Polen Stone'
           }
         }
       });
@@ -135,7 +134,7 @@ export function SEO({
       schemas.push({
         '@context': 'https://schema.org',
         '@type': 'WebSite',
-        name: 'HANK',
+        name: 'Polen Stone',
         url: BASE_URL,
         potentialAction: {
           '@type': 'SearchAction',

@@ -190,7 +190,7 @@ export default function OrderTracking() {
                 <Input
                   value={orderNumber}
                   onChange={(e) => setOrderNumber(e.target.value)}
-                  placeholder="HANK-XXXXXX"
+                  placeholder="PS-XXXXXX"
                   className="h-12 bg-zinc-800 border-zinc-700 focus:border-white"
                   data-testid="input-order-number"
                 />

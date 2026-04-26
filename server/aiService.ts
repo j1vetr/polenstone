@@ -8,14 +8,14 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
 });
 
-export type DescriptionStyle = 'professional' | 'energetic' | 'minimal' | 'luxury' | 'sporty';
+export type DescriptionStyle = 'professional' | 'energetic' | 'minimal' | 'luxury' | 'natural';
 
 const stylePrompts: Record<DescriptionStyle, string> = {
-  professional: `Profesyonel ve kurumsal bir ton kullan. Ürünün teknik özelliklerini ve kalitesini vurgula. Güvenilirlik ve uzmanlık hissi ver.`,
-  energetic: `Enerjik ve motive edici bir ton kullan. Spor ve fitness tutkusunu yansıt. Dinamik ve heyecan verici bir dil kullan.`,
+  professional: `Profesyonel ve kurumsal bir ton kullan. Taşın teknik özelliklerini (sertlik, gözeneklilik, dayanıklılık) ve kalitesini vurgula. Güvenilirlik ve uzmanlık hissi ver.`,
+  energetic: `Canlı ve etkileyici bir ton kullan. Doğal taşın ihtişamını ve estetik gücünü yansıt. Şık ve etkileyici bir dil kullan.`,
   minimal: `Minimal ve özlü bir ton kullan. Kısa, net ve etkili cümleler kur. Gereksiz detaylardan kaçın, öze odaklan.`,
   luxury: `Lüks ve premium bir ton kullan. Üst düzey kalite ve ayrıcalık hissi ver. Sofistike ve zarif bir dil kullan.`,
-  sporty: `Sportif ve atletik bir ton kullan. Performans ve dayanıklılık vurgula. Aktif yaşam tarzını öne çıkar.`,
+  natural: `Doğal ve sıcak bir ton kullan. Taşın oluşum hikayesini, dokusunu ve organik karakterini öne çıkar. Anadolu mirası ve el işçiliği vurgusu yap.`,
 };
 
 const styleNames: Record<DescriptionStyle, string> = {
@@ -23,7 +23,7 @@ const styleNames: Record<DescriptionStyle, string> = {
   energetic: 'Enerjik',
   minimal: 'Minimal',
   luxury: 'Lüks',
-  sporty: 'Sportif',
+  natural: 'Doğal',
 };
 
 export { styleNames };
@@ -38,7 +38,7 @@ export async function generateProductDescription(
   }
   const stylePrompt = stylePrompts[style];
   
-  const systemPrompt = `Sen HANK markası için çalışan profesyonel bir ürün açıklaması yazarısın. HANK, Türkiye'nin premium fitness ve spor giyim markasıdır.
+  const systemPrompt = `Sen Polen Stone markası için çalışan profesyonel bir ürün açıklaması yazarısın. Polen Stone, Türkiye'nin premium doğal taş ve mermer markasıdır (mermer, granit, traverten, oniks).
 
 Görevin:
 1. Verilen ürün adını ve fotoğrafını analiz et
@@ -60,12 +60,12 @@ FORMAT KURALLARI (ÇOK ÖNEMLİ):
 - Görsel olarak çekici ve okunabilir olsun
 
 ÜRÜN DETAYLARI (FOTOĞRAFA DİKKATLİ BAK):
-- Üzerinde çizgi varsa "çizgili tasarım" diye belirt
-- Üzerinde yazı/logo varsa bunu açıklamada belirt
-- Yaka tipi (V yaka, bisiklet yaka, kapüşonlu vb.)
-- Kol tipi (kısa kol, uzun kol, kolsuz)
-- Kumaş dokusu görünüyorsa belirt
-- Fermuarlı, cepli gibi detayları ekle
+- Taşın baskın rengini ve ton geçişlerini belirt (beyaz, krem, gri, bej, antrasit vb.)
+- Damar/desen yapısını anlat (damarlı, düz, bulutlu, dalgalı, noktasal)
+- Yüzey işlemini belirt (cilalı/parlak, honlu/mat, fırçalı, eskitme, patine)
+- Taş tipini doğru adlandır (mermer, granit, traverten, oniks, bazalt vb.)
+- Önerilen kullanım alanlarını ekle (banyo, mutfak tezgahı, dış cephe, döşeme, dekoratif duvar)
+- Sıcak/soğuk ton karakterini ve uyum sağladığı dekor stillerini belirt
 
 NOKTALAMA İŞARETLERİ (ÇOK DİKKATLİ OL):
 - Her cümle sonunda nokta (.) kullan

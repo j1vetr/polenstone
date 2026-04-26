@@ -361,38 +361,43 @@ export default function Profile() {
               transition={{ delay: 0.1 }}
               className="lg:col-span-1"
             >
-              <div className="bg-white border border-black/8 rounded-2xl p-4 sticky top-28">
-                <div className="flex flex-col items-center mb-6 pb-6 border-b border-black/8">
+              <div className="bg-white border border-black/8 rounded-none p-6 sticky top-28">
+                <div className="flex flex-col items-center mb-7 pb-7 border-b border-black/8">
                   <div className="w-20 h-20 rounded-full bg-black flex items-center justify-center text-white text-2xl font-bold mb-3">
                     {user.firstName?.charAt(0) || user.email.charAt(0).toUpperCase()}
                   </div>
-                  <h3 className="font-semibold text-black">
+                  <h3 className="font-display text-base tracking-[0.04em] text-black">
                     {user.firstName} {user.lastName}
                   </h3>
-                  <p className="text-sm text-black/45">{user.email}</p>
+                  <p className="text-[11px] tracking-[0.18em] uppercase text-black/45 mt-1">{user.email}</p>
                 </div>
 
-                <nav className="space-y-1">
-                  {tabs.map((tab) => (
+                <nav className="-mx-6">
+                  {tabs.map((tab, idx) => (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${
+                      className={`group w-full flex items-center justify-between gap-3 px-6 py-4 border-l-2 transition-all ${
                         activeTab === tab.id
-                          ? 'bg-white text-black'
-                          : 'text-black/55 hover:bg-stone-100 hover:text-black'
+                          ? 'border-polen-orange bg-polen-cream text-black'
+                          : 'border-transparent text-black/55 hover:text-black hover:border-black/20 hover:bg-black/[0.02]'
                       }`}
                       data-testid={`tab-${tab.id}`}
                     >
-                      <div className="flex items-center gap-3">
-                        <tab.icon className="w-5 h-5" />
-                        <span className="font-medium">{tab.label}</span>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className={`text-[10px] font-mono tracking-[0.32em] tabular-nums shrink-0 ${
+                          activeTab === tab.id ? 'text-polen-orange' : 'text-black/30 group-hover:text-polen-orange/70'
+                        }`}>
+                          {String(idx + 1).padStart(2, '0')}
+                        </span>
+                        <tab.icon className="w-4 h-4 shrink-0" />
+                        <span className={`text-[13px] tracking-[0.04em] truncate ${activeTab === tab.id ? 'font-semibold' : 'font-medium'}`}>{tab.label}</span>
                       </div>
                       {tab.count !== undefined && (
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          activeTab === tab.id ? 'bg-black/20' : 'bg-stone-100'
+                        <span className={`text-[10px] font-mono tabular-nums tracking-wider px-2 py-0.5 ${
+                          activeTab === tab.id ? 'bg-black text-white' : 'bg-black/[0.06] text-black/55'
                         }`}>
-                          {tab.count}
+                          {String(tab.count).padStart(2, '0')}
                         </span>
                       )}
                     </button>

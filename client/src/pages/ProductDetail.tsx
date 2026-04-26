@@ -22,7 +22,8 @@ import {
   ChevronLeft,
   Copy,
   Star,
-  Send
+  Send,
+  ArrowUpRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -903,7 +904,7 @@ export default function ProductDetail() {
                     whileTap={!isCompletelyOutOfStock ? { scale: 0.99 } : {}}
                     onClick={handleAddToCart}
                     disabled={isAdding || isCompletelyOutOfStock}
-                    className={`flex-1 py-3.5 font-medium text-sm uppercase tracking-[0.15em] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${
+                    className={`group flex-1 py-3.5 font-semibold text-xs uppercase tracking-[0.18em] transition-colors duration-300 disabled:opacity-50 flex items-center justify-center gap-3 ${
                       isCompletelyOutOfStock 
                         ? 'bg-black/8 text-black/35 cursor-not-allowed' 
                         : 'bg-black hover:bg-polen-orange text-white'
@@ -911,7 +912,10 @@ export default function ProductDetail() {
                     data-testid="button-add-to-cart"
                   >
                     {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                    {isCompletelyOutOfStock ? 'TÜKENDİ' : isAdding ? 'Ekleniyor...' : 'Sepete Ekle'}
+                    <span>{isCompletelyOutOfStock ? 'TÜKENDİ' : isAdding ? 'Ekleniyor...' : 'Sepete Ekle'}</span>
+                    {!isCompletelyOutOfStock && !isAdding && (
+                      <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:rotate-[-45deg]" strokeWidth={1.75} />
+                    )}
                   </motion.button>
 
                   <motion.button

@@ -163,9 +163,10 @@ export default function Store() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="flex items-center gap-3 mb-4"
+                className="flex items-baseline gap-4 mb-4"
               >
-                <span className="text-[10px] font-mono tracking-[0.32em] uppercase text-polen-orange tabular-nums">— Koleksiyon</span>
+                <span className="text-[11px] font-mono tracking-[0.32em] uppercase text-polen-orange tabular-nums">01 / Koleksiyon</span>
+                <span className="h-px w-10 bg-polen-orange/40" />
               </motion.div>
               <motion.h1
                 initial={{ opacity: 0, y: 24 }}

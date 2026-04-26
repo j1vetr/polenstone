@@ -95,6 +95,21 @@ export default function Login() {
 
           {/* RIGHT — Form column */}
           <section className="flex flex-col bg-white">
+            {/* Mobile compact hero block (visible <lg) */}
+            <div className="relative lg:hidden bg-polen-cream border-b border-black/8 overflow-hidden">
+              <div
+                className="absolute inset-0 opacity-[0.16] pointer-events-none"
+                style={{ backgroundImage: `url(${heroImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                aria-hidden
+              />
+              <div className="relative z-10 px-6 py-8">
+                <span className="block text-[10px] font-mono tracking-[0.32em] uppercase text-polen-orange tabular-nums mb-3">01 / Giriş</span>
+                <h2 className="font-display text-3xl tracking-[0.005em] text-black leading-[0.98]">
+                  DOĞANIN İHTİŞAMI <span className="text-polen-orange">SİZİ BEKLİYOR</span>
+                </h2>
+              </div>
+            </div>
+
             <div className="flex-1 flex items-center justify-center px-6 lg:px-16 py-12">
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
@@ -103,7 +118,7 @@ export default function Login() {
                 className="w-full max-w-md"
               >
                 <div className="mb-10">
-                  <div className="flex items-center gap-3 mb-5">
+                  <div className="hidden lg:flex items-center gap-3 mb-5">
                     <span className="text-[10px] font-mono tracking-[0.32em] uppercase text-polen-orange tabular-nums">01 / Hesabınız</span>
                     <span className="h-px flex-1 bg-black/12" />
                   </div>

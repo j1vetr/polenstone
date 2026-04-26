@@ -546,16 +546,19 @@ export default function ProductDetail() {
 
       <main className="pt-16 lg:pt-8 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <motion.nav initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 text-xs text-black/40 mb-6">
+          <motion.nav initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 text-[11px] text-black/45 mb-6 font-mono tracking-[0.18em] uppercase">
+            <span className="text-polen-orange tabular-nums">01</span>
             <Link href="/" className="hover:text-black transition-colors">Ana Sayfa</Link>
-            <ChevronRight className="w-3 h-3" />
             {category && (
               <>
+                <ChevronRight className="w-3 h-3 text-black/25" />
+                <span className="text-polen-orange tabular-nums">02</span>
                 <Link href={`/kategori/${category.slug}`} className="hover:text-black transition-colors">{category.name}</Link>
-                <ChevronRight className="w-3 h-3" />
               </>
             )}
-            <span className="text-black truncate max-w-[300px] uppercase">{product.name}</span>
+            <ChevronRight className="w-3 h-3 text-black/25" />
+            <span className="text-polen-orange tabular-nums">{category ? '03' : '02'}</span>
+            <span className="text-black truncate max-w-[280px]">{product.name}</span>
           </motion.nav>
 
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-16 lg:items-stretch">
@@ -780,7 +783,10 @@ export default function ProductDetail() {
                     {originalPrice.toLocaleString('tr-TR', { maximumFractionDigits: 0 })} ₺
                   </span>
                 )}
-                <span className="text-2xl font-bold text-black" data-testid="text-price">
+                <span
+                  className="font-display text-3xl text-black tabular-nums tracking-[0.005em] decoration-polen-orange decoration-[3px] underline-offset-[6px] underline"
+                  data-testid="text-price"
+                >
                   {price.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺
                 </span>
               </div>

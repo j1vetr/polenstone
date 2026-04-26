@@ -88,6 +88,21 @@ export default function Register() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] min-h-[calc(100vh-5rem)]">
           {/* LEFT — Form column */}
           <section className="flex flex-col bg-white order-2 lg:order-1">
+            {/* Mobile compact hero block (visible <lg) */}
+            <div className="relative lg:hidden bg-polen-cream border-b border-black/8 overflow-hidden">
+              <div
+                className="absolute inset-0 opacity-[0.16] pointer-events-none"
+                style={{ backgroundImage: `url(${heroImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                aria-hidden
+              />
+              <div className="relative z-10 px-6 py-8">
+                <span className="block text-[10px] font-mono tracking-[0.32em] uppercase text-polen-orange tabular-nums mb-3">02 / Kayıt</span>
+                <h2 className="font-display text-3xl tracking-[0.005em] text-black leading-[0.98]">
+                  <span className="text-polen-orange">EVE GELEN</span> NUMUNE, ÖZEL FİYAT.
+                </h2>
+              </div>
+            </div>
+
             <div className="flex-1 flex items-start justify-center px-6 lg:px-14 py-12">
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
@@ -96,7 +111,7 @@ export default function Register() {
                 className="w-full max-w-lg"
               >
                 <div className="mb-10">
-                  <div className="flex items-center gap-3 mb-5">
+                  <div className="hidden lg:flex items-center gap-3 mb-5">
                     <span className="text-[10px] font-mono tracking-[0.32em] uppercase text-polen-orange tabular-nums">02 / Üye Olun</span>
                     <span className="h-px flex-1 bg-black/12" />
                   </div>

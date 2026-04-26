@@ -31,7 +31,7 @@ export function AuthCrossLinkCTA({
           <span className="block text-[10px] font-mono tracking-[0.32em] uppercase text-polen-orange tabular-nums mb-1.5">
             {index} / {eyebrow}
           </span>
-          <p className="font-display text-xl sm:text-2xl tracking-[0.01em] text-black truncate">
+          <p className="font-display text-lg sm:text-2xl tracking-[0.01em] text-black leading-tight break-words">
             {headline}
           </p>
         </div>

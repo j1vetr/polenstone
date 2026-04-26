@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { SEO } from '@/components/SEO';
@@ -7,7 +7,6 @@ import { Link } from 'wouter';
 import { ChevronRight, X, SlidersHorizontal, Grid3X3, LayoutGrid, ArrowUpRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useProducts, useCategories, type ProductFilters } from '@/hooks/useProducts';
-import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import {
   Select,
@@ -47,9 +46,7 @@ export default function Store() {
     maxPrice: priceRange[1] < 10000 ? priceRange[1] : undefined,
   };
 
-  const { data: products = [], isLoading } = useProducts(filters);
-
-  const filteredProducts = useMemo(() => products, [products]);
+  const { data: filteredProducts = [], isLoading } = useProducts(filters);
 
   const clearFilters = () => {
     setSelectedCategory(undefined);

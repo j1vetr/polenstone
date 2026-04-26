@@ -826,7 +826,7 @@ export default function ProductDetail() {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
                             className={`relative w-8 h-8 rounded-full transition-all ${
-                              isSelected ? 'ring-2 ring-black ring-offset-2 ring-offset-white' : 'ring-1 ring-black/20'
+                              isSelected ? 'ring-2 ring-polen-orange ring-offset-2 ring-offset-white' : 'ring-1 ring-black/20 hover:ring-polen-orange/60'
                             }`}
                             style={{ backgroundColor: color.hex }}
                             title={color.name}
@@ -871,8 +871,8 @@ export default function ProductDetail() {
                               isOutOfStock
                                 ? 'bg-transparent border-black/10 text-black/25 cursor-not-allowed'
                                 : selectedSize === size
-                                  ? 'bg-black text-white border-black'
-                                  : 'bg-transparent border-black/20 text-black hover:border-black'
+                                  ? 'bg-polen-orange text-white border-polen-orange'
+                                  : 'bg-transparent border-black/20 text-black hover:border-polen-orange hover:text-polen-orange'
                             }`}
                             data-testid={`button-size-${size}`}
                           >
@@ -1137,7 +1137,16 @@ export default function ProductDetail() {
 
           {moreProducts.length > 0 && (
             <motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="mt-20">
-              <h2 className="font-display text-3xl tracking-wide uppercase mb-8 text-black">Beğenebileceğiniz Ürünler</h2>
+              <div className="flex items-end justify-between mb-8 border-b border-black/8 pb-5">
+                <div>
+                  <span className="block text-[10px] font-mono tracking-[0.32em] uppercase text-polen-orange tabular-nums mb-2">
+                    02 / KOLEKSIYONDAN
+                  </span>
+                  <h2 className="font-display text-3xl sm:text-4xl tracking-[0.04em] uppercase text-black">
+                    Beğenebileceğiniz Ürünler
+                  </h2>
+                </div>
+              </div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-6">
                 {moreProducts.map((p) => (
                   <ProductCard key={p.id} product={p} />

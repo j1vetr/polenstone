@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
-import { Mail, ArrowRight, ArrowLeft, CheckCircle2, KeyRound, Loader2 } from 'lucide-react';
+import { Mail, ArrowRight, CheckCircle2, KeyRound, Loader2 } from 'lucide-react';
+import { AuthCrossLinkCTA } from '@/components/AuthCrossLinkCTA';
 
 export default function ForgotPassword() {
   const { toast } = useToast();
@@ -98,22 +99,23 @@ export default function ForgotPassword() {
                 </ul>
               </div>
               
-              <div className="space-y-3">
-                <Link href="/giris">
-                  <Button className="w-full h-12 bg-black text-white hover:bg-polen-orange font-bold tracking-[0.12em] text-xs uppercase rounded-none group">
-                    <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
-                    Giriş Sayfasına Dön
-                  </Button>
-                </Link>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="text-sm text-black/45 hover:text-black transition-colors"
-                >
-                  Farklı bir e-posta adresi dene
-                </button>
-              </div>
+              <button
+                onClick={() => setSubmitted(false)}
+                className="text-sm text-black/45 hover:text-polen-orange transition-colors"
+              >
+                Farklı bir e-posta adresi dene
+              </button>
             </motion.div>
         </main>
+        <AuthCrossLinkCTA
+          href="/giris"
+          index="01"
+          eyebrow="Şifrenizi Hatırladınız mı?"
+          headline="GİRİŞ SAYFASINA DÖN"
+          ctaLabel="Giriş Yap"
+          testId="link-login-bottom"
+          containerClassName="px-6 lg:px-16 py-7 max-w-3xl mx-auto"
+        />
       </div>
     );
   }
@@ -193,25 +195,11 @@ export default function ForgotPassword() {
               </motion.div>
             </motion.form>
 
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="mt-8 text-center"
-            >
-              <p className="text-sm text-black/45">
-                Şifrenizi hatırladınız mı?{' '}
-                <Link href="/giris" className="text-black font-bold hover:text-polen-orange transition-colors underline-offset-4" data-testid="link-login">
-                  Giriş Yap
-                </Link>
-              </p>
-            </motion.div>
-
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="mt-10 p-4 bg-stone-50 border border-black/8 rounded-xl"
+              className="mt-10 p-4 bg-stone-50 border border-black/8 rounded-none"
             >
               <p className="text-xs text-black/45 text-center leading-relaxed">
                 Güvenliğiniz için şifre sıfırlama bağlantısı yalnızca <strong>15 dakika</strong> geçerlidir. 
@@ -220,6 +208,15 @@ export default function ForgotPassword() {
             </motion.div>
           </motion.div>
       </main>
+      <AuthCrossLinkCTA
+        href="/giris"
+        index="01"
+        eyebrow="Şifrenizi Hatırladınız mı?"
+        headline="GİRİŞ SAYFASINA DÖN"
+        ctaLabel="Giriş Yap"
+        testId="link-login"
+        containerClassName="px-6 lg:px-16 py-7 max-w-3xl mx-auto"
+      />
     </div>
   );
 }

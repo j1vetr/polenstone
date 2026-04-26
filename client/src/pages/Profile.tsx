@@ -91,6 +91,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
   pending: { label: 'Beklemede', color: 'text-black/55', icon: Clock, bg: 'bg-black/[0.04] border border-black/8' },
   processing: { label: 'İşleniyor', color: 'text-polen-orange', icon: Package, bg: 'bg-polen-orange/10 border border-polen-orange/30' },
   shipped: { label: 'Kargoda', color: 'text-polen-orange', icon: Truck, bg: 'bg-polen-orange/15 border border-polen-orange/40' },
+  delivered: { label: 'Teslim Edildi', color: 'text-white', icon: CheckCircle2, bg: 'bg-black border border-black' },
   completed: { label: 'Tamamlandı', color: 'text-white', icon: CheckCircle2, bg: 'bg-black border border-black' },
   cancelled: { label: 'İptal Edildi', color: 'text-destructive', icon: XCircle, bg: 'bg-destructive/10 border border-destructive/30' },
 };

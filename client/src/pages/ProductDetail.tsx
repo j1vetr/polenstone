@@ -582,7 +582,7 @@ export default function ProductDetail() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className={`relative overflow-hidden transition-all aspect-[3/4] lg:aspect-auto lg:flex-1 lg:min-h-0 ${
-                          index === selectedImage ? 'ring-2 ring-black' : 'opacity-40 hover:opacity-100'
+                          index === selectedImage ? 'ring-2 ring-polen-orange' : 'opacity-40 hover:opacity-100'
                         }`}
                         data-testid={`button-thumbnail-${index}`}
                       >
@@ -602,7 +602,7 @@ export default function ProductDetail() {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           className={`relative overflow-hidden transition-all aspect-[3/4] lg:aspect-auto lg:flex-1 lg:min-h-0 ${
-                            actualIndex === selectedImage ? 'ring-2 ring-black' : 'opacity-40 hover:opacity-100'
+                            actualIndex === selectedImage ? 'ring-2 ring-polen-orange' : 'opacity-40 hover:opacity-100'
                           }`}
                           data-testid={`button-thumbnail-${actualIndex}`}
                         >
@@ -713,7 +713,7 @@ export default function ProductDetail() {
                           key={index} 
                           onClick={() => setSelectedImage(index)} 
                           className={`shrink-0 w-14 aspect-[3/4] overflow-hidden transition-all ${
-                            index === selectedImage ? 'ring-2 ring-black ring-offset-2 ring-offset-white' : 'opacity-40'
+                            index === selectedImage ? 'ring-2 ring-polen-orange ring-offset-2 ring-offset-white' : 'opacity-40'
                           }`}
                         >
                           <img src={image} alt="" className="w-full h-full object-cover" loading="lazy" />
@@ -930,7 +930,7 @@ export default function ProductDetail() {
                     onClick={() => product && !isFavoriteLoading && toggleFavorite(product.id, isLiked)}
                     disabled={isFavoriteLoading}
                     className={`w-12 h-12 border flex items-center justify-center transition-colors ${
-                      isLiked ? 'bg-black border-black text-white' : 'border-black/20 hover:border-black text-black'
+                      isLiked ? 'bg-polen-orange border-polen-orange text-white' : 'border-black/20 hover:border-polen-orange hover:text-polen-orange text-black'
                     } ${isFavoriteLoading ? 'opacity-50' : ''}`}
                     data-testid="button-like"
                   >
@@ -946,7 +946,9 @@ export default function ProductDetail() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setShowShareMenu(!showShareMenu)}
-                      className="w-12 h-12 border border-black/20 hover:border-black text-black flex items-center justify-center transition-colors"
+                      className={`w-12 h-12 border flex items-center justify-center transition-colors ${
+                        showShareMenu ? 'bg-polen-orange border-polen-orange text-white' : 'border-black/20 hover:border-polen-orange hover:text-polen-orange text-black'
+                      }`}
                       data-testid="button-share"
                     >
                       <Share2 className="w-5 h-5" />

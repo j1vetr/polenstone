@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,7 +9,6 @@ import { CartModalProvider } from "@/hooks/useCartModal";
 import { lazy, Suspense, memo } from "react";
 import { Loader2 } from "lucide-react";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import Chatbot from "@/components/Chatbot";
 
 const Home = lazy(() => import("@/pages/Home"));
 const Category = lazy(() => import("@/pages/Category"));
@@ -81,14 +80,6 @@ function Router() {
   );
 }
 
-function ChatbotWrapper() {
-  const [location] = useLocation();
-  const isAdminPage = location.startsWith("/toov-admin");
-  
-  if (isAdminPage) return null;
-  return <Chatbot />;
-}
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -99,7 +90,6 @@ function App() {
               <div className="relative w-full overflow-x-hidden">
                 <Toaster />
                 <Router />
-                <ChatbotWrapper />
               </div>
             </TooltipProvider>
           </CartModalProvider>

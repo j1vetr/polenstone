@@ -50,6 +50,7 @@ export default function AdminDashboard() {
   const [showBulkPriceModal, setShowBulkPriceModal] = useState(false);
   const [showBulkBadgeModal, setShowBulkBadgeModal] = useState(false);
   const [showBulkAIModal, setShowBulkAIModal] = useState(false);
+  const [bulkPreselectedIds, setBulkPreselectedIds] = useState<string[]>([]);
 
   const data = useAdminDashboardData({
     searchQuery,
@@ -156,6 +157,7 @@ export default function AdminDashboard() {
             setShowBulkBadgeModal={setShowBulkBadgeModal}
             setShowBulkPriceModal={setShowBulkPriceModal}
             setShowBulkAIModal={setShowBulkAIModal}
+            setBulkPreselectedIds={setBulkPreselectedIds}
             deleteProductMutation={deleteProductMutation}
           />
         )}
@@ -220,9 +222,14 @@ export default function AdminDashboard() {
         <BulkPriceModal
           categories={categories}
           products={products}
-          onClose={() => setShowBulkPriceModal(false)}
+          preselectedProductIds={bulkPreselectedIds}
+          onClose={() => {
+            setShowBulkPriceModal(false);
+            setBulkPreselectedIds([]);
+          }}
           onSuccess={() => {
             setShowBulkPriceModal(false);
+            setBulkPreselectedIds([]);
             queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
           }}
         />
@@ -231,15 +238,27 @@ export default function AdminDashboard() {
         <BulkBadgeModal
           products={products}
           categories={categories}
-          onClose={() => setShowBulkBadgeModal(false)}
+          preselectedProductIds={bulkPreselectedIds}
+          onClose={() => {
+            setShowBulkBadgeModal(false);
+            setBulkPreselectedIds([]);
+          }}
           onSuccess={() => {
             setShowBulkBadgeModal(false);
+            setBulkPreselectedIds([]);
             queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
           }}
         />
       )}
       {showBulkAIModal && (
-        <BulkAIModal categories={categories} onClose={() => setShowBulkAIModal(false)} />
+        <BulkAIModal
+          categories={categories}
+          preselectedProductIds={bulkPreselectedIds}
+          onClose={() => {
+            setShowBulkAIModal(false);
+            setBulkPreselectedIds([]);
+          }}
+        />
       )}
     </>
   );

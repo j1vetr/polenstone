@@ -1,22 +1,42 @@
 import { useState } from 'react';
-import type { BulkAIResult } from '../_shared/types';
 import { useQueryClient } from '@tanstack/react-query';
-import { Sparkles, Loader2, Check } from 'lucide-react';
-import type { Category } from '../_shared/types';
+import { Sparkles, Loader2, Check, AlertCircle } from 'lucide-react';
+import type { BulkAIResult, Category } from '../_shared/types';
 import AdminModal from '../_ui/AdminModal';
+import {
+  PrimaryButton,
+  SecondaryButton,
+  GhostButton,
+  SectionHeading,
+  SelectInput,
+  InlineAlert,
+} from '../_ui/AdminUI';
 
 interface BulkAIModalProps {
   categories: Category[];
   onClose: () => void;
+  preselectedProductIds?: string[];
 }
 
-export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
+const STYLES = [
+  { value: 'professional', label: 'Profesyonel', desc: 'Kurumsal ve güvenilir ton' },
+  { value: 'energetic', label: 'Enerjik', desc: 'Dinamik ve motive edici' },
+  { value: 'minimal', label: 'Minimal', desc: 'Kısa ve öz' },
+  { value: 'luxury', label: 'Lüks', desc: 'Premium ve sofistike' },
+  { value: 'natural', label: 'Doğal', desc: 'Anadolu mirası ve el işçiliği vurgusu' },
+];
+
+export default function BulkAIModal({
+  categories,
+  onClose,
+  preselectedProductIds,
+}: BulkAIModalProps) {
   const queryClient = useQueryClient();
-  const [bulkAIStyle, setBulkAIStyle] = useState('natural');
-  const [bulkAICategory, setBulkAICategory] = useState('');
-  const [bulkAIOnlyEmpty, setBulkAIOnlyEmpty] = useState(true);
-  const [bulkAIOverwrite, setBulkAIOverwrite] = useState(false);
-  const [bulkAIProgress, setBulkAIProgress] = useState<{
+  const [style, setStyle] = useState('natural');
+  const [categoryId, setCategoryId] = useState('');
+  const [mode, setMode] = useState<'empty' | 'overwrite'>('empty');
+  const hasPreselection = !!preselectedProductIds && preselectedProductIds.length > 0;
+  const [progress, setProgress] = useState<{
     running: boolean;
     done: boolean;
     message: string;
@@ -24,187 +44,233 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
   }>({ running: false, done: false, message: '' });
 
   const handleClose = () => {
-    if (!bulkAIProgress.running) {
+    if (!progress.running) {
       onClose();
-      setBulkAIProgress({ running: false, done: false, message: '' });
+      setProgress({ running: false, done: false, message: '' });
     }
   };
+
+  const start = async () => {
+    setProgress({ running: true, done: false, message: 'Başlatılıyor…' });
+    try {
+      const res = await fetch('/api/admin/products/bulk-ai-description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          style,
+          categoryId: hasPreselection ? undefined : categoryId || undefined,
+          productIds: hasPreselection ? preselectedProductIds : undefined,
+          onlyEmpty: mode === 'empty',
+          overwrite: mode === 'overwrite',
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setProgress({ running: false, done: true, message: data.error || 'Hata oluştu' });
+      } else {
+        setProgress({
+          running: false,
+          done: true,
+          message: data.message,
+          results: data.results,
+        });
+        queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
+      }
+    } catch {
+      setProgress({ running: false, done: true, message: 'Bağlantı hatası' });
+    }
+  };
+
+  const successCount = progress.results?.filter((r) => r.success).length ?? 0;
+  const errorCount = progress.results?.filter((r) => !r.success).length ?? 0;
 
   return (
     <AdminModal
       open
       onClose={handleClose}
-      closeOnOutsideClick={!bulkAIProgress.running}
+      closeOnOutsideClick={!progress.running}
       title={
         <>
-          <Sparkles className="w-4 h-4 text-purple-500" />
+          <Sparkles className="w-4 h-4 text-neutral-500" />
           Toplu AI Açıklama
         </>
       }
+      description="Seçili ürünlerin açıklamalarını seçtiğiniz stilde otomatik oluşturun."
       size="md"
       testId="modal-bulk-ai"
+      footer={
+        !progress.running && !progress.done ? (
+          <>
+            <GhostButton onClick={handleClose}>İptal</GhostButton>
+            <PrimaryButton onClick={start} data-testid="button-start-bulk-ai">
+              <Sparkles className="w-3.5 h-3.5" />
+              Açıklamaları Oluştur
+            </PrimaryButton>
+          </>
+        ) : !progress.running && progress.done ? (
+          <PrimaryButton onClick={handleClose} data-testid="button-close-bulk-ai">
+            Kapat
+          </PrimaryButton>
+        ) : null
+      }
     >
-
-        {!bulkAIProgress.running && !bulkAIProgress.done ? (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-neutral-500 mb-2">Açıklama Stili</label>
-              <select
-                value={bulkAIStyle}
-                onChange={(e) => setBulkAIStyle(e.target.value)}
-                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900"
-                data-testid="select-bulk-ai-style"
-              >
-                <option value="professional">Profesyonel - Kurumsal ve güvenilir ton</option>
-                <option value="energetic">Enerjik - Dinamik ve motive edici</option>
-                <option value="minimal">Minimal - Kısa ve öz</option>
-                <option value="luxury">Lüks - Premium ve sofistike</option>
-                <option value="natural">Doğal - Anadolu mirası ve el işçiliği vurgusu</option>
-              </select>
+      {!progress.running && !progress.done ? (
+        <div className="space-y-5">
+          <section>
+            <SectionHeading number={1} title="Yazım Stili" />
+            <select
+              value={style}
+              onChange={(e) => setStyle(e.target.value)}
+              className="sr-only"
+              aria-hidden="true"
+              tabIndex={-1}
+              data-testid="select-bulk-ai-style"
+            >
+              {STYLES.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+              {STYLES.map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => setStyle(s.value)}
+                  title={s.desc}
+                  className={`px-2.5 py-2 rounded-md text-[12px] font-medium transition-colors border text-center ${
+                    style === s.value
+                      ? 'bg-neutral-900 text-white border-neutral-900'
+                      : 'bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-50'
+                  }`}
+                  data-testid={`button-bulk-ai-style-${s.value}`}
+                >
+                  {s.label}
+                </button>
+              ))}
             </div>
+            <p className="text-[11px] text-neutral-500 mt-1.5">
+              {STYLES.find((s) => s.value === style)?.desc}
+            </p>
+          </section>
 
-            <div>
-              <label className="block text-sm font-medium text-neutral-500 mb-2">Kategori Filtresi (Opsiyonel)</label>
-              <select
-                value={bulkAICategory}
-                onChange={(e) => setBulkAICategory(e.target.value)}
-                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900"
-                data-testid="select-bulk-ai-category"
-              >
-                <option value="">Tüm Kategoriler</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
+          <section>
+            <SectionHeading number={2} title="Kategori Filtresi" description="Boş bırakırsanız tüm kategoriler dahil edilir." />
+            <SelectInput
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full"
+              data-testid="select-bulk-ai-category"
+            >
+              <option value="">Tüm kategoriler</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </SelectInput>
+          </section>
+
+          <section>
+            <SectionHeading number={3} title="Hangi ürünlere uygulansın?" />
+            <div className="space-y-1.5">
+              <label className="flex items-start gap-2.5 px-3 py-2.5 rounded-md border border-neutral-200 cursor-pointer hover:bg-neutral-50">
+                <input
+                  type="radio"
+                  name="bulkAIMode"
+                  checked={mode === 'empty'}
+                  onChange={() => setMode('empty')}
+                  className="mt-0.5 w-3.5 h-3.5 accent-neutral-900 shrink-0"
+                  data-testid="radio-bulk-ai-empty-only"
+                />
+                <span className="text-[13px] text-neutral-900">
+                  Sadece açıklaması boş ürünler
+                  <span className="block text-[11px] text-neutral-500 mt-0.5">
+                    Mevcut açıklamalar korunur
+                  </span>
+                </span>
+              </label>
+              <label className="flex items-start gap-2.5 px-3 py-2.5 rounded-md border border-neutral-200 cursor-pointer hover:bg-neutral-50">
+                <input
+                  type="radio"
+                  name="bulkAIMode"
+                  checked={mode === 'overwrite'}
+                  onChange={() => setMode('overwrite')}
+                  className="mt-0.5 w-3.5 h-3.5 accent-neutral-900 shrink-0"
+                  data-testid="radio-bulk-ai-overwrite"
+                />
+                <span className="text-[13px] text-neutral-900">
+                  Tüm ürünler
+                  <span className="block text-[11px] text-neutral-500 mt-0.5">
+                    Mevcut açıklamalar silinir, yenileri yazılır
+                  </span>
+                </span>
+              </label>
             </div>
+          </section>
 
-            <div className="space-y-3 bg-neutral-100 p-4 rounded-lg">
-              <label className="block text-sm font-medium text-neutral-500 mb-3">Hangi ürünlere uygulansın?</label>
-              <div className="space-y-2">
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="bulkAIMode"
-                    checked={bulkAIOnlyEmpty && !bulkAIOverwrite}
-                    onChange={() => {
-                      setBulkAIOnlyEmpty(true);
-                      setBulkAIOverwrite(false);
-                    }}
-                    className="w-5 h-5 bg-neutral-200 border-zinc-600 text-purple-600 focus:ring-purple-500"
-                    data-testid="radio-bulk-ai-empty-only"
-                  />
-                  <span className="text-neutral-700">Sadece açıklaması boş ürünler</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="bulkAIMode"
-                    checked={bulkAIOverwrite}
-                    onChange={() => {
-                      setBulkAIOnlyEmpty(false);
-                      setBulkAIOverwrite(true);
-                    }}
-                    className="w-5 h-5 bg-neutral-200 border-zinc-600 text-purple-600 focus:ring-purple-500"
-                    data-testid="radio-bulk-ai-overwrite"
-                  />
-                  <span className="text-neutral-700">Tüm ürünler (mevcut açıklamalar silinir)</span>
-                </label>
+          <InlineAlert tone="warning">
+            Her ürün için yaklaşık 2-3 saniye sürer. Pencereyi kapatmayın.
+          </InlineAlert>
+        </div>
+      ) : progress.running ? (
+        <div className="text-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-neutral-400 mx-auto mb-3" />
+          <p className="text-[13px] text-neutral-900">{progress.message}</p>
+          <p className="text-[12px] text-neutral-500 mt-1">
+            Bu işlem biraz zaman alabilir…
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <InlineAlert tone={progress.results ? 'success' : 'error'}>
+            {progress.message}
+          </InlineAlert>
+
+          {progress.results && progress.results.length > 0 && (
+            <>
+              <div className="flex items-center gap-3 text-[12px] text-neutral-700">
+                <span className="inline-flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="tabular-nums">{successCount}</span> başarılı
+                </span>
+                {errorCount > 0 && (
+                  <span className="inline-flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 text-red-600" />
+                    <span className="tabular-nums">{errorCount}</span> başarısız
+                  </span>
+                )}
               </div>
-            </div>
-
-            <div className="bg-neutral-900/10 border border-neutral-900/20 rounded-lg p-4">
-              <p className="text-neutral-900 text-sm">
-                ⚠️ Bu işlem, seçilen filtrelere göre tüm ürünlerin açıklamalarını AI ile oluşturacak. Her ürün için yaklaşık 2-3 saniye sürer.
-              </p>
-            </div>
-
-            <button
-              onClick={async () => {
-                setBulkAIProgress({ running: true, done: false, message: 'Başlatılıyor...' });
-                try {
-                  const res = await fetch('/api/admin/products/bulk-ai-description', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                      style: bulkAIStyle,
-                      categoryId: bulkAICategory || undefined,
-                      onlyEmpty: bulkAIOnlyEmpty,
-                      overwrite: bulkAIOverwrite,
-                    }),
-                  });
-                  const data = await res.json();
-                  if (!res.ok) {
-                    setBulkAIProgress({ running: false, done: true, message: data.error || 'Hata oluştu' });
-                  } else {
-                    setBulkAIProgress({ running: false, done: true, message: data.message, results: data.results });
-                    queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
-                  }
-                } catch (error) {
-                  setBulkAIProgress({ running: false, done: true, message: 'Bağlantı hatası' });
-                }
-              }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-500 hover:to-pink-500 transition-colors"
-              data-testid="button-start-bulk-ai"
-            >
-              <Sparkles className="w-5 h-5" />
-              Toplu Açıklama Oluştur
-            </button>
-          </div>
-        ) : bulkAIProgress.running ? (
-          <div className="text-center py-8">
-            <Loader2 className="w-12 h-12 animate-spin text-purple-400 mx-auto mb-4" />
-            <p className="text-neutral-700">{bulkAIProgress.message}</p>
-            <p className="text-neutral-500 text-sm mt-2">Bu işlem biraz zaman alabilir...</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div
-              className={`p-4 rounded-lg ${
-                bulkAIProgress.results
-                  ? 'bg-green-500/10 border border-green-500/20'
-                  : 'bg-red-500/10 border border-red-500/20'
-              }`}
-            >
-              <p className={bulkAIProgress.results ? 'text-green-400' : 'text-red-400'}>
-                {bulkAIProgress.message}
-              </p>
-            </div>
-
-            {bulkAIProgress.results && (
-              <div className="max-h-60 overflow-y-auto space-y-2">
-                {bulkAIProgress.results.map((r: BulkAIResult, idx: number) => (
-                  <div
-                    key={idx}
-                    className={`flex items-center justify-between p-2 rounded ${
-                      r.success ? 'bg-neutral-50' : 'bg-red-900/20'
-                    }`}
-                  >
-                    <span className="text-sm text-neutral-700 truncate flex-1">{r.productName}</span>
-                    {r.success ? (
-                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
-                    ) : (
-                      <span className="text-xs text-red-400 flex-shrink-0">{r.error}</span>
-                    )}
-                  </div>
-                ))}
+              <div className="border border-neutral-200 rounded-md overflow-hidden">
+                <div className="max-h-60 overflow-y-auto divide-y divide-neutral-100">
+                  {progress.results.map((r, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between gap-3 px-3 py-2"
+                    >
+                      <span className="text-[12px] text-neutral-700 truncate flex-1">
+                        {r.productName || r.productId}
+                      </span>
+                      {r.success ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      ) : (
+                        <span
+                          className="text-[11px] text-red-600 truncate max-w-[180px]"
+                          title={r.error}
+                        >
+                          {r.error}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            )}
-
-            <button
-              onClick={() => {
-                onClose();
-                setBulkAIProgress({ running: false, done: false, message: '' });
-              }}
-              className="w-full px-4 py-3 bg-neutral-50 text-neutral-900 rounded-lg font-medium hover:bg-neutral-200 transition-colors"
-              data-testid="button-close-bulk-ai"
-            >
-              Kapat
-            </button>
-          </div>
-        )}
+            </>
+          )}
+        </div>
+      )}
     </AdminModal>
   );
 }

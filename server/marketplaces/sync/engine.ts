@@ -57,6 +57,10 @@ type SyncStats = {
   productsUpdated: number;
   productsDeactivated: number;
   productsReactivated: number;
+  /** Stok/fiyat uygulanan varyant satırı sayısı (delta). */
+  variantsUpdated: number;
+  /** Snapshot SKU eşleşemeyen varyant sayısı — diagnostik. */
+  variantsUnmatched: number;
   imagesDownloaded: number;
   imagesSkipped: number;
   pagesProcessed: number;
@@ -77,6 +81,8 @@ function emptyStats(): SyncStats {
     productsUpdated: 0,
     productsDeactivated: 0,
     productsReactivated: 0,
+    variantsUpdated: 0,
+    variantsUnmatched: 0,
     imagesDownloaded: 0,
     imagesSkipped: 0,
     pagesProcessed: 0,
@@ -711,28 +717,48 @@ async function runDeltaSync(
         if (snap.isActive && !p.isActive) stats.productsReactivated += 1;
         if (!snap.isActive && p.isActive) stats.productsDeactivated += 1;
       }
-      // Varyant düzeyinde stok güncellemesi: ProductVariant şemasında sku/barcode
-      // alanı yok. İlk eşleştirme: tek varyant varsa onu güncelle. Çoklu varyant
-      // durumlarında size+color üzerinden eşle; eşleşmeyenler atlanır (full-sync
-      // bir sonraki turda yeniden yazacak).
-      if (snap.variants?.length) {
-        const variants = await storage.getProductVariants(row.productId);
-        for (const v of snap.variants) {
-          let target = variants.length === 1 ? variants[0] : undefined;
-          if (!target) {
-            target = variants.find(
-              (existing) =>
-                (existing.size ?? "") === (v.sku ?? v.barcode ?? "") ||
-                (existing.color ?? "") === (v.sku ?? v.barcode ?? ""),
-            );
-          }
-          if (target) {
-            await storage.updateProductVariant(target.id, {
-              price: v.price.toFixed(2),
-              stock: v.stock,
-            });
-          }
+      // Varyant düzeyinde stok güncellemesi.
+      // Eşleştirme önceliği:
+      //   1) snap.variants[i].sku  ↔  productVariants.sku
+      //   2) snap.variants[i].barcode ↔ productVariants.sku (Trendyol bazen
+      //      stockCode yerine sadece barcode'u SKU gibi kullanır)
+      //   3) Tek varyantlı ürün → o tek varyanta uygula
+      //   4) Hiçbiri tutmazsa: tek varyant + tek snapshot ise totalStock'u uygula
+      const variants = await storage.getProductVariants(row.productId);
+      const snapVariants = snap.variants ?? [];
+      let stockApplied = false;
+
+      for (const v of snapVariants) {
+        let target: typeof variants[number] | undefined;
+        const skuKey = v.sku ?? v.barcode ?? null;
+        if (skuKey) {
+          target = variants.find((existing) => existing.sku === skuKey);
         }
+        if (!target && variants.length === 1) {
+          target = variants[0];
+        }
+        if (target) {
+          await storage.updateProductVariant(target.id, {
+            price: v.price.toFixed(2),
+            stock: v.stock,
+          });
+          stockApplied = true;
+          stats.variantsUpdated += 1;
+        } else {
+          stats.variantsUnmatched += 1;
+        }
+      }
+
+      // Fallback: snapshot variants vermediyse veya hiç eşleşme olmadıysa,
+      // tek varyantlı ürünlerde totalStock'u doğrudan uygula. Bu sayede
+      // hourly delta job, en az tek-SKU vakalarda stok güncellemesini
+      // garanti eder (acceptance: "fiyat/stok 1 saat içinde yansır").
+      if (!stockApplied && variants.length === 1) {
+        await storage.updateProductVariant(variants[0].id, {
+          price: snap.basePrice.toFixed(2),
+          stock: snap.totalStock,
+        });
+        stats.variantsUpdated += 1;
       }
     } catch (err) {
       errors.push({

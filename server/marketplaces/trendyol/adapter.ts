@@ -184,11 +184,25 @@ class TrendyolAdapter implements MarketplaceAdapter {
       for (const p of resp.content ?? []) {
         const id = String(p.contentId ?? p.barcode);
         if (!wanted.has(id)) continue;
+        const price = Number(p.salePrice ?? 0);
+        const stock = Number(p.quantity ?? 0);
+        // Trendyol her satırı bir barcode/SKU olarak döndürür → tek varyant.
+        // sku alanı productVariants.sku ile eşleşir; barcode da yedek anahtardır.
         out.push({
           externalId: id,
-          basePrice: Number(p.salePrice ?? 0),
-          totalStock: Number(p.quantity ?? 0),
-          isActive: !!p.approved && !p.archived && !p.rejected,
+          basePrice: price,
+          totalStock: stock,
+          isActive:
+            (p.approved === undefined || p.approved === true) && !p.archived && !p.rejected,
+          variants: [
+            {
+              externalVariantId: p.barcode ? String(p.barcode) : null,
+              sku: p.stockCode ?? p.productCode ?? null,
+              barcode: p.barcode ?? null,
+              price,
+              stock,
+            },
+          ],
         });
       }
       page += 1;

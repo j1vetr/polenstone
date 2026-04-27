@@ -410,7 +410,7 @@ export default function BulkPriceModal({
                   <p className="text-[10px] text-neutral-500 mt-0.5">Seçilen ürünlere uygulanan indirim oranını etiket olarak bassın</p>
                 </div>
                 {autoBadge && badgeTextToSend && (
-                  <div className="bg-red-600 text-neutral-900 text-[10px] font-black px-2 py-1 rounded shrink-0 rotate-[-2deg]">
+                  <div className="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded shrink-0 rotate-[-2deg]">
                     {badgeTextToSend}
                   </div>
                 )}

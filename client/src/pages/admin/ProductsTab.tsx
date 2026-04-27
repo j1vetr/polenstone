@@ -66,7 +66,7 @@ export default function ProductsTab({
                         alert('Senkronizasyon başarısız');
                       }
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-neutral-900 rounded-lg font-medium hover:bg-purple-500 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-500 transition-colors"
                     data-testid="button-sync-all-variants"
                   >
                     <RefreshCw className="w-4 h-4" />
@@ -74,7 +74,7 @@ export default function ProductsTab({
                   </button>
                   <button
                     onClick={() => setShowBulkBadgeModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 text-neutral-900 rounded-lg font-medium hover:from-orange-500 hover:to-red-500 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg font-medium hover:from-orange-500 hover:to-red-500 transition-colors"
                     data-testid="button-bulk-badge"
                   >
                     <Tag className="w-4 h-4" />
@@ -90,7 +90,7 @@ export default function ProductsTab({
                   </button>
                   <button
                     onClick={() => setShowBulkAIModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-neutral-900 rounded-lg font-medium hover:from-purple-500 hover:to-pink-500 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-500 hover:to-pink-500 transition-colors"
                     data-testid="button-bulk-ai"
                   >
                     <Sparkles className="w-4 h-4" />

@@ -319,7 +319,7 @@ export default function ProductModal({
                 <button
                   type="button"
                   onClick={() => setShowAiPanel(!showAiPanel)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-neutral-900 text-xs font-medium rounded-lg transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs font-medium rounded-lg transition-all"
                   data-testid="button-ai-description"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
@@ -345,7 +345,7 @@ export default function ProductModal({
                         onClick={() => setAiStyle(style.id)}
                         className={`px-2 py-1.5 text-xs rounded-lg transition-all ${
                           aiStyle === style.id
-                            ? 'bg-purple-600 text-neutral-900'
+                            ? 'bg-purple-600 text-white'
                             : 'bg-neutral-200 text-neutral-700 hover:bg-zinc-600'
                         }`}
                         title={style.description}
@@ -361,7 +361,7 @@ export default function ProductModal({
                   type="button"
                   onClick={generateAIDescription}
                   disabled={isGeneratingAI}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-neutral-900 text-sm font-medium rounded-lg transition-all"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-all"
                   data-testid="button-ai-generate"
                 >
                   {isGeneratingAI ? (
@@ -388,7 +388,7 @@ export default function ProductModal({
                       <button
                         type="button"
                         onClick={applyAIDescription}
-                        className="flex-1 px-3 py-1.5 bg-green-600 hover:bg-green-500 text-neutral-900 text-xs font-medium rounded-lg transition-colors"
+                        className="flex-1 px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-xs font-medium rounded-lg transition-colors"
                         data-testid="button-ai-apply"
                       >
                         <Check className="w-3.5 h-3.5 inline mr-1" />
@@ -640,7 +640,7 @@ export default function ProductModal({
                     >
                       <X className="w-4 h-4" />
                     </button>
-                    <span className="absolute bottom-1 left-1 text-[10px] bg-green-600 text-neutral-900 px-1.5 py-0.5 rounded font-medium">
+                    <span className="absolute bottom-1 left-1 text-[10px] bg-green-600 text-white px-1.5 py-0.5 rounded font-medium">
                       Yeni
                     </span>
                   </div>

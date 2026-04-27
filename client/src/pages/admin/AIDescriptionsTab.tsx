@@ -109,7 +109,7 @@ export default function AIDescriptionsPanel({ products, categories }: { products
             <div className="flex gap-2">
               <label className={`flex-1 p-3 rounded-lg border cursor-pointer transition-colors ${
                 descriptionMode === 'empty' 
-                  ? 'bg-neutral-900/20 border-amber-600 text-neutral-900' 
+                  ? 'bg-amber-50 border-amber-400 text-amber-900' 
                   : 'bg-neutral-50 border-neutral-200 text-neutral-500'
               }`}>
                 <input
@@ -125,7 +125,7 @@ export default function AIDescriptionsPanel({ products, categories }: { products
               </label>
               <label className={`flex-1 p-3 rounded-lg border cursor-pointer transition-colors ${
                 descriptionMode === 'overwrite' 
-                  ? 'bg-neutral-900/20 border-amber-600 text-neutral-900' 
+                  ? 'bg-amber-50 border-amber-400 text-amber-900' 
                   : 'bg-neutral-50 border-neutral-200 text-neutral-500'
               }`}>
                 <input
@@ -164,7 +164,7 @@ export default function AIDescriptionsPanel({ products, categories }: { products
           <button
             onClick={generateDescriptions}
             disabled={isGenerating || filteredProducts.length === 0}
-            className="px-6 py-2 bg-gradient-to-r from-amber-600 to-amber-700 text-neutral-900 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isGenerating ? (
               <>

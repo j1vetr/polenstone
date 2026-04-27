@@ -36,7 +36,7 @@ const STATUS_OPTIONS = [
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; dot: string; icon: React.ElementType }> = {
   confirmed:  { label: 'Yeni Sipariş', color: 'text-orange-400', bg: 'bg-orange-500/15 border-orange-500/30', dot: 'bg-orange-400', icon: Banknote },
-  pending:    { label: 'Beklemede',  color: 'text-neutral-900',   bg: 'bg-neutral-900/15 border-neutral-900/30',   dot: 'bg-amber-400',   icon: Clock },
+  pending:    { label: 'Beklemede',  color: 'text-amber-900',   bg: 'bg-amber-50 border-amber-300',   dot: 'bg-amber-500',   icon: Clock },
   processing: { label: 'İşleniyor', color: 'text-blue-400',    bg: 'bg-blue-500/15 border-blue-500/30',     dot: 'bg-blue-400',    icon: RefreshCw },
   shipped:    { label: 'Kargoda',   color: 'text-purple-400',  bg: 'bg-purple-500/15 border-purple-500/30', dot: 'bg-purple-400',  icon: Truck },
   completed:  { label: 'Tamamlandı',color: 'text-emerald-400', bg: 'bg-emerald-500/15 border-emerald-500/30',dot: 'bg-emerald-400', icon: CheckCircle2 },
@@ -392,7 +392,7 @@ export default function OrdersPanel() {
                     >
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${avatarGradient(order.customerName)} flex items-center justify-center text-neutral-900 text-xs font-bold shrink-0`}>
+                          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${avatarGradient(order.customerName)} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
                             {getInitials(order.customerName)}
                           </div>
                           <div className="min-w-0">
@@ -446,7 +446,7 @@ export default function OrdersPanel() {
                 <div key={order.id} className="p-4" data-testid={`card-order-${order.id}`}>
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${avatarGradient(order.customerName)} flex items-center justify-center text-neutral-900 text-xs font-bold shrink-0`}>
+                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${avatarGradient(order.customerName)} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
                         {getInitials(order.customerName)}
                       </div>
                       <div className="min-w-0">

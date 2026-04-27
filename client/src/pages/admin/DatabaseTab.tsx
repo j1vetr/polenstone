@@ -201,7 +201,7 @@ export default function DatabasePanel() {
           </div>
           <button
             onClick={() => setShowClearAllModal(true)}
-            className="px-6 py-3 bg-red-600 text-neutral-900 rounded-lg hover:bg-red-700 transition-colors font-medium"
+            className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
           >
             Tümünü Sil
           </button>
@@ -254,7 +254,7 @@ export default function DatabasePanel() {
               <button
                 onClick={handleClearAllSales}
                 disabled={clearingTable !== null || clearAllCode !== 'TUM_SATISLARI_SIL'}
-                className="flex items-center gap-2 px-6 py-2 bg-red-600 text-neutral-900 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {clearingTable === 'all' && <Loader2 className="w-4 h-4 animate-spin" />}
                 Tümünü Sil

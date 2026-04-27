@@ -121,7 +121,7 @@ export default function BulkBadgeModal({
                   onClick={() => setBadgeText(preset)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                     badgeText === preset
-                      ? 'bg-orange-500 text-neutral-900'
+                      ? 'bg-orange-500 text-white'
                       : 'bg-neutral-50 text-neutral-700 hover:bg-neutral-200 border border-neutral-200'
                   }`}
                   data-testid={`button-preset-${preset}`}
@@ -138,7 +138,7 @@ export default function BulkBadgeModal({
               <div className="relative w-32 h-40 bg-neutral-200 rounded-lg overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center text-neutral-500 text-xs">Ürün</div>
                 {badgeText && (
-                  <div className="absolute top-2 left-2 bg-red-600 text-neutral-900 text-[10px] font-black px-2 py-1 rounded-md shadow-lg transform -rotate-2">
+                  <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-md shadow-lg transform -rotate-2">
                     {badgeText}
                   </div>
                 )}
@@ -207,7 +207,7 @@ export default function BulkBadgeModal({
                     )}
                     <span className="text-sm text-neutral-900 truncate">{p.name}</span>
                     {p.discountBadge && (
-                      <span className="text-[10px] bg-red-600 text-neutral-900 px-1.5 py-0.5 rounded font-bold shrink-0">{p.discountBadge}</span>
+                      <span className="text-[10px] bg-red-600 text-white px-1.5 py-0.5 rounded font-bold shrink-0">{p.discountBadge}</span>
                     )}
                   </div>
                 </label>
@@ -249,7 +249,7 @@ export default function BulkBadgeModal({
             <button
               onClick={handleApply}
               disabled={isLoading || targetIds.length === 0 || !badgeText}
-              className="px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 text-neutral-900 rounded-lg hover:from-orange-500 hover:to-red-500 transition-colors disabled:opacity-50 font-medium"
+              className="px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-500 hover:to-red-500 transition-colors disabled:opacity-50 font-medium"
               data-testid="button-apply-badge"
             >
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Etiketi Uygula'}

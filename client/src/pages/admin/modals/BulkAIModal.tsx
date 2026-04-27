@@ -146,7 +146,7 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
                   setBulkAIProgress({ running: false, done: true, message: 'Bağlantı hatası' });
                 }
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-neutral-900 rounded-lg font-medium hover:from-purple-500 hover:to-pink-500 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-500 hover:to-pink-500 transition-colors"
               data-testid="button-start-bulk-ai"
             >
               <Sparkles className="w-5 h-5" />

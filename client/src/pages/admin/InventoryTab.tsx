@@ -150,7 +150,7 @@ export default function InventoryPanel() {
                   alert('Varyant kontrolü başarısız');
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-neutral-900 rounded-lg hover:bg-purple-500 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors"
               data-testid="button-fix-variants"
             >
               <Search className="w-4 h-4" />

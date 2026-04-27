@@ -228,7 +228,7 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
               <button
                 onClick={handleTrackingUpdate}
                 disabled={isUpdating || !trackingNumber}
-                className="w-full px-4 py-2 bg-purple-600 text-neutral-900 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50"
+                className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50"
               >
                 Kargoya Ver
               </button>
@@ -297,7 +297,7 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
                     <button
                       onClick={handleCancelOrder}
                       disabled={isUpdating}
-                      className="flex-1 px-4 py-2 bg-red-600 text-neutral-900 rounded-lg hover:bg-red-700 disabled:opacity-50"
+                      className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
                     >
                       İptal Et
                     </button>

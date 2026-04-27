@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
-import { Settings, Mail, Loader2, CheckCircle2, XCircle, Send, Server } from 'lucide-react';
+import { Settings, Mail, Loader2, CheckCircle2, XCircle, Send, Server, CreditCard, Copy, AlertTriangle } from 'lucide-react';
 
 export default function SettingsPanel() {
   const [settings, setSettings] = useState({
@@ -16,6 +16,59 @@ export default function SettingsPanel() {
   const [isTesting, setIsTesting] = useState(false);
   const [testEmail, setTestEmail] = useState('');
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [iyzicoSaving, setIyzicoSaving] = useState(false);
+  const [callbackCopied, setCallbackCopied] = useState(false);
+
+  const { data: iyzicoConfig, refetch: refetchIyzico } = useQuery<{
+    mode: 'sandbox' | 'live';
+    configured: boolean;
+    callbackUrl: string;
+    baseUrl: string;
+    envOverride: boolean;
+  }>({
+    queryKey: ['/api/admin/iyzico/config'],
+  });
+
+  const handleIyzicoModeChange = async (mode: 'sandbox' | 'live') => {
+    if (!iyzicoConfig || iyzicoConfig.mode === mode) return;
+    setIyzicoSaving(true);
+    setMessage(null);
+    try {
+      const res = await fetch('/api/admin/iyzico/mode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode }),
+        credentials: 'include',
+      });
+      if (res.ok) {
+        await refetchIyzico();
+        setMessage({
+          type: 'success',
+          text: mode === 'live'
+            ? 'iyzico CANLI moda alındı. API anahtarlarınızın canlı (production) anahtarlar olduğundan emin olun.'
+            : 'iyzico TEST (sandbox) moduna alındı.',
+        });
+      } else {
+        const data = await res.json();
+        setMessage({ type: 'error', text: data.error || 'Mod değiştirilemedi' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Mod değiştirilemedi' });
+    } finally {
+      setIyzicoSaving(false);
+    }
+  };
+
+  const handleCopyCallback = async () => {
+    if (!iyzicoConfig?.callbackUrl) return;
+    try {
+      await navigator.clipboard.writeText(iyzicoConfig.callbackUrl);
+      setCallbackCopied(true);
+      setTimeout(() => setCallbackCopied(false), 2000);
+    } catch {
+      setMessage({ type: 'error', text: 'URL panoya kopyalanamadı' });
+    }
+  };
 
   const { data: savedSettings, isLoading } = useQuery<{
     smtp_host?: string;
@@ -219,6 +272,130 @@ export default function SettingsPanel() {
             <p className="text-xs text-neutral-500 mt-1">E-postalardaki bağlantılar için kullanılır</p>
           </div>
         </div>
+      </div>
+
+      <div className="bg-white border border-neutral-200 rounded-xl p-6" data-testid="card-iyzico-settings">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-neutral-50 rounded-lg">
+            <CreditCard className="w-5 h-5 text-neutral-900" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-neutral-900">iyzico Ödeme Ayarları</h3>
+            <p className="text-sm text-neutral-500">Test (sandbox) ve canlı mod arasında geçiş yapın</p>
+          </div>
+        </div>
+
+        {!iyzicoConfig ? (
+          <div className="flex items-center gap-2 text-sm text-neutral-500">
+            <Loader2 className="w-4 h-4 animate-spin" /> Yükleniyor...
+          </div>
+        ) : (
+          <div className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-neutral-500 mb-2">Çalışma Modu</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleIyzicoModeChange('sandbox')}
+                  disabled={iyzicoSaving || iyzicoConfig.envOverride}
+                  data-testid="button-iyzico-mode-sandbox"
+                  className={`relative px-4 py-3 rounded-lg border text-left transition-colors disabled:opacity-50 ${
+                    iyzicoConfig.mode === 'sandbox'
+                      ? 'border-neutral-900 bg-neutral-900 text-white'
+                      : 'border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    {iyzicoConfig.mode === 'sandbox' && <CheckCircle2 className="w-4 h-4" />}
+                    Test (Sandbox)
+                  </div>
+                  <div className={`text-xs mt-1 ${iyzicoConfig.mode === 'sandbox' ? 'text-white/70' : 'text-neutral-500'}`}>
+                    Gerçek tahsilat yapılmaz
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleIyzicoModeChange('live')}
+                  disabled={iyzicoSaving || iyzicoConfig.envOverride}
+                  data-testid="button-iyzico-mode-live"
+                  className={`relative px-4 py-3 rounded-lg border text-left transition-colors disabled:opacity-50 ${
+                    iyzicoConfig.mode === 'live'
+                      ? 'border-emerald-600 bg-emerald-600 text-white'
+                      : 'border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    {iyzicoConfig.mode === 'live' && <CheckCircle2 className="w-4 h-4" />}
+                    Canlı (Production)
+                  </div>
+                  <div className={`text-xs mt-1 ${iyzicoConfig.mode === 'live' ? 'text-white/80' : 'text-neutral-500'}`}>
+                    Gerçek kart tahsilatı yapılır
+                  </div>
+                </button>
+              </div>
+              {iyzicoConfig.envOverride && (
+                <div className="flex items-start gap-2 mt-3 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
+                  <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span>
+                    <strong>IYZICO_MODE</strong> veya <strong>IYZICO_BASE_URL</strong> ortam değişkeni tanımlı,
+                    panel üzerinden mod değiştirme devre dışı. Modu değiştirmek için bu değişkenleri kaldırın.
+                  </span>
+                </div>
+              )}
+              {!iyzicoConfig.configured && (
+                <div className="flex items-start gap-2 mt-3 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs">
+                  <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span>
+                    <strong>IYZICO_API_KEY</strong> ve <strong>IYZICO_SECRET_KEY</strong> tanımlı değil. Ödeme alınamaz.
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-500 mb-2">
+                Callback URL (iyzico panelinde &ldquo;Bildirim URL&rdquo; alanına girin)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={iyzicoConfig.callbackUrl}
+                  data-testid="input-iyzico-callback-url"
+                  className="flex-1 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 text-sm font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={handleCopyCallback}
+                  data-testid="button-copy-callback-url"
+                  className="flex items-center gap-2 px-4 py-3 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors text-sm font-medium"
+                >
+                  {callbackCopied ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {callbackCopied ? 'Kopyalandı' : 'Kopyala'}
+                </button>
+              </div>
+              <p className="text-xs text-neutral-500 mt-2">
+                iyzico Merchant Panel → Ayarlar → Bildirim Ayarları bölümünden bu URL'i kaydedin.
+                Checkout Form akışı ayrıca her isteğin içinde callback URL gönderir, ancak panelde whitelisting yapılması önerilir.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="px-3 py-2 rounded-lg bg-neutral-50 border border-neutral-200">
+                <div className="text-neutral-500">Aktif Mod</div>
+                <div className="font-semibold text-neutral-900 mt-0.5" data-testid="text-iyzico-active-mode">
+                  {iyzicoConfig.mode === 'live' ? 'CANLI (Production)' : 'TEST (Sandbox)'}
+                </div>
+              </div>
+              <div className="px-3 py-2 rounded-lg bg-neutral-50 border border-neutral-200">
+                <div className="text-neutral-500">API Anahtarları</div>
+                <div className={`font-semibold mt-0.5 ${iyzicoConfig.configured ? 'text-emerald-600' : 'text-red-600'}`}>
+                  {iyzicoConfig.configured ? 'Tanımlı' : 'Eksik'}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="bg-white border border-neutral-200 rounded-xl p-6">

@@ -2359,6 +2359,41 @@ export async function registerRoutes(
   // Backwards-compatible alias for any legacy webhook configuration
   app.post("/api/payment/callback", iyzicoCallbackHandler);
 
+  // ── iyzico mode (sandbox/live) admin controls ──────────────────────────
+  app.get("/api/admin/iyzico/config", requireAdmin, async (_req, res) => {
+    try {
+      const { getIyzicoMode } = await import('./iyzico');
+      const mode = await getIyzicoMode();
+      const baseUrl = process.env.PUBLIC_BASE_URL || 'https://polenstone.com.tr';
+      res.json({
+        mode,
+        configured: isIyzicoConfigured(),
+        callbackUrl: `${baseUrl}/api/payment/iyzico/callback`,
+        baseUrl,
+        envOverride: Boolean(process.env.IYZICO_BASE_URL || process.env.IYZICO_MODE),
+      });
+    } catch (error) {
+      console.error('[iyzico config] error:', error);
+      res.status(500).json({ error: 'iyzico ayarları alınamadı' });
+    }
+  });
+
+  app.post("/api/admin/iyzico/mode", requireAdmin, async (req, res) => {
+    try {
+      const mode = String(req.body?.mode || '').toLowerCase();
+      if (mode !== 'sandbox' && mode !== 'live') {
+        return res.status(400).json({ error: "mode must be 'sandbox' or 'live'" });
+      }
+      const { setIyzicoMode } = await import('./iyzico');
+      await setIyzicoMode(mode as 'sandbox' | 'live');
+      console.log('[iyzico] mode switched →', mode);
+      res.json({ success: true, mode });
+    } catch (error) {
+      console.error('[iyzico mode] error:', error);
+      res.status(500).json({ error: 'Mod değiştirilemedi' });
+    }
+  });
+
   // Check payment status
   app.get("/api/payment/status/:merchantOid", async (req: Request, res) => {
     try {

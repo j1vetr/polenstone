@@ -18,3 +18,21 @@ id = "eapS_1N1ZvWKJHObEOpAP"
 uri = "file://attached_assets/generated_images/polen-category-mermer.png"
 type = "image"
 title = "polen mermer category"
+
+[[generated]]
+id = "3hq6o1ZAiwBo5IxhL0shl"
+uri = "file://attached_assets/generated_images/polen-hero-dark-1.png"
+type = "image"
+title = "polen hero dark marble slab"
+
+[[generated]]
+id = "Qy8ynFlvCfiFTE93fV0E6"
+uri = "file://attached_assets/generated_images/polen-hero-dark-2.png"
+type = "image"
+title = "polen hero dark interior"
+
+[[generated]]
+id = "gS-Q_LgzXf4NLQ-R9-iHM"
+uri = "file://attached_assets/generated_images/polen-hero-dark-3.png"
+type = "image"
+title = "polen hero dark calacatta"

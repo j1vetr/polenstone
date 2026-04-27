@@ -6,8 +6,9 @@ import { ArrowRight, Truck, RotateCcw, Shield, Zap } from 'lucide-react';
 import { Link } from 'wouter';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
-import heroImage1 from '@assets/generated_images/polen-hero-1.png';
-import heroImage2 from '@assets/generated_images/polen-hero-2.png';
+import heroImage1 from '@assets/generated_images/polen-hero-dark-1.png';
+import heroImage2 from '@assets/generated_images/polen-hero-dark-2.png';
+import heroImage3 from '@assets/generated_images/polen-hero-dark-3.png';
 import categoryMermer from '@assets/generated_images/polen-category-mermer.png';
 import { useProducts, useCategories } from '@/hooks/useProducts';
 import { getOriginalPrice } from '@/lib/discountPrice';
@@ -21,8 +22,9 @@ const defaultCategoryImages: Record<string, string> = {
 };
 
 const heroSlides = [
-  { img: heroImage1 },
-  { img: heroImage2 },
+  { img: heroImage1, stone: 'NERO MARQUINA', origin: 'AFYON · TR', edition: 'No. 001' },
+  { img: heroImage2, stone: 'EMPERADOR DARK', origin: 'BURSA · TR',  edition: 'No. 002' },
+  { img: heroImage3, stone: 'CALACATTA BLACK', origin: 'MUĞLA · TR', edition: 'No. 003' },
 ];
 
 const tickerWords = Array(12).fill(
@@ -351,10 +353,21 @@ export default function Home() {
   const highlightLabel = hasDiscounts ? 'İNDİRİMDEKİLER' : 'ÖNE ÇIKANLAR';
   const highlightEyebrow = hasDiscounts ? 'Kampanya' : 'Seçki';
 
+  const [reducedMotion, setReducedMotion] = useState(false);
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener?.('change', update);
+    return () => mq.removeEventListener?.('change', update);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) return;
     const t = setInterval(() => setActiveSlide(p => (p + 1) % heroSlides.length), 6000);
     return () => clearInterval(t);
-  }, []);
+  }, [reducedMotion]);
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
@@ -366,153 +379,222 @@ export default function Home() {
       <Header />
 
       {/* ════════════════════════════════════════════
-          HERO — full-bleed cinematic, text overlay
+          HERO — editorial cinematic, off-center
       ════════════════════════════════════════════ */}
       <section
         ref={heroRef}
-        className="relative overflow-hidden bg-black"
-        style={{ height: 'calc(100svh - 0px)', minHeight: 600, maxHeight: 960 }}
+        className="relative overflow-hidden bg-black text-white"
+        style={{ height: 'calc(100svh - 0px)', minHeight: 640, maxHeight: 980 }}
         data-testid="section-hero"
       >
-        {/* Slides */}
+        {/* ── Slides with crossfade + slow ken-burns ── */}
         <motion.div className="absolute inset-0" style={{ y: heroImgY }}>
-          {heroSlides.map((slide, i) => (
-            <div
-              key={i}
-              className={`absolute inset-0 transition-opacity duration-[1400ms] ease-in-out ${activeSlide === i ? 'opacity-100' : 'opacity-0'}`}
-            >
-              <img
-                src={slide.img}
-                alt="Polen Stone"
-                className="w-full h-full object-cover object-center"
-                style={{ transform: 'scale(1.05)' }}
-                data-testid={`img-hero-${i}`}
-              />
-            </div>
-          ))}
+          {heroSlides.map((slide, i) => {
+            const isActive = activeSlide === i;
+            return (
+              <div
+                key={i}
+                className={`absolute inset-0 transition-opacity ease-[cubic-bezier(0.4,0,0.2,1)] ${isActive ? 'opacity-100 duration-[1600ms]' : 'opacity-0 duration-[1200ms]'}`}
+              >
+                <motion.img
+                  src={slide.img}
+                  alt={slide.stone}
+                  className="absolute inset-0 w-full h-full object-cover object-center"
+                  initial={false}
+                  animate={reducedMotion ? { scale: 1.04 } : isActive ? { scale: 1.12 } : { scale: 1.04 }}
+                  transition={{ duration: reducedMotion ? 0 : 9, ease: 'linear' }}
+                  data-testid={`img-hero-${i}`}
+                />
+              </div>
+            );
+          })}
         </motion.div>
 
-        {/* Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/5" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent hidden lg:block" />
+        {/* ── Cinematic overlays ── */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-black/55" />
+        <div className="absolute inset-0 hidden lg:block" style={{ background: 'radial-gradient(ellipse at 30% 55%, transparent 0%, rgba(0,0,0,0.55) 75%)' }} />
+        {/* Subtle film grain (SVG noise) */}
+        <div
+          className="absolute inset-0 mix-blend-overlay opacity-[0.18] pointer-events-none"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          }}
+        />
 
-        {/* Top-right: slide counter */}
-        <div className="absolute top-6 right-6 lg:top-8 lg:right-10 flex items-center gap-3 z-10">
-          <span className="text-white/35 text-[10px] tracking-[0.3em] font-medium tabular-nums">
-            {String(activeSlide + 1).padStart(2, '0')} / {String(heroSlides.length).padStart(2, '0')}
+        {/* ── Editorial chrome: corner rules ── */}
+        <div className="absolute top-0 left-0 w-px h-16 bg-polen-orange z-20 hidden lg:block" />
+        <div className="absolute bottom-0 right-0 w-px h-24 bg-polen-orange z-20 hidden lg:block" />
+
+        {/* ── Top bar: brand mark (left) + slide meta (right) ── */}
+        <div className="absolute top-5 lg:top-8 left-5 lg:left-10 right-5 lg:right-10 z-20 flex items-start justify-between gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.2 }}
+            className="flex items-center gap-3"
+          >
+            <span className="hidden lg:inline-block w-8 h-px bg-white/35" />
+            <span className="text-white/55 text-[10px] tracking-[0.32em] uppercase font-medium">
+              Polen Stone <span className="hidden md:inline">— Est. Anatolia</span>
+            </span>
+          </motion.div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`meta-${activeSlide}`}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              className="text-right"
+            >
+              <p className="text-white/85 text-[10px] tracking-[0.32em] uppercase font-medium">
+                {heroSlides[activeSlide].stone}
+              </p>
+              <p className="text-white/35 text-[9px] tracking-[0.32em] uppercase mt-1 tabular-nums">
+                {heroSlides[activeSlide].origin}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* ── Main content: off-center left ── */}
+        <div className="absolute inset-0 z-10 flex items-center px-5 lg:px-16">
+          <div className="max-w-[640px] w-full">
+            {/* Eyebrow with edition */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`eyebrow-${activeSlide}`}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.6 }}
+                className="flex items-center gap-3 mb-6 lg:mb-9"
+              >
+                <span className="w-10 h-px bg-polen-orange" />
+                <span className="text-polen-orange text-[10px] tracking-[0.32em] uppercase font-semibold">
+                  Editorial · {heroSlides[activeSlide].edition}
+                </span>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Headline (one semantic h1, two visual lines) */}
+            <h1
+              className="font-display leading-[0.95] tracking-[0.01em]"
+              style={{ fontSize: 'clamp(2.6rem, 9.2vw, 9.5rem)' }}
+              aria-label="Doğanın İhtişamı"
+            >
+              <span className="block overflow-hidden">
+                <motion.span
+                  initial={{ y: '110%' }}
+                  animate={{ y: '0%' }}
+                  transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1] }}
+                  className="block text-white"
+                >
+                  DOĞANIN
+                </motion.span>
+              </span>
+              <span className="block overflow-hidden mt-1 lg:mt-2">
+                <motion.span
+                  initial={{ y: '110%' }}
+                  animate={{ y: '0%' }}
+                  transition={{ duration: 1.05, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+                  className="block italic"
+                  style={{
+                    color: 'transparent',
+                    WebkitTextStroke: '1.4px hsl(var(--polen-orange))',
+                  }}
+                >
+                  İHTİŞAMI
+                </motion.span>
+              </span>
+            </h1>
+
+            {/* Rule + description */}
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.55 }}
+              className="mt-8 lg:mt-10 max-w-[480px]"
+            >
+              <div className="w-12 h-px bg-white/30 mb-5" />
+              <p className="text-white/65 text-[13px] lg:text-[14px] font-body leading-[1.7] tracking-wide">
+                Anadolu'nun ocaklarından, mimarın masasına. Mermer, granit, traverten ve oniks
+                koleksiyonumuzla mekânlarınıza bin yıllık taş mirasını taşıyoruz.
+              </p>
+            </motion.div>
+
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="mt-9 lg:mt-12 flex flex-wrap items-center gap-x-5 lg:gap-x-7 gap-y-4"
+            >
+              <Link href="/magaza" data-testid="button-hero-shop">
+                <motion.span
+                  whileHover={{ x: 4 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="group inline-flex items-center gap-4 bg-polen-orange text-white text-[10px] tracking-[0.28em] uppercase font-bold px-7 py-4 lg:px-9 lg:py-[18px] cursor-pointer hover:bg-[hsl(var(--polen-orange-deep))] transition-colors"
+                >
+                  Koleksiyonu Keşfet
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1.5" />
+                </motion.span>
+              </Link>
+              <Link href="/iletisim">
+                <span className="text-[10px] tracking-[0.22em] uppercase text-white/65 hover:text-white transition-colors font-medium border-b border-white/30 hover:border-white pb-1.5">
+                  Atölyeyi Ziyaret Et
+                </span>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* ── Bottom-left: scroll indicator ── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1.2 }}
+          className="absolute bottom-7 left-5 lg:left-10 z-20 hidden md:flex items-center gap-3"
+        >
+          <span className="text-white/45 text-[9px] tracking-[0.32em] uppercase font-medium">Scroll</span>
+          <div className="relative w-10 h-px bg-white/15 overflow-hidden">
+            <motion.span
+              animate={{ x: ['-100%', '100%'] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute inset-y-0 left-0 w-1/2 bg-white"
+            />
+          </div>
+        </motion.div>
+
+        {/* ── Bottom-right: slide indicator + counter ── */}
+        <div className="absolute bottom-7 right-5 lg:right-10 z-20 flex items-center gap-5">
+          <span className="text-white/85 text-[12px] tracking-[0.32em] font-medium tabular-nums">
+            {String(activeSlide + 1).padStart(2, '0')}
+          </span>
+          <div className="flex items-center gap-2">
+            {heroSlides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveSlide(i)}
+                aria-label={`Slide ${i + 1}`}
+                className="group relative h-3 flex items-center"
+                data-testid={`button-slide-${i}`}
+              >
+                <span
+                  className={`h-px transition-all duration-700 ease-out ${
+                    activeSlide === i ? 'w-12 bg-polen-orange' : 'w-5 bg-white/30 group-hover:bg-white/60'
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+          <span className="text-white/35 text-[12px] tracking-[0.32em] font-medium tabular-nums">
+            {String(heroSlides.length).padStart(2, '0')}
           </span>
         </div>
-
-        {/* Main content: centered */}
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-5 pb-32">
-          {/* Headline */}
-          <div className="overflow-hidden pt-2 mb-2">
-            <motion.h1
-              initial={{ y: '110%' }}
-              animate={{ y: '0%' }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="font-display text-white leading-[1.05] tracking-wide"
-              style={{ fontSize: 'clamp(3.2rem, 8.5vw, 8rem)' }}
-            >
-              DOĞANIN
-            </motion.h1>
-          </div>
-          <div className="overflow-hidden mb-6 lg:mb-10 pt-3">
-            <motion.h1
-              initial={{ y: '110%' }}
-              animate={{ y: '0%' }}
-              transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="font-display leading-[1.05] tracking-wide"
-              style={{
-                fontSize: 'clamp(3.2rem, 8.5vw, 8rem)',
-                color: 'transparent',
-                WebkitTextStroke: '2px hsl(var(--polen-orange))',
-              }}
-            >
-              İHTİŞAMI
-            </motion.h1>
-          </div>
-
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-white/55 text-sm font-body leading-relaxed mb-8 max-w-xs lg:max-w-md"
-          >
-            Mermer, granit, traverten ve oniks koleksiyonumuzla
-            mekânlarınıza Anadolu'nun bin yıllık taş mirasını taşıyoruz.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
-            className="flex items-center gap-4 lg:gap-6"
-          >
-            <Link href="/magaza" data-testid="button-hero-shop">
-              <motion.span
-                whileHover={{ x: 4 }}
-                whileTap={{ scale: 0.97 }}
-                className="group inline-flex items-center gap-3 bg-polen-orange text-white text-[10px] tracking-[0.22em] uppercase font-bold px-6 py-3.5 lg:px-8 lg:py-4 cursor-pointer hover:bg-[hsl(var(--polen-orange-deep))] transition-colors"
-              >
-                Koleksiyonu Keşfet
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1.5" />
-              </motion.span>
-            </Link>
-            <Link href="/magaza">
-              <span className="text-[10px] tracking-[0.18em] uppercase text-white/55 hover:text-white transition-colors font-medium underline underline-offset-4 decoration-white/25">
-                Tüm Ürünler
-              </span>
-            </Link>
-          </motion.div>
-        </div>
-
-        {/* Slide dots — top-right */}
-        <div className="absolute top-8 right-5 lg:top-10 lg:right-12 flex items-center gap-2.5 z-10">
-          {heroSlides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveSlide(i)}
-              className={`h-px transition-all duration-500 ease-out ${activeSlide === i ? 'w-10 bg-white' : 'w-4 bg-white/28 hover:bg-white/55'}`}
-              data-testid={`button-slide-${i}`}
-            />
-          ))}
-        </div>
-
-        {/* Product scroll strip — bottom of hero */}
-        {allProducts.length > 0 && (
-          <div className="absolute bottom-8 left-0 right-0 z-10 overflow-hidden" style={{ height: 168 }}>
-            {/* Fade edges */}
-            <div className="absolute inset-y-0 left-0 w-28 z-10 pointer-events-none" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.92), transparent)' }} />
-            <div className="absolute inset-y-0 right-0 w-28 z-10 pointer-events-none" style={{ background: 'linear-gradient(to left, rgba(0,0,0,0.92), transparent)' }} />
-            {/* Top fade */}
-            <div className="absolute top-0 left-0 right-0 h-10 z-10 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), transparent)' }} />
-            {/* Scrolling track */}
-            <div className="flex animate-marquee-slow h-full items-center" style={{ width: 'max-content' }}>
-              {[...allProducts, ...allProducts, ...allProducts].map((p, i) => {
-                const img = p.images?.[0];
-                const price = parseFloat(p.basePrice);
-                return (
-                  <Link key={`${p.id}-${i}`} href={`/urun/${p.slug}`} className="group flex-shrink-0 mx-2.5 flex flex-col items-center gap-1.5 cursor-pointer" data-testid={`link-hero-scroll-${p.id}-${i}`}>
-                    <div className="relative w-[72px] h-[108px] overflow-hidden bg-white/5 border border-white/10 group-hover:border-white/35 transition-colors duration-300">
-                      {img ? (
-                        <img src={img} alt={p.name} className="w-full h-full object-cover object-top opacity-75 group-hover:opacity-100 group-hover:scale-105 transition-all duration-400" />
-                      ) : (
-                        <div className="w-full h-full bg-white/5" />
-                      )}
-                      {p.discountBadge && (
-                        <div className="absolute top-1 left-1 bg-white text-black text-[7px] font-black px-1 py-px">{p.discountBadge}</div>
-                      )}
-                    </div>
-                    <p className="text-[10px] text-white/50 group-hover:text-white/85 transition-colors font-medium tracking-wide truncate max-w-[72px] text-center">{price.toLocaleString('tr-TR')}₺</p>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </section>
 
       {/* ════════════════════════════════════════════

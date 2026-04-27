@@ -337,13 +337,18 @@ export default function Home() {
     return Number.isFinite(parsed) ? parsed : 0;
   };
 
-  const newArrivals = [...allProducts]
+  const newArrivals = allProducts
+    .filter(p => p.isNew)
     .sort((a, b) => toTimestamp(b.createdAt) - toTimestamp(a.createdAt))
     .slice(0, 12);
+
   const discountedProducts = allProducts.filter(p => p.discountBadge).slice(0, 8);
-  const fallbackHighlights = allProducts.slice(13, 21);
+  const featuredHighlights = allProducts
+    .filter(p => p.isFeatured)
+    .sort((a, b) => toTimestamp(b.createdAt) - toTimestamp(a.createdAt))
+    .slice(0, 8);
   const hasDiscounts = discountedProducts.length >= 4;
-  const highlightProducts = hasDiscounts ? discountedProducts : fallbackHighlights;
+  const highlightProducts = hasDiscounts ? discountedProducts : featuredHighlights;
   const highlightLabel = hasDiscounts ? 'İNDİRİMDEKİLER' : 'ÖNE ÇIKANLAR';
   const highlightEyebrow = hasDiscounts ? 'Kampanya' : 'Seçki';
 

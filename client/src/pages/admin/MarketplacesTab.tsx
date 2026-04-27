@@ -1,5 +1,5 @@
 import { Fragment, useMemo, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueries, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -210,6 +210,14 @@ export default function MarketplacesTab({
         </InlineAlert>
       )}
 
+      {marketplaces.length > 0 && (
+        <ProvidersHealthSummary
+          marketplaces={marketplaces}
+          onOpenHistory={(id) => setHistoryForId(id)}
+          onEdit={(id) => setEditingId(id)}
+        />
+      )}
+
       {marketplacesQuery.isLoading ? (
         <Card className="p-6">
           <LoadingState />
@@ -283,6 +291,136 @@ export default function MarketplacesTab({
         isPending={deleteMutation.isPending}
       />
     </div>
+  );
+}
+
+// ============================================================================
+// Providers Health Summary (page-level warning band)
+// ============================================================================
+type ProviderIssue = {
+  marketplaceId: string;
+  marketplaceName: string;
+  severity: 'error' | 'warning';
+  reason: string;
+  detail?: string;
+  action: 'history' | 'edit';
+};
+
+function ProvidersHealthSummary({
+  marketplaces,
+  onOpenHistory,
+  onEdit,
+}: {
+  marketplaces: Marketplace[];
+  onOpenHistory: (id: string) => void;
+  onEdit: (id: string) => void;
+}) {
+  // Fetch latest run for every marketplace in parallel; cache is shared
+  // with each card's own `latestRunQuery` (same queryKey + queryFn).
+  const runResults = useQueries({
+    queries: marketplaces.map((mp) => ({
+      queryKey: ['/api/admin/marketplaces', mp.id, 'sync-runs', 'latest'] as const,
+      queryFn: async () => {
+        const res = await apiRequest(
+          'GET',
+          `/api/admin/marketplaces/${mp.id}/sync-runs?limit=1`,
+        );
+        return (await res.json()) as SyncRun[];
+      },
+      refetchInterval: 5000,
+    })),
+  });
+
+  const issues: ProviderIssue[] = [];
+  marketplaces.forEach((mp, i) => {
+    // 1) Active provider with no credentials saved → cannot sync
+    if (mp.isActive && Object.keys(mp.maskedCredentials ?? {}).length === 0) {
+      issues.push({
+        marketplaceId: mp.id,
+        marketplaceName: mp.name,
+        severity: 'error',
+        reason: 'Kimlik bilgisi eksik',
+        detail: 'API anahtarları girilmeden senkron yapılamaz.',
+        action: 'edit',
+      });
+      return;
+    }
+    const latest = (runResults[i]?.data ?? [])[0];
+    if (!latest) return;
+    if (latest.status === 'failed') {
+      const firstErr = latest.errors?.[0];
+      issues.push({
+        marketplaceId: mp.id,
+        marketplaceName: mp.name,
+        severity: 'error',
+        reason: 'Son senkron başarısız',
+        detail: firstErr ? `${firstErr.context}: ${firstErr.message}` : undefined,
+        action: 'history',
+      });
+    } else if (latest.status === 'partial' && (latest.errors?.length ?? 0) > 0) {
+      const firstErr = latest.errors[0];
+      issues.push({
+        marketplaceId: mp.id,
+        marketplaceName: mp.name,
+        severity: 'warning',
+        reason: `Son senkron kısmi (${latest.errors.length} hata)`,
+        detail: firstErr ? `${firstErr.context}: ${firstErr.message}` : undefined,
+        action: 'history',
+      });
+    }
+  });
+
+  if (issues.length === 0) return null;
+
+  const hasError = issues.some((i) => i.severity === 'error');
+
+  return (
+    <InlineAlert tone={hasError ? 'error' : 'warning'}>
+      <div data-testid="providers-health-summary">
+        <div className="flex items-start gap-2">
+          <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <div className="font-medium">
+              {issues.length === 1
+                ? '1 pazaryerinde dikkat gereken bir durum var'
+                : `${issues.length} pazaryerinde dikkat gereken durumlar var`}
+            </div>
+            <ul className="mt-1.5 space-y-1">
+              {issues.map((issue) => (
+                <li
+                  key={issue.marketplaceId}
+                  className="text-[12px] flex items-start gap-1.5"
+                  data-testid={`health-issue-${issue.marketplaceId}`}
+                >
+                  <span className="opacity-70 shrink-0">·</span>
+                  <span className="min-w-0 flex-1">
+                    <strong className="font-medium">{issue.marketplaceName}</strong>
+                    <span className="opacity-80"> — {issue.reason}</span>
+                    {issue.detail && (
+                      <span className="block opacity-70 truncate text-[11px] mt-0.5">
+                        {issue.detail}
+                      </span>
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      issue.action === 'edit'
+                        ? onEdit(issue.marketplaceId)
+                        : onOpenHistory(issue.marketplaceId)
+                    }
+                    className="text-[11px] underline underline-offset-2 hover:no-underline shrink-0"
+                    data-testid={`button-resolve-${issue.marketplaceId}`}
+                  >
+                    {issue.action === 'edit' ? 'Düzenle' : 'Geçmiş'}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </InlineAlert>
   );
 }
 
@@ -1039,21 +1177,6 @@ function CategoryMappingsDialog({
     enabled: open,
   });
 
-  const setMapping = useMutation({
-    mutationFn: async ({ id, siteCategoryId }: { id: string; siteCategoryId: string | null }) => {
-      await apiRequest(
-        'PUT',
-        `/api/admin/marketplaces/${marketplaceId}/category-mappings/${id}`,
-        { siteCategoryId },
-      );
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({
-        queryKey: ['/api/admin/marketplaces', marketplaceId, 'category-mappings'],
-      });
-    },
-  });
-
   const allMappings = data ?? [];
 
   const draftCount = Object.keys(drafts).length;
@@ -1272,11 +1395,6 @@ function CategoryMappingsDialog({
         </div>
       )}
 
-      {/* Hidden mutation reference to keep the per-row save path importable
-          even though we now use saveAllMutation; not rendered. */}
-      <span hidden aria-hidden>
-        {setMapping.isPending ? '…' : ''}
-      </span>
     </AdminModal>
   );
 }

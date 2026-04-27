@@ -2018,7 +2018,7 @@ export async function registerRoutes(
         paidPrice: paidPriceTry,
         currency: 'TRY',
         basketId: merchantOid,
-        callbackUrl: `${baseUrl}/api/payment/callback`,
+        callbackUrl: `${baseUrl}/api/payment/iyzico/callback`,
         enabledInstallments: [1],
         buyer: {
           id: cartToken.substring(0, 64),
@@ -2074,8 +2074,9 @@ export async function registerRoutes(
     }
   });
 
-  // iyzico Callback - browser POSTs here after Checkout Form completes
-  app.post("/api/payment/callback", async (req: Request, res) => {
+  // iyzico Callback - browser POSTs here after Checkout Form completes.
+  // The legacy /api/payment/callback path is kept as an alias for older webhooks.
+  const iyzicoCallbackHandler = async (req: Request, res: Response) => {
     const baseUrl = process.env.NODE_ENV === 'production'
       ? (process.env.PUBLIC_BASE_URL || 'https://polenstone.com.tr')
       : `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host || 'localhost:5000'}`;
@@ -2165,7 +2166,7 @@ export async function registerRoutes(
           couponCode: pendingPayment.couponCode,
           total: pendingPayment.total,
           status: 'confirmed',
-          paymentMethod: 'credit_card',
+          paymentMethod: 'iyzico',
           paymentStatus: 'paid',
         });
 
@@ -2323,7 +2324,12 @@ export async function registerRoutes(
       console.error('[iyzico Callback] Error:', error);
       return sendRedirect('/odeme-basarisiz');
     }
-  });
+  };
+
+  // Primary iyzico callback path (used in createCheckoutFormInitialize.callbackUrl)
+  app.post("/api/payment/iyzico/callback", iyzicoCallbackHandler);
+  // Backwards-compatible alias for any legacy webhook configuration
+  app.post("/api/payment/callback", iyzicoCallbackHandler);
 
   // Check payment status
   app.get("/api/payment/status/:merchantOid", async (req: Request, res) => {

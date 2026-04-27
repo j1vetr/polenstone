@@ -1,64 +1,303 @@
-import { Plus, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Reorder, useDragControls } from 'framer-motion';
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  GripVertical,
+  Image as ImageIcon,
+  FolderTree,
+  Loader2,
+} from 'lucide-react';
 import type { Category } from './_shared/types';
+import { useToast } from '@/hooks/use-toast';
+import {
+  PageHeader,
+  Card,
+  EmptyState,
+  LoadingState,
+  InlineAlert,
+  PrimaryButton,
+  IconButton,
+} from './_ui/AdminUI';
 
 interface CategoriesTabProps {
   categories: Category[];
   setEditingCategory: (c: Category | null) => void;
   setShowCategoryModal: (b: boolean) => void;
   deleteCategoryMutation: { mutate: (id: string) => void };
+  categoriesLoading?: boolean;
+  categoriesError?: unknown;
 }
 
-export default function CategoriesTab({ categories, setEditingCategory, setShowCategoryModal, deleteCategoryMutation }: CategoriesTabProps) {
-  return (
-            <div>
-              <div className="flex justify-end mb-6">
-                <button
-                  onClick={() => { setEditingCategory(null); setShowCategoryModal(true); }}
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg font-medium hover:bg-zinc-200 transition-colors"
-                  data-testid="button-add-category"
-                >
-                  <Plus className="w-4 h-4" />
-                  Yeni Kategori
-                </button>
-              </div>
+interface SortableCardProps {
+  category: Category;
+  index: number;
+  onEdit: () => void;
+  onDelete: () => void;
+  onCommit: () => void;
+  isSaving: boolean;
+}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {categories.map((category) => (
-                  <div key={category.id} className="bg-white border border-neutral-200 rounded-xl overflow-hidden group" data-testid={`card-category-${category.id}`}>
-                    {category.image && (
-                      <div className="aspect-video relative overflow-hidden">
-                        <img src={category.image} alt={category.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      </div>
-                    )}
-                    <div className="p-6">
-                      <h3 className="font-semibold text-lg text-neutral-900 mb-2">{category.name}</h3>
-                      <p className="text-sm text-neutral-500 mb-4">Slug: {category.slug}</p>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => { setEditingCategory(category); setShowCategoryModal(true); }}
-                          className="flex-1 py-2 text-sm text-center bg-neutral-50 hover:bg-neutral-200 rounded-lg transition-colors text-neutral-900"
-                          data-testid={`button-edit-category-${category.id}`}
-                        >
-                          Düzenle
-                        </button>
-                        <button
-                          onClick={() => { if (confirm('Bu kategoriyi silmek istediğinize emin misiniz?')) deleteCategoryMutation.mutate(category.id); }}
-                          className="p-2 bg-neutral-50 hover:bg-red-500/20 rounded-lg transition-colors text-neutral-500 hover:text-red-400"
-                          data-testid={`button-delete-category-${category.id}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {categories.length === 0 && (
-                  <div className="col-span-full text-center text-neutral-500 py-12">
-                    Henüz kategori eklenmemiş
-                  </div>
-                )}
+function SortableCategoryCard({
+  category,
+  index,
+  onEdit,
+  onDelete,
+  onCommit,
+  isSaving,
+}: SortableCardProps) {
+  const dragControls = useDragControls();
+  return (
+    <Reorder.Item
+      value={category}
+      dragListener={false}
+      dragControls={dragControls}
+      onDragEnd={onCommit}
+      className="list-none"
+      data-testid={`card-category-${category.id}`}
+    >
+      <Card className="p-0 overflow-hidden group transition-shadow hover:shadow-sm">
+        <div className="flex items-stretch">
+          <button
+            type="button"
+            onPointerDown={(e) => dragControls.start(e)}
+            className="flex items-center justify-center px-2.5 sm:px-3 bg-neutral-50 border-r border-neutral-200 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 active:bg-neutral-200 cursor-grab active:cursor-grabbing touch-none"
+            aria-label="Sırayı değiştirmek için sürükleyin"
+            data-testid={`drag-handle-category-${category.id}`}
+            disabled={isSaving}
+          >
+            <GripVertical className="w-4 h-4" />
+          </button>
+
+          <div className="relative w-20 sm:w-24 shrink-0 bg-neutral-50 border-r border-neutral-200 overflow-hidden">
+            {category.image ? (
+              <img
+                src={category.image}
+                alt={category.name}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <ImageIcon className="w-5 h-5 text-neutral-300" />
               </div>
+            )}
+          </div>
+
+          <div className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span
+                  className="inline-flex items-center justify-center min-w-[22px] h-[18px] px-1.5 rounded bg-neutral-100 border border-neutral-200 text-[10px] font-semibold tabular-nums text-neutral-600"
+                  data-testid={`order-category-${category.id}`}
+                  title={`Sıra: ${index + 1}`}
+                >
+                  {index + 1}
+                </span>
+                <h3
+                  className="text-[13px] font-medium text-neutral-900 truncate"
+                  data-testid={`text-category-name-${category.id}`}
+                >
+                  {category.name}
+                </h3>
+              </div>
+              <p
+                className="text-[11px] text-neutral-500 truncate mt-0.5"
+                data-testid={`text-category-slug-${category.id}`}
+              >
+                /{category.slug}
+              </p>
             </div>
+
+            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+              <IconButton
+                onClick={onEdit}
+                aria-label="Düzenle"
+                data-testid={`button-edit-category-${category.id}`}
+                disabled={isSaving}
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </IconButton>
+              <IconButton
+                onClick={onDelete}
+                aria-label="Sil"
+                tone="danger"
+                data-testid={`button-delete-category-${category.id}`}
+                disabled={isSaving}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </IconButton>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </Reorder.Item>
+  );
+}
+
+export default function CategoriesTab({
+  categories,
+  setEditingCategory,
+  setShowCategoryModal,
+  deleteCategoryMutation,
+  categoriesLoading,
+  categoriesError,
+}: CategoriesTabProps) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [items, setItems] = useState<Category[]>([]);
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
+  const itemsRef = useRef<Category[]>([]);
+
+  const sortedFromProps = useMemo(
+    () => [...categories].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)),
+    [categories],
+  );
+
+  useEffect(() => {
+    if (!isSavingOrder) {
+      setItems(sortedFromProps);
+      itemsRef.current = sortedFromProps;
+    }
+  }, [sortedFromProps, isSavingOrder]);
+
+  const handleReorder = (newOrder: Category[]) => {
+    setItems(newOrder);
+    itemsRef.current = newOrder;
+  };
+
+  const persistOrder = async () => {
+    const newOrder = itemsRef.current;
+    const changed = newOrder
+      .map((cat, idx) => ({ cat, newOrder: idx + 1 }))
+      .filter(({ cat, newOrder }) => (cat.displayOrder ?? 0) !== newOrder);
+
+    if (changed.length === 0) return;
+
+    setIsSavingOrder(true);
+    try {
+      const results = await Promise.all(
+        changed.map(({ cat, newOrder }) =>
+          fetch(`/api/admin/categories/${cat.id}`, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ displayOrder: newOrder }),
+          }),
+        ),
+      );
+      const failed = results.filter((r) => !r.ok).length;
+      if (failed > 0) {
+        toast({
+          title: 'Sıralama kısmen kaydedildi',
+          description: `${failed} kategori güncellenemedi.`,
+          variant: 'destructive',
+        });
+      } else {
+        toast({ title: 'Sıralama güncellendi' });
+      }
+    } catch {
+      toast({
+        title: 'Sıralama kaydedilemedi',
+        description: 'Bağlantınızı kontrol edin.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSavingOrder(false);
+      queryClient.invalidateQueries({ queryKey: ['admin', 'categories'] });
+    }
+  };
+
+  const handleEdit = (cat: Category) => {
+    setEditingCategory(cat);
+    setShowCategoryModal(true);
+  };
+
+  const handleDelete = (cat: Category) => {
+    if (confirm(`"${cat.name}" kategorisini silmek istediğinize emin misiniz?`)) {
+      deleteCategoryMutation.mutate(cat.id);
+    }
+  };
+
+  return (
+    <div data-testid="tab-categories" className="space-y-4 sm:space-y-5">
+      <PageHeader
+        title="Kategoriler"
+        description={`${categories.length.toLocaleString('tr-TR')} kategori — sürükleyerek sıralayın`}
+        actions={
+          <PrimaryButton
+            onClick={() => {
+              setEditingCategory(null);
+              setShowCategoryModal(true);
+            }}
+            data-testid="button-add-category"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Yeni Kategori
+          </PrimaryButton>
+        }
+      />
+
+      {isSavingOrder && (
+        <div
+          className="flex items-center gap-2 text-[12px] text-neutral-600"
+          data-testid="status-saving-order"
+        >
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          Sıralama kaydediliyor…
+        </div>
+      )}
+
+      {categoriesError ? (
+        <InlineAlert tone="error">
+          <span className="font-medium">Kategoriler yüklenemedi.</span> Bağlantınızı kontrol edip
+          sayfayı yenileyin.
+        </InlineAlert>
+      ) : categoriesLoading && categories.length === 0 ? (
+        <Card>
+          <LoadingState label="Kategoriler yükleniyor…" />
+        </Card>
+      ) : items.length === 0 ? (
+        <Card className="py-2">
+          <EmptyState
+            icon={FolderTree}
+            title="Henüz kategori yok"
+            description="İlk kategoriyi ekleyerek mağaza navigasyonunu kurmaya başlayın."
+            action={
+              <PrimaryButton
+                onClick={() => {
+                  setEditingCategory(null);
+                  setShowCategoryModal(true);
+                }}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Yeni Kategori
+              </PrimaryButton>
+            }
+          />
+        </Card>
+      ) : (
+        <Reorder.Group
+          axis="y"
+          values={items}
+          onReorder={handleReorder}
+          className="space-y-2"
+          data-testid="list-categories"
+        >
+          {items.map((cat, index) => (
+            <SortableCategoryCard
+              key={cat.id}
+              category={cat}
+              index={index}
+              onEdit={() => handleEdit(cat)}
+              onDelete={() => handleDelete(cat)}
+              onCommit={persistOrder}
+              isSaving={isSavingOrder}
+            />
+          ))}
+        </Reorder.Group>
+      )}
+    </div>
   );
 }

@@ -77,6 +77,8 @@ export default function AdminDashboard() {
     productsError,
     allVariants,
     categories,
+    categoriesLoading,
+    categoriesError,
     orders,
     ordersLoading,
     ordersError,
@@ -169,6 +171,8 @@ export default function AdminDashboard() {
             setEditingCategory={setEditingCategory}
             setShowCategoryModal={setShowCategoryModal}
             deleteCategoryMutation={deleteCategoryMutation}
+            categoriesLoading={categoriesLoading}
+            categoriesError={categoriesError}
           />
         )}
         {activeTab === 'orders' && <OrdersTab />}

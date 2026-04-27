@@ -57,9 +57,17 @@ export function useAdminDashboardData({
     enabled: !!adminUser,
   });
 
-  const { data: categories = [] } = useQuery<Category[]>({
+  const {
+    data: categories = [],
+    isLoading: categoriesLoading,
+    isError: categoriesError,
+  } = useQuery<Category[]>({
     queryKey: ['admin', 'categories'],
-    queryFn: async () => (await fetch('/api/categories')).json(),
+    queryFn: async () => {
+      const r = await fetch('/api/categories');
+      if (!r.ok) throw new Error('Categories request failed');
+      return r.json();
+    },
     enabled: !!adminUser,
   });
 
@@ -162,6 +170,8 @@ export function useAdminDashboardData({
     productsError,
     allVariants,
     categories,
+    categoriesLoading,
+    categoriesError,
     orders,
     ordersLoading,
     ordersError,

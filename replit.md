@@ -51,7 +51,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Third-Party Services & APIs
 - **OpenAI**: AI product descriptions and chatbot.
-- **PayTR**: Payment gateway.
+- **iyzico**: Payment gateway (Checkout Form / 3D Secure).
 - **BizimHesap**: Invoice integration.
 - **Facebook (Meta Pixel/CAPI)**: Advertising and event tracking.
 - **Google Merchant Center**: Product feed submission.

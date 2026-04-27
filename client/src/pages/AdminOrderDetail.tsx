@@ -645,9 +645,12 @@ export default function AdminOrderDetail() {
               </div>
             </Card>
 
-            {/* Shipping address */}
+            {/* Shipping address (also used as billing address) */}
             <Card className="p-5">
-              <SectionHeading title="Teslimat Adresi" />
+              <SectionHeading
+                title="Teslimat ve Fatura Adresi"
+                description="Bu sipariş için teslimat ve fatura adresi aynıdır."
+              />
               <div className="text-[12.5px] text-neutral-700 space-y-1 leading-relaxed">
                 <p className="flex items-start gap-1.5">
                   <MapPin className="w-3 h-3 text-neutral-400 mt-1 shrink-0" />

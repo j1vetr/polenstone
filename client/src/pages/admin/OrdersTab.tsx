@@ -633,7 +633,30 @@ export default function OrdersPanel() {
             />
           </div>
         ) : isLoading ? (
-          <div className="hidden md:block">
+          <>
+            {/* Mobile skeleton */}
+            <div className="md:hidden divide-y divide-neutral-100" data-testid="loading-orders-mobile">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="p-4 animate-pulse">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="w-9 h-9 rounded-md bg-neutral-100 shrink-0" />
+                      <div className="space-y-1.5 flex-1">
+                        <div className="h-3 w-28 rounded bg-neutral-100" />
+                        <div className="h-2.5 w-20 rounded bg-neutral-100" />
+                      </div>
+                    </div>
+                    <div className="h-3 w-12 rounded bg-neutral-100" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="h-5 w-20 rounded-full bg-neutral-100" />
+                    <div className="h-3 w-16 rounded bg-neutral-100" />
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop skeleton */}
+            <div className="hidden md:block">
             <table className="w-full" data-testid="loading-orders">
               <thead>
                 <tr className="border-b border-neutral-200 bg-neutral-50/50">
@@ -664,7 +687,8 @@ export default function OrdersPanel() {
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         ) : filtered.length === 0 ? (
           <EmptyState
             icon={Package}

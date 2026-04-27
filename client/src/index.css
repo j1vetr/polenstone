@@ -217,6 +217,10 @@
   animation: marquee 110s linear infinite;
 }
 
+.animate-marquee-slowest {
+  animation: marquee 200s linear infinite;
+}
+
 @keyframes marquee-right {
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }

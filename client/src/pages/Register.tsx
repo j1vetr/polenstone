@@ -11,7 +11,7 @@ import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowUpRight, Check } from 'lucid
 import { AuthCrossLinkCTA } from '@/components/AuthCrossLinkCTA';
 import { COUNTRIES } from '@/lib/countries';
 import polenLogo from '@assets/Polen-Sticker-1.pdf_1777239312980.png';
-import heroImg from '@assets/hero-1.webp';
+import heroImg from '@assets/generated_images/polen-hero-1.png';
 
 export default function Register() {
   const [, navigate] = useLocation();

@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowUpRight } from 'lucide-react';
 import { AuthCrossLinkCTA } from '@/components/AuthCrossLinkCTA';
 import polenLogo from '@assets/Polen-Sticker-1.pdf_1777239312980.png';
-import heroImg from '@assets/hero-2.webp';
+import heroImg from '@assets/generated_images/polen-hero-dark-1.png';
 
 export default function Login() {
   const [, navigate] = useLocation();

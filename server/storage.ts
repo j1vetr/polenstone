@@ -201,10 +201,13 @@ export interface IStorage {
   getOrderItems(orderId: string): Promise<OrderItem[]>;
   createOrderItem(item: InsertOrderItem): Promise<OrderItem>;
 
-  // Pending Payments for PayTR
+  // Pending Payments (iyzico Checkout Form)
   createPendingPayment(payment: Omit<PendingPayment, 'id' | 'createdAt'>): Promise<PendingPayment>;
   getPendingPaymentByMerchantOid(merchantOid: string): Promise<PendingPayment | undefined>;
+  getPendingPaymentByPaymentToken(paymentToken: string): Promise<PendingPayment | undefined>;
   updatePendingPaymentStatus(merchantOid: string, status: string): Promise<PendingPayment | undefined>;
+  updatePendingPaymentToken(merchantOid: string, paymentToken: string): Promise<PendingPayment | undefined>;
+  setPendingPaymentIyzicoId(merchantOid: string, iyzicoPaymentId: string): Promise<PendingPayment | undefined>;
   deletePendingPayment(merchantOid: string): Promise<void>;
 
   // Dealers (Bayiler)

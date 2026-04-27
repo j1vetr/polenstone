@@ -525,7 +525,7 @@ export const reviewRequests = pgTable("review_requests", {
 
 export type ReviewRequest = typeof reviewRequests.$inferSelect;
 
-// Pending Payments for PayTR
+// Pending Payments (iyzico Checkout Form)
 export const pendingPayments = pgTable("pending_payments", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   merchantOid: text("merchant_oid").notNull().unique(),
@@ -554,7 +554,8 @@ export const pendingPayments = pgTable("pending_payments", {
   couponCode: text("coupon_code"),
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
   status: text("status").default("pending").notNull(),
-  paytrToken: text("paytr_token"),
+  paymentToken: text("payment_token"),
+  iyzicoPaymentId: text("iyzico_payment_id"),
   createAccount: boolean("create_account").default(false),
   accountPasswordHash: text("account_password_hash"),
   clientIp: text("client_ip"),

@@ -399,6 +399,39 @@ export default function ProductsTab({
         description={`Toplam ${products.length.toLocaleString('tr-TR')} ürün`}
         actions={
           <>
+            <GhostButton
+              onClick={() => {
+                setBulkPreselectedIds?.([]);
+                setShowBulkPriceModal(true);
+              }}
+              data-testid="button-header-bulk-price"
+              title="Tüm/kategori bazlı toplu fiyat"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Toplu fiyat</span>
+            </GhostButton>
+            <GhostButton
+              onClick={() => {
+                setBulkPreselectedIds?.([]);
+                setShowBulkBadgeModal(true);
+              }}
+              data-testid="button-header-bulk-badge"
+              title="Tüm/kategori bazlı toplu etiket"
+            >
+              <Tag className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Toplu etiket</span>
+            </GhostButton>
+            <GhostButton
+              onClick={() => {
+                setBulkPreselectedIds?.([]);
+                setShowBulkAIModal(true);
+              }}
+              data-testid="button-header-bulk-ai"
+              title="Tüm/kategori bazlı toplu AI açıklama"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Toplu AI</span>
+            </GhostButton>
             <SecondaryButton
               onClick={handleSyncVariants}
               disabled={isSyncing}
@@ -520,6 +553,7 @@ export default function ProductsTab({
                 setBulkPreselectedIds?.(Array.from(selectedIds));
                 setShowBulkPriceModal(true);
               }}
+              disabled={selectedIds.size === 0}
               data-testid="button-bulk-price"
             >
               <Edit3 className="w-3.5 h-3.5" />
@@ -530,6 +564,7 @@ export default function ProductsTab({
                 setBulkPreselectedIds?.(Array.from(selectedIds));
                 setShowBulkBadgeModal(true);
               }}
+              disabled={selectedIds.size === 0}
               data-testid="button-bulk-badge"
             >
               <Tag className="w-3.5 h-3.5" />
@@ -540,6 +575,7 @@ export default function ProductsTab({
                 setBulkPreselectedIds?.(Array.from(selectedIds));
                 setShowBulkAIModal(true);
               }}
+              disabled={selectedIds.size === 0}
               data-testid="button-bulk-ai"
             >
               <Sparkles className="w-3.5 h-3.5" />

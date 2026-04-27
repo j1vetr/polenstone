@@ -384,26 +384,33 @@ async function upsertProduct(
 ): Promise<void> {
   const ctx = `[${marketplace.type}] ${np.name} (${np.externalId})`;
 
-  // İçerik hash'i değişmediyse fast-path. ANCAK isActive durumunu kontrol et:
-  // pazaryeri ürünü "aktif" diyor ama site tarafında soft-deactivate edilmişse
-  // (örn. önceki tarama yetimledi, şimdi yeniden göründü) reactivate gerekir.
+  // İçerik hash'i değişmediyse fast-path. ANCAK iki şeyi reconcile et:
+  //   (a) isActive: pazaryeri "aktif" diyor ama site soft-deactivated ise
+  //       (önceki tarama yetimlemişti, ürün geri geldi) — reactivate.
+  //   (b) categoryId: admin sonradan kategori eşlemesini değiştirmiş olabilir;
+  //       contentHash bunu içermez (np.externalCategoryId üründe değişmez),
+  //       o yüzden mapping → siteCategoryId değiştiyse ürünü taşı.
   const newHash = contentHash(np);
   if (existingMpRow?.contentHash === newHash && existingMpRow.productId) {
     const current = await storage.getProduct(existingMpRow.productId);
-    if (current && current.isActive !== np.isActive) {
-      await storage.updateProduct(current.id, { isActive: np.isActive });
-      stats.productsUpdated += 1;
-      if (np.isActive && !current.isActive) stats.productsReactivated += 1;
-      if (!np.isActive && current.isActive) stats.productsDeactivated += 1;
-      // lastSyncedAt'ı tazele
-      await storage.upsertMarketplaceProduct({
-        marketplaceId: marketplace.id,
-        externalId: np.externalId,
-        externalProductCode: np.externalProductCode ?? null,
-        productId: current.id,
-        imageHashes: existingMpRow.imageHashes ?? [],
-        contentHash: newHash,
-      });
+    if (current) {
+      const patch: Partial<InsertProduct> = {};
+      if (current.isActive !== np.isActive) patch.isActive = np.isActive;
+      if (current.categoryId !== siteCategoryId) patch.categoryId = siteCategoryId;
+      if (Object.keys(patch).length > 0) {
+        await storage.updateProduct(current.id, patch);
+        stats.productsUpdated += 1;
+        if (patch.isActive === true && !current.isActive) stats.productsReactivated += 1;
+        if (patch.isActive === false && current.isActive) stats.productsDeactivated += 1;
+        await storage.upsertMarketplaceProduct({
+          marketplaceId: marketplace.id,
+          externalId: np.externalId,
+          externalProductCode: np.externalProductCode ?? null,
+          productId: current.id,
+          imageHashes: existingMpRow.imageHashes ?? [],
+          contentHash: newHash,
+        });
+      }
     }
     return;
   }

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   X,
   Upload,
@@ -112,6 +112,7 @@ export default function ProductModal({
   });
 
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [pendingPreviewUrls, setPendingPreviewUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -128,10 +129,13 @@ export default function ProductModal({
   const [previewImage, setPreviewImage] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
 
-  const pendingPreviews = useMemo(
-    () => pendingFiles.map((f) => ({ file: f, url: URL.createObjectURL(f) })),
-    [pendingFiles],
-  );
+  useEffect(() => {
+    const urls = pendingFiles.map((f) => URL.createObjectURL(f));
+    setPendingPreviewUrls(urls);
+    return () => {
+      urls.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, [pendingFiles]);
 
   const regenerateSlug = () => {
     setFormData((prev) => ({ ...prev, slug: generateSlug(prev.name) }));
@@ -282,10 +286,10 @@ export default function ProductModal({
   const previewImages = useMemo(() => {
     const list = [
       ...formData.images.map((url) => ({ url, isPending: false })),
-      ...pendingPreviews.map((p) => ({ url: p.url, isPending: true })),
+      ...pendingPreviewUrls.map((url) => ({ url, isPending: true })),
     ];
     return list;
-  }, [formData.images, pendingPreviews]);
+  }, [formData.images, pendingPreviewUrls]);
 
   return (
     <AdminModal
@@ -671,12 +675,12 @@ export default function ProductModal({
                     )}
                   </div>
                 ))}
-                {pendingPreviews.map((p, index) => (
+                {pendingPreviewUrls.map((url, index) => (
                   <div
                     key={`pending-${index}`}
                     className="relative group aspect-square bg-neutral-50 rounded-md overflow-hidden border border-emerald-300"
                   >
-                    <img src={p.url} alt={`Yeni ${index + 1}`} className="w-full h-full object-cover" />
+                    <img src={url} alt={`Yeni ${index + 1}`} className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => removePendingFile(index)}

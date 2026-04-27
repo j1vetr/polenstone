@@ -514,7 +514,6 @@ export default function ProductsTab({
                 setBulkPreselectedIds?.(Array.from(selectedIds));
                 setShowBulkPriceModal(true);
               }}
-              disabled={selectedIds.size === 0}
               data-testid="button-bulk-price"
             >
               <Edit3 className="w-3.5 h-3.5" />
@@ -525,7 +524,6 @@ export default function ProductsTab({
                 setBulkPreselectedIds?.(Array.from(selectedIds));
                 setShowBulkBadgeModal(true);
               }}
-              disabled={selectedIds.size === 0}
               data-testid="button-bulk-badge"
             >
               <Tag className="w-3.5 h-3.5" />
@@ -536,7 +534,6 @@ export default function ProductsTab({
                 setBulkPreselectedIds?.(Array.from(selectedIds));
                 setShowBulkAIModal(true);
               }}
-              disabled={selectedIds.size === 0}
               data-testid="button-bulk-ai"
             >
               <Sparkles className="w-3.5 h-3.5" />

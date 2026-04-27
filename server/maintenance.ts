@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { storage } from "./storage";
+import { verifyAccessToken } from "./jwt";
 
 const SETTING_KEY = "maintenance_mode";
 const CACHE_TTL_MS = 10_000;
@@ -54,10 +55,18 @@ function isAllowed(path: string): boolean {
   return false;
 }
 
+function hasValidAdminSession(req: Request): boolean {
+  const token = (req as any).cookies?.access_token;
+  if (!token) return false;
+  const payload = verifyAccessToken(token);
+  return Boolean(payload && payload.type === "admin" && payload.adminUserId);
+}
+
 export function maintenanceMiddleware() {
   return async (req: Request, res: Response, next: NextFunction) => {
     if (req.method !== "GET" && req.method !== "HEAD") return next();
     if (isAllowed(req.path)) return next();
+    if (hasValidAdminSession(req)) return next();
 
     const enabled = await getMaintenanceMode();
     if (!enabled) return next();

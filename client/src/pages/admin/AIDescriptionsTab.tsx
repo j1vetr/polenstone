@@ -79,22 +79,22 @@ export default function AIDescriptionsPanel({ products, categories }: { products
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Wand2 className="w-6 h-6 text-amber-500" />
+          <h2 className="text-2xl font-bold text-neutral-900 flex items-center gap-2">
+            <Wand2 className="w-6 h-6 text-neutral-900" />
             AI Ürün Açıklamaları
           </h2>
-          <p className="text-zinc-400 mt-1">Yapay zeka ile toplu ürün açıklaması oluşturun</p>
+          <p className="text-neutral-500 mt-1">Yapay zeka ile toplu ürün açıklaması oluşturun</p>
         </div>
       </div>
 
-      <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+      <div className="bg-white rounded-xl p-6 border border-neutral-200">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Kategori</label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Kategori</label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white"
+              className="w-full bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-2 text-neutral-900"
               disabled={isGenerating}
             >
               <option value="all">Tüm Kategoriler</option>
@@ -105,12 +105,12 @@ export default function AIDescriptionsPanel({ products, categories }: { products
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Açıklama Modu</label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Açıklama Modu</label>
             <div className="flex gap-2">
               <label className={`flex-1 p-3 rounded-lg border cursor-pointer transition-colors ${
                 descriptionMode === 'empty' 
-                  ? 'bg-amber-600/20 border-amber-600 text-amber-400' 
-                  : 'bg-zinc-800 border-zinc-700 text-zinc-400'
+                  ? 'bg-neutral-900/20 border-amber-600 text-neutral-900' 
+                  : 'bg-neutral-50 border-neutral-200 text-neutral-500'
               }`}>
                 <input
                   type="radio"
@@ -125,8 +125,8 @@ export default function AIDescriptionsPanel({ products, categories }: { products
               </label>
               <label className={`flex-1 p-3 rounded-lg border cursor-pointer transition-colors ${
                 descriptionMode === 'overwrite' 
-                  ? 'bg-amber-600/20 border-amber-600 text-amber-400' 
-                  : 'bg-zinc-800 border-zinc-700 text-zinc-400'
+                  ? 'bg-neutral-900/20 border-amber-600 text-neutral-900' 
+                  : 'bg-neutral-50 border-neutral-200 text-neutral-500'
               }`}>
                 <input
                   type="radio"
@@ -143,11 +143,11 @@ export default function AIDescriptionsPanel({ products, categories }: { products
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Yazım Stili</label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Yazım Stili</label>
             <select
               value={selectedStyle}
               onChange={(e) => setSelectedStyle(e.target.value)}
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white"
+              className="w-full bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-2 text-neutral-900"
               disabled={isGenerating}
             >
               {styles.map(style => (
@@ -158,13 +158,13 @@ export default function AIDescriptionsPanel({ products, categories }: { products
         </div>
 
         <div className="mt-6 flex items-center justify-between">
-          <p className="text-zinc-400">
+          <p className="text-neutral-500">
             {filteredProducts.length} ürün seçildi
           </p>
           <button
             onClick={generateDescriptions}
             disabled={isGenerating || filteredProducts.length === 0}
-            className="px-6 py-2 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2 bg-gradient-to-r from-amber-600 to-amber-700 text-neutral-900 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isGenerating ? (
               <>
@@ -182,7 +182,7 @@ export default function AIDescriptionsPanel({ products, categories }: { products
 
         {isGenerating && (
           <div className="mt-6">
-            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="h-2 bg-neutral-50 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-amber-500 to-amber-600 transition-all duration-300"
                 style={{ width: `${(progress.current / progress.total) * 100}%` }}
@@ -209,7 +209,7 @@ export default function AIDescriptionsPanel({ products, categories }: { products
                 ) : (
                   <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
                 )}
-                <span className="text-white text-sm truncate">{result.name}</span>
+                <span className="text-neutral-900 text-sm truncate">{result.name}</span>
                 <span className={`text-xs ml-auto ${result.success ? 'text-emerald-400' : 'text-red-400'}`}>
                   {result.message}
                 </span>

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Product, Category, Order, User, Stats } from './types';
+import type { Product, Category, Order, User, Stats, ProductVariant } from './types';
 
 interface UseAdminDashboardDataOptions {
   searchQuery: string;
@@ -43,7 +43,7 @@ export function useAdminDashboardData({
     enabled: !!adminUser,
   });
 
-  const { data: allVariants = [] } = useQuery<any[]>({
+  const { data: allVariants = [] } = useQuery<ProductVariant[]>({
     queryKey: ['admin-inventory'],
     queryFn: async () => {
       const res = await fetch('/api/admin/inventory', { credentials: 'include' });

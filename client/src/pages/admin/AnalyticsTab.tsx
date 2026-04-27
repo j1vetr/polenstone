@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, DollarSign, ShoppingBag, Users, Package, BadgePercent, Star, Award, BarChart3, AlertTriangle, UserPlus, Loader2, Globe } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, DollarSign, ShoppingBag, Users, Package, BadgePercent, Star, Award, BarChart3, AlertTriangle, UserPlus, Loader2, Globe, type LucideIcon } from 'lucide-react';
+import type { AnalyticsStatusRow, AnalyticsBestSeller, AnalyticsCountryRow } from './_shared/types';
 
 export default function AnalyticsPanel() {
   const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'year'>('month');
@@ -58,15 +59,15 @@ export default function AnalyticsPanel() {
     cancelled:  { label: 'İptal',        color: '#ef4444' },
   };
 
-  const totalOrders = (statusBreakdown || []).reduce((s: number, r: any) => s + r.count, 0);
-  const maxBestRevenue = bestSellers?.length > 0 ? Math.max(...bestSellers.map((b: any) => b.revenue)) : 1;
+  const totalOrders = (statusBreakdown || []).reduce((s: number, r: AnalyticsStatusRow) => s + r.count, 0);
+  const maxBestRevenue = bestSellers?.length > 0 ? Math.max(...bestSellers.map((b: AnalyticsBestSeller) => b.revenue)) : 1;
   const maxSalesRev = salesData?.revenue?.length > 0 ? Math.max(...salesData.revenue, 1) : 1;
   const chartHeight = 180;
 
   const KpiCard = ({ icon: Icon, iconClass, label, value, sub, change, loading }: {
-    icon: any; iconClass: string; label: string; value: string; sub?: string; change?: number; loading?: boolean;
+    icon: LucideIcon; iconClass: string; label: string; value: string; sub?: string; change?: number; loading?: boolean;
   }) => (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+    <div className="bg-white border border-neutral-200 rounded-xl p-5">
       <div className="flex items-start justify-between mb-4">
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconClass}`}>
           <Icon className="w-5 h-5" />
@@ -79,12 +80,12 @@ export default function AnalyticsPanel() {
         )}
       </div>
       {loading ? (
-        <div className="h-8 w-24 bg-zinc-800 rounded animate-pulse" />
+        <div className="h-8 w-24 bg-neutral-50 rounded animate-pulse" />
       ) : (
-        <p className="text-2xl font-bold text-white tracking-tight">{value}</p>
+        <p className="text-2xl font-bold text-neutral-900 tracking-tight">{value}</p>
       )}
-      <p className="text-xs text-zinc-500 mt-1">{label}</p>
-      {sub && <p className="text-xs text-zinc-600 mt-0.5">{sub}</p>}
+      <p className="text-xs text-neutral-500 mt-1">{label}</p>
+      {sub && <p className="text-xs text-neutral-400 mt-0.5">{sub}</p>}
     </div>
   );
 
@@ -123,18 +124,18 @@ export default function AnalyticsPanel() {
       </div>
 
       {/* Sales Chart */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+      <div className="bg-white border border-neutral-200 rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-base font-semibold text-white">Satış Grafiği</h3>
-            <p className="text-xs text-zinc-500 mt-0.5">Gelir ve sipariş dağılımı</p>
+            <h3 className="text-base font-semibold text-neutral-900">Satış Grafiği</h3>
+            <p className="text-xs text-neutral-500 mt-0.5">Gelir ve sipariş dağılımı</p>
           </div>
-          <div className="flex bg-zinc-800 rounded-lg p-0.5 gap-0.5">
+          <div className="flex bg-neutral-50 rounded-lg p-0.5 gap-0.5">
             {(['day', 'week', 'month', 'year'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${period === p ? 'bg-white text-black shadow' : 'text-zinc-400 hover:text-white'}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${period === p ? 'bg-white text-black shadow' : 'text-neutral-500 hover:text-neutral-900'}`}
               >
                 {p === 'day' ? '24 Saat' : p === 'week' ? 'Hafta' : p === 'month' ? '30 Gün' : 'Yıl'}
               </button>
@@ -144,15 +145,15 @@ export default function AnalyticsPanel() {
 
         {salesLoading ? (
           <div className="flex items-center justify-center" style={{ height: chartHeight + 40 }}>
-            <Loader2 className="w-6 h-6 animate-spin text-zinc-600" />
+            <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
           </div>
         ) : salesData?.labels?.length > 0 ? (
           <div>
             <div className="relative" style={{ height: chartHeight }}>
               {[0, 25, 50, 75, 100].map(pct => (
-                <div key={pct} className="absolute w-full border-t border-zinc-800/60" style={{ bottom: `${pct}%` }}>
+                <div key={pct} className="absolute w-full border-t border-neutral-200/60" style={{ bottom: `${pct}%` }}>
                   {pct > 0 && (
-                    <span className="absolute right-0 -translate-y-1/2 text-[10px] text-zinc-600 pr-1 select-none">
+                    <span className="absolute right-0 -translate-y-1/2 text-[10px] text-neutral-400 pr-1 select-none">
                       {fmtPrice((maxSalesRev * pct) / 100)}
                     </span>
                   )}
@@ -165,12 +166,12 @@ export default function AnalyticsPanel() {
                   return (
                     <div key={i} className="flex-1 flex flex-col items-center justify-end group relative" style={{ height: '100%' }}>
                       <div
-                        className={`w-full rounded-t-md transition-all duration-300 cursor-default ${isLast ? 'bg-white' : 'bg-zinc-700 group-hover:bg-zinc-500'}`}
+                        className={`w-full rounded-t-md transition-all duration-300 cursor-default ${isLast ? 'bg-white' : 'bg-neutral-200 group-hover:bg-zinc-500'}`}
                         style={{ height: `${h}%`, minHeight: rev > 0 ? '4px' : '0' }}
                       >
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 shadow-xl z-20 pointer-events-none whitespace-nowrap">
-                          <span className="text-white text-xs font-semibold">{fmtPrice(rev)}</span>
-                          <span className="text-zinc-400 text-[10px]">{salesData.orders?.[i] || 0} sipariş</span>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 shadow-xl z-20 pointer-events-none whitespace-nowrap">
+                          <span className="text-neutral-900 text-xs font-semibold">{fmtPrice(rev)}</span>
+                          <span className="text-neutral-500 text-[10px]">{salesData.orders?.[i] || 0} sipariş</span>
                         </div>
                       </div>
                     </div>
@@ -181,22 +182,22 @@ export default function AnalyticsPanel() {
             <div className="flex gap-1 mt-2 pr-14">
               {salesData.labels.map((label: string, i: number) => (
                 <div key={i} className="flex-1 text-center">
-                  <span className="text-[9px] text-zinc-600 block truncate">{label}</span>
+                  <span className="text-[9px] text-neutral-400 block truncate">{label}</span>
                 </div>
               ))}
             </div>
-            <div className="flex items-center gap-6 mt-4 pt-4 border-t border-zinc-800">
+            <div className="flex items-center gap-6 mt-4 pt-4 border-t border-neutral-200">
               <div>
-                <p className="text-xs text-zinc-500">Toplam Gelir</p>
-                <p className="text-sm font-semibold text-white">{fmtPrice(salesData.revenue.reduce((a: number, b: number) => a + b, 0))}</p>
+                <p className="text-xs text-neutral-500">Toplam Gelir</p>
+                <p className="text-sm font-semibold text-neutral-900">{fmtPrice(salesData.revenue.reduce((a: number, b: number) => a + b, 0))}</p>
               </div>
               <div>
-                <p className="text-xs text-zinc-500">Toplam Sipariş</p>
-                <p className="text-sm font-semibold text-white">{fmt(salesData.orders?.reduce((a: number, b: number) => a + b, 0) || 0)}</p>
+                <p className="text-xs text-neutral-500">Toplam Sipariş</p>
+                <p className="text-sm font-semibold text-neutral-900">{fmt(salesData.orders?.reduce((a: number, b: number) => a + b, 0) || 0)}</p>
               </div>
               <div>
-                <p className="text-xs text-zinc-500">Ort. Sipariş Değeri</p>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-xs text-neutral-500">Ort. Sipariş Değeri</p>
+                <p className="text-sm font-semibold text-neutral-900">
                   {(salesData.orders?.reduce((a: number, b: number) => a + b, 0) || 0) > 0
                     ? fmtPrice(salesData.revenue.reduce((a: number, b: number) => a + b, 0) / salesData.orders.reduce((a: number, b: number) => a + b, 0))
                     : '—'}
@@ -205,7 +206,7 @@ export default function AnalyticsPanel() {
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center text-zinc-500 text-sm" style={{ height: chartHeight }}>
+          <div className="flex items-center justify-center text-neutral-500 text-sm" style={{ height: chartHeight }}>
             Bu dönem için veri bulunamadı
           </div>
         )}
@@ -215,61 +216,61 @@ export default function AnalyticsPanel() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
         {/* Best sellers */}
-        <div className="lg:col-span-3 bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+        <div className="lg:col-span-3 bg-white border border-neutral-200 rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
             <div>
-              <h3 className="text-sm font-semibold text-white">En Çok Satan Ürünler</h3>
-              <p className="text-xs text-zinc-500 mt-0.5">Tüm zamanlar, satış adedine göre</p>
+              <h3 className="text-sm font-semibold text-neutral-900">En Çok Satan Ürünler</h3>
+              <p className="text-xs text-neutral-500 mt-0.5">Tüm zamanlar, satış adedine göre</p>
             </div>
             <Award className="w-4 h-4 text-yellow-500" />
           </div>
-          <div className="divide-y divide-zinc-800/60">
+          <div className="divide-y divide-neutral-200/60">
             {bestSellersLoading ? (
-              <div className="p-8 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-zinc-600" /></div>
-            ) : bestSellers?.filter((b: any) => b.totalSold > 0).length > 0 ? (
-              bestSellers.filter((b: any) => b.totalSold > 0).map((item: any, index: number) => {
+              <div className="p-8 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-neutral-400" /></div>
+            ) : bestSellers?.filter((b: AnalyticsBestSeller) => b.totalSold > 0).length > 0 ? (
+              bestSellers.filter((b: AnalyticsBestSeller) => b.totalSold > 0).map((item: AnalyticsBestSeller, index: number) => {
                 const barPct = maxBestRevenue > 0 ? (item.revenue / maxBestRevenue) * 100 : 0;
-                const rankColors = ['text-yellow-400', 'text-zinc-300', 'text-amber-600'];
+                const rankColors = ['text-yellow-400', 'text-neutral-700', 'text-amber-600'];
                 return (
-                  <div key={item.product.id} className="flex items-center gap-3 px-6 py-3 hover:bg-zinc-800/40 transition-colors">
-                    <span className={`w-5 text-xs font-bold text-center flex-shrink-0 ${rankColors[index] || 'text-zinc-600'}`}>
+                  <div key={item.product?.id ?? item.productId} className="flex items-center gap-3 px-6 py-3 hover:bg-neutral-50/40 transition-colors">
+                    <span className={`w-5 text-xs font-bold text-center flex-shrink-0 ${rankColors[index] || 'text-neutral-400'}`}>
                       {index + 1}
                     </span>
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-zinc-800 flex-shrink-0">
-                      {item.product.images?.[0]
-                        ? <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" />
-                        : <div className="w-full h-full flex items-center justify-center"><Package className="w-4 h-4 text-zinc-600" /></div>
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-50 flex-shrink-0">
+                      {item.product?.images?.[0]
+                        ? <img src={item.product?.images?.[0] ?? ''} alt="" className="w-full h-full object-cover" />
+                        : <div className="w-full h-full flex items-center justify-center"><Package className="w-4 h-4 text-neutral-400" /></div>
                       }
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-white truncate">{item.product.name}</p>
+                      <p className="text-sm font-medium text-neutral-900 truncate">{item.product?.name ?? item.productName}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <div className="flex-1 bg-zinc-800 rounded-full h-1">
+                        <div className="flex-1 bg-neutral-50 rounded-full h-1">
                           <div className="bg-white h-1 rounded-full transition-all" style={{ width: `${barPct}%` }} />
                         </div>
-                        <span className="text-[10px] text-zinc-500 whitespace-nowrap">{item.totalSold} adet</span>
+                        <span className="text-[10px] text-neutral-500 whitespace-nowrap">{item.totalSold} adet</span>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-sm font-semibold text-white">{fmtPrice(item.revenue)}</p>
+                      <p className="text-sm font-semibold text-neutral-900">{fmtPrice(item.revenue)}</p>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <div className="p-8 text-center text-zinc-500 text-sm">Henüz satış verisi yok</div>
+              <div className="p-8 text-center text-neutral-500 text-sm">Henüz satış verisi yok</div>
             )}
           </div>
         </div>
 
         {/* Status breakdown */}
-        <div className="lg:col-span-2 bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+        <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
             <div>
-              <h3 className="text-sm font-semibold text-white">Sipariş Dağılımı</h3>
-              <p className="text-xs text-zinc-500 mt-0.5">Duruma göre tüm zamanlar</p>
+              <h3 className="text-sm font-semibold text-neutral-900">Sipariş Dağılımı</h3>
+              <p className="text-xs text-neutral-500 mt-0.5">Duruma göre tüm zamanlar</p>
             </div>
-            <BarChart3 className="w-4 h-4 text-zinc-500" />
+            <BarChart3 className="w-4 h-4 text-neutral-500" />
           </div>
 
           {statusBreakdown?.length > 0 && (
@@ -278,7 +279,7 @@ export default function AnalyticsPanel() {
                 <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
                   {(() => {
                     let offset = 0;
-                    return (statusBreakdown || []).map((r: any) => {
+                    return (statusBreakdown || []).map((r: AnalyticsStatusRow) => {
                       const pct = totalOrders > 0 ? (r.count / totalOrders) * 100 : 0;
                       const color = STATUS_META[r.status]?.color || '#71717a';
                       const el = (
@@ -298,23 +299,23 @@ export default function AnalyticsPanel() {
                   })()}
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <p className="text-xl font-bold text-white">{totalOrders}</p>
-                  <p className="text-[10px] text-zinc-500">sipariş</p>
+                  <p className="text-xl font-bold text-neutral-900">{totalOrders}</p>
+                  <p className="text-[10px] text-neutral-500">sipariş</p>
                 </div>
               </div>
             </div>
           )}
 
           <div className="px-4 pb-4 space-y-2.5">
-            {(statusBreakdown || []).map((r: any) => {
+            {(statusBreakdown || []).map((r: AnalyticsStatusRow) => {
               const meta = STATUS_META[r.status] || { label: r.status, color: '#71717a' };
               const pct = totalOrders > 0 ? (r.count / totalOrders) * 100 : 0;
               return (
                 <div key={r.status} className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: meta.color }} />
-                  <span className="text-xs text-zinc-400 flex-1">{meta.label}</span>
-                  <span className="text-xs font-semibold text-white">{r.count}</span>
-                  <span className="text-[10px] text-zinc-600 w-8 text-right">{pct.toFixed(0)}%</span>
+                  <span className="text-xs text-neutral-500 flex-1">{meta.label}</span>
+                  <span className="text-xs font-semibold text-neutral-900">{r.count}</span>
+                  <span className="text-[10px] text-neutral-400 w-8 text-right">{pct.toFixed(0)}%</span>
                 </div>
               );
             })}
@@ -324,44 +325,44 @@ export default function AnalyticsPanel() {
 
       {/* Country breakdown */}
       {countryBreakdown?.length > 0 && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+        <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
             <div>
-              <h3 className="text-sm font-semibold text-white">Ülke Bazında Gelir</h3>
-              <p className="text-xs text-zinc-500 mt-0.5">İptal edilen siparişler hariç</p>
+              <h3 className="text-sm font-semibold text-neutral-900">Ülke Bazında Gelir</h3>
+              <p className="text-xs text-neutral-500 mt-0.5">İptal edilen siparişler hariç</p>
             </div>
-            <Globe className="w-4 h-4 text-zinc-500" />
+            <Globe className="w-4 h-4 text-neutral-500" />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-zinc-800">
-                  <th className="text-left px-6 py-3 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Ülke</th>
-                  <th className="text-right px-6 py-3 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Sipariş</th>
-                  <th className="text-right px-6 py-3 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Gelir</th>
-                  <th className="text-right px-6 py-3 text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Pay</th>
+                <tr className="border-b border-neutral-200">
+                  <th className="text-left px-6 py-3 text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Ülke</th>
+                  <th className="text-right px-6 py-3 text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Sipariş</th>
+                  <th className="text-right px-6 py-3 text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Gelir</th>
+                  <th className="text-right px-6 py-3 text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Pay</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/60">
-                {countryBreakdown.map((row: any) => {
-                  const totalRevenue = countryBreakdown.reduce((s: number, r: any) => s + r.revenue, 0);
+              <tbody className="divide-y divide-neutral-200/60">
+                {countryBreakdown.map((row: AnalyticsCountryRow) => {
+                  const totalRevenue = countryBreakdown.reduce((s: number, r: AnalyticsCountryRow) => s + r.revenue, 0);
                   const share = totalRevenue > 0 ? (row.revenue / totalRevenue) * 100 : 0;
                   return (
-                    <tr key={row.country} className="hover:bg-zinc-800/30 transition-colors">
+                    <tr key={row.country} className="hover:bg-neutral-50/30 transition-colors">
                       <td className="px-6 py-3">
                         <div className="flex items-center gap-3">
-                          <Globe className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
-                          <span className="text-sm text-white">{row.country}</span>
+                          <Globe className="w-3.5 h-3.5 text-neutral-500 flex-shrink-0" />
+                          <span className="text-sm text-neutral-900">{row.country}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-3 text-right text-sm text-zinc-300">{row.count}</td>
-                      <td className="px-6 py-3 text-right text-sm font-semibold text-white">{fmtPrice(row.revenue)}</td>
+                      <td className="px-6 py-3 text-right text-sm text-neutral-700">{row.count}</td>
+                      <td className="px-6 py-3 text-right text-sm font-semibold text-neutral-900">{fmtPrice(row.revenue)}</td>
                       <td className="px-6 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <div className="w-16 bg-zinc-800 rounded-full h-1">
+                          <div className="w-16 bg-neutral-50 rounded-full h-1">
                             <div className="bg-zinc-400 h-1 rounded-full" style={{ width: `${share}%` }} />
                           </div>
-                          <span className="text-xs text-zinc-500 w-8 text-right">{share.toFixed(0)}%</span>
+                          <span className="text-xs text-neutral-500 w-8 text-right">{share.toFixed(0)}%</span>
                         </div>
                       </td>
                     </tr>

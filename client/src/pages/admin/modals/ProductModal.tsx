@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { X, Upload, ImageIcon, Loader2, Plus, Trash2, Sparkles, Wand2, ChevronDown, ChevronUp, Edit, Check, GripVertical, Package, Eye, RefreshCw } from 'lucide-react';
 import type { Product, Category } from '../_shared/types';
+import AdminModal from '../_ui/AdminModal';
 
 const ALL_SIZES = ['S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL'];
 
@@ -238,51 +239,49 @@ export default function ProductModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-5xl max-h-[90vh] overflow-auto">
-        <div className="flex items-center justify-between p-6 border-b border-zinc-800">
-          <h3 className="text-xl font-semibold text-white">
-            {product ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
-          </h3>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setShowPreview(!showPreview)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                showPreview ? 'bg-white text-black' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-              }`}
-              data-testid="button-toggle-preview"
-            >
-              <Eye className="w-4 h-4" />
-              Önizleme
-            </button>
-            <button onClick={onClose} className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-        
-        <div className={`flex ${showPreview ? 'flex-row' : 'flex-col'}`}>
-        <form onSubmit={handleSubmit} className={`p-6 space-y-4 ${showPreview ? 'w-1/2 border-r border-zinc-800' : 'w-full'}`}>
+    <AdminModal
+      open
+      onClose={onClose}
+      title={product ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
+      size="xl"
+      testId="modal-product"
+      headerActions={
+        <button
+          type="button"
+          onClick={() => setShowPreview(!showPreview)}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            showPreview
+              ? 'bg-neutral-900 text-white hover:bg-neutral-800'
+              : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+          }`}
+          data-testid="button-toggle-preview"
+        >
+          <Eye className="w-3.5 h-3.5" />
+          Önizleme
+        </button>
+      }
+    >
+        <div className={`flex ${showPreview ? 'flex-row' : 'flex-col'} -mx-6 -my-5`}>
+        <form onSubmit={handleSubmit} className={`p-6 space-y-4 ${showPreview ? 'w-1/2 border-r border-neutral-200' : 'w-full'}`}>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Ürün Adı</label>
+              <label className="block text-sm font-medium text-neutral-500 mb-2">Ürün Adı</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-zinc-500"
+                className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-zinc-500"
                 required
                 data-testid="input-product-name"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Stok Kodu (SKU)</label>
+              <label className="block text-sm font-medium text-neutral-500 mb-2">Stok Kodu (SKU)</label>
               <input
                 type="text"
                 value={formData.sku}
                 onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-zinc-500"
+                className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-zinc-500"
                 placeholder="Örn: HNK-001"
                 data-testid="input-product-sku"
               />
@@ -291,11 +290,11 @@ export default function ProductModal({
           
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-zinc-400">URL Slug</label>
+              <label className="block text-sm font-medium text-neutral-500">URL Slug</label>
               <button
                 type="button"
                 onClick={regenerateSlug}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-white text-xs font-medium rounded-lg transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-200 hover:bg-zinc-600 text-neutral-900 text-xs font-medium rounded-lg transition-all"
                 data-testid="button-regenerate-slug"
               >
                 <RefreshCw className="w-3 h-3" />
@@ -306,21 +305,21 @@ export default function ProductModal({
               type="text"
               value={formData.slug}
               onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
-              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-zinc-500"
+              className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-zinc-500"
               placeholder="urun-adi-slug"
               data-testid="input-product-slug"
             />
-            <p className="text-xs text-zinc-500 mt-1">Site URL'sinde görünecek: polenstone.com.tr/urun/{formData.slug || 'slug'}</p>
+            <p className="text-xs text-neutral-500 mt-1">Site URL'sinde görünecek: polenstone.com.tr/urun/{formData.slug || 'slug'}</p>
           </div>
           
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-zinc-400">Açıklama</label>
+              <label className="block text-sm font-medium text-neutral-500">Açıklama</label>
               {product?.id && (
                 <button
                   type="button"
                   onClick={() => setShowAiPanel(!showAiPanel)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs font-medium rounded-lg transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-neutral-900 text-xs font-medium rounded-lg transition-all"
                   data-testid="button-ai-description"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
@@ -330,14 +329,14 @@ export default function ProductModal({
             </div>
             
             {showAiPanel && (
-              <div className="mb-3 p-4 bg-zinc-800/50 border border-purple-500/30 rounded-xl space-y-3">
+              <div className="mb-3 p-4 bg-neutral-100 border border-purple-500/30 rounded-xl space-y-3">
                 <div className="flex items-center gap-2 text-purple-400 text-sm font-medium">
                   <Wand2 className="w-4 h-4" />
                   AI Açıklama Oluşturucu
                 </div>
                 
                 <div>
-                  <label className="block text-xs text-zinc-500 mb-1.5">Yazım Stili</label>
+                  <label className="block text-xs text-neutral-500 mb-1.5">Yazım Stili</label>
                   <div className="grid grid-cols-5 gap-1.5">
                     {aiStyles.map((style) => (
                       <button
@@ -346,8 +345,8 @@ export default function ProductModal({
                         onClick={() => setAiStyle(style.id)}
                         className={`px-2 py-1.5 text-xs rounded-lg transition-all ${
                           aiStyle === style.id
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+                            ? 'bg-purple-600 text-neutral-900'
+                            : 'bg-neutral-200 text-neutral-700 hover:bg-zinc-600'
                         }`}
                         title={style.description}
                         data-testid={`button-ai-style-${style.id}`}
@@ -362,7 +361,7 @@ export default function ProductModal({
                   type="button"
                   onClick={generateAIDescription}
                   disabled={isGeneratingAI}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-all"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-neutral-900 text-sm font-medium rounded-lg transition-all"
                   data-testid="button-ai-generate"
                 >
                   {isGeneratingAI ? (
@@ -380,16 +379,16 @@ export default function ProductModal({
                 
                 {aiPreview && (
                   <div className="space-y-2">
-                    <div className="text-xs text-zinc-500">Önizleme:</div>
+                    <div className="text-xs text-neutral-500">Önizleme:</div>
                     <div 
-                      className="p-3 bg-zinc-900 border border-zinc-700 rounded-lg text-sm text-zinc-300 max-h-40 overflow-y-auto prose prose-sm prose-invert"
+                      className="p-3 bg-white border border-neutral-200 rounded-lg text-sm text-neutral-700 max-h-40 overflow-y-auto prose prose-sm prose-invert"
                       dangerouslySetInnerHTML={{ __html: aiPreview }}
                     />
                     <div className="flex gap-2">
                       <button
                         type="button"
                         onClick={applyAIDescription}
-                        className="flex-1 px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-xs font-medium rounded-lg transition-colors"
+                        className="flex-1 px-3 py-1.5 bg-green-600 hover:bg-green-500 text-neutral-900 text-xs font-medium rounded-lg transition-colors"
                         data-testid="button-ai-apply"
                       >
                         <Check className="w-3.5 h-3.5 inline mr-1" />
@@ -399,7 +398,7 @@ export default function ProductModal({
                         type="button"
                         onClick={generateAIDescription}
                         disabled={isGeneratingAI}
-                        className="flex-1 px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-white text-xs font-medium rounded-lg transition-colors"
+                        className="flex-1 px-3 py-1.5 bg-neutral-200 hover:bg-zinc-600 text-neutral-900 text-xs font-medium rounded-lg transition-colors"
                         data-testid="button-ai-regenerate"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 inline mr-1 ${isGeneratingAI ? 'animate-spin' : ''}`} />
@@ -408,7 +407,7 @@ export default function ProductModal({
                       <button
                         type="button"
                         onClick={() => { setAiPreview(null); setShowAiPanel(false); }}
-                        className="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-white text-xs font-medium rounded-lg transition-colors"
+                        className="px-3 py-1.5 bg-neutral-200 hover:bg-zinc-600 text-neutral-900 text-xs font-medium rounded-lg transition-colors"
                         data-testid="button-ai-cancel"
                       >
                         <X className="w-3.5 h-3.5" />
@@ -423,15 +422,15 @@ export default function ProductModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={5}
-              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-zinc-500 font-mono text-sm"
+              className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-zinc-500 font-mono text-sm"
               placeholder="Ürün açıklaması (HTML destekler)..."
               data-testid="input-product-description"
             />
             {formData.description && formData.description.includes('<') && (
               <div className="mt-2">
-                <div className="text-xs text-zinc-500 mb-1">Önizleme:</div>
+                <div className="text-xs text-neutral-500 mb-1">Önizleme:</div>
                 <div 
-                  className="p-3 bg-zinc-800/50 border border-zinc-700 rounded-lg text-sm text-zinc-300 prose prose-sm prose-invert max-w-none"
+                  className="p-3 bg-neutral-100 border border-neutral-200 rounded-lg text-sm text-neutral-700 prose prose-sm prose-invert max-w-none"
                   dangerouslySetInnerHTML={{ __html: formData.description }}
                 />
               </div>
@@ -440,33 +439,33 @@ export default function ProductModal({
           
           <div className={`grid ${!product ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Fiyat (₺)</label>
+              <label className="block text-sm font-medium text-neutral-500 mb-2">Fiyat (₺)</label>
               <input
                 type="text"
                 value={formData.basePrice}
                 onChange={(e) => setFormData({ ...formData, basePrice: e.target.value })}
-                className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-zinc-500"
+                className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-zinc-500"
                 required
                 data-testid="input-product-price"
               />
             </div>
             {!product && (
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Başlangıç Stoğu</label>
+                <label className="block text-sm font-medium text-neutral-500 mb-2">Başlangıç Stoğu</label>
                 <input
                   type="number"
                   value={formData.initialStock}
                   onChange={(e) => setFormData({ ...formData, initialStock: e.target.value })}
                   placeholder="Tüm varyasyonlar için"
-                  className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-zinc-500"
+                  className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-zinc-500"
                   min="0"
                   data-testid="input-product-stock"
                 />
-                <p className="text-xs text-zinc-500 mt-1">Tüm beden/renk kombinasyonlarına uygulanır</p>
+                <p className="text-xs text-neutral-500 mt-1">Tüm beden/renk kombinasyonlarına uygulanır</p>
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Kategoriler</label>
+              <label className="block text-sm font-medium text-neutral-500 mb-2">Kategoriler</label>
               <div className="flex flex-wrap gap-2">
                 {categories.map((cat) => (
                   <button
@@ -485,7 +484,7 @@ export default function ProductModal({
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       formData.categoryIds.includes(cat.id)
                         ? 'bg-white text-black'
-                        : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                        : 'bg-neutral-50 text-neutral-500 hover:bg-neutral-200'
                     }`}
                     data-testid={`button-category-${cat.id}`}
                   >
@@ -500,7 +499,7 @@ export default function ProductModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Bedenler</label>
+            <label className="block text-sm font-medium text-neutral-500 mb-2">Bedenler</label>
             <div className="flex flex-wrap gap-2">
               {ALL_SIZES.map((size) => (
                 <button
@@ -510,7 +509,7 @@ export default function ProductModal({
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     formData.availableSizes.includes(size)
                       ? 'bg-white text-black'
-                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                      : 'bg-neutral-50 text-neutral-500 hover:bg-neutral-200'
                   }`}
                   data-testid={`button-size-${size}`}
                 >
@@ -521,7 +520,7 @@ export default function ProductModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Renkler</label>
+            <label className="block text-sm font-medium text-neutral-500 mb-2">Renkler</label>
             <div className="flex flex-wrap gap-2">
               {COLOR_OPTIONS.map((color) => (
                 <button
@@ -530,8 +529,8 @@ export default function ProductModal({
                   onClick={() => toggleColor(color)}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
                     formData.availableColors.some(c => c.name === color.name)
-                      ? 'bg-zinc-700 ring-2 ring-white'
-                      : 'bg-zinc-800 hover:bg-zinc-700'
+                      ? 'bg-neutral-200 ring-2 ring-white'
+                      : 'bg-neutral-50 hover:bg-neutral-200'
                   }`}
                   data-testid={`button-color-${color.name}`}
                 >
@@ -539,14 +538,14 @@ export default function ProductModal({
                     className="w-4 h-4 rounded-full border border-zinc-600" 
                     style={{ backgroundColor: color.hex }}
                   />
-                  <span className="text-zinc-300">{color.name}</span>
+                  <span className="text-neutral-700">{color.name}</span>
                 </button>
               ))}
             </div>
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Ürün Resimleri</label>
+            <label className="block text-sm font-medium text-neutral-500 mb-2">Ürün Resimleri</label>
             
             {uploadError && (
               <div className="mb-3 p-3 bg-red-900/30 border border-red-600 rounded-lg text-red-400 text-sm">
@@ -556,7 +555,7 @@ export default function ProductModal({
             
             <div 
               className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                dragOver ? 'border-white bg-zinc-800' : 'border-zinc-700 hover:border-zinc-500'
+                dragOver ? 'border-white bg-neutral-50' : 'border-neutral-200 hover:border-zinc-500'
               }`}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
@@ -572,11 +571,11 @@ export default function ProductModal({
                 data-testid="input-product-images"
               />
               <label htmlFor="image-upload" className="cursor-pointer">
-                <Upload className="w-8 h-8 mx-auto mb-2 text-zinc-500" />
-                <p className="text-sm text-zinc-400">
-                  Resimleri sürükleyip bırakın veya <span className="text-white underline">seçin</span>
+                <Upload className="w-8 h-8 mx-auto mb-2 text-neutral-500" />
+                <p className="text-sm text-neutral-500">
+                  Resimleri sürükleyip bırakın veya <span className="text-neutral-900 underline">seçin</span>
                 </p>
-                <p className="text-xs text-zinc-500 mt-1">PNG, JPG, WEBP (max 10MB)</p>
+                <p className="text-xs text-neutral-500 mt-1">PNG, JPG, WEBP (max 10MB)</p>
               </label>
             </div>
 
@@ -620,7 +619,7 @@ export default function ProductModal({
                           newImages.unshift(selected);
                           setFormData({ ...formData, images: newImages });
                         }}
-                        className="absolute bottom-1 left-1 text-[10px] bg-zinc-700 text-white px-1.5 py-0.5 rounded font-medium opacity-0 group-hover:opacity-100 transition-opacity hover:bg-zinc-600"
+                        className="absolute bottom-1 left-1 text-[10px] bg-neutral-200 text-neutral-900 px-1.5 py-0.5 rounded font-medium opacity-0 group-hover:opacity-100 transition-opacity hover:bg-zinc-600"
                       >
                         Ana Yap
                       </button>
@@ -641,7 +640,7 @@ export default function ProductModal({
                     >
                       <X className="w-4 h-4" />
                     </button>
-                    <span className="absolute bottom-1 left-1 text-[10px] bg-green-600 text-white px-1.5 py-0.5 rounded font-medium">
+                    <span className="absolute bottom-1 left-1 text-[10px] bg-green-600 text-neutral-900 px-1.5 py-0.5 rounded font-medium">
                       Yeni
                     </span>
                   </div>
@@ -653,7 +652,7 @@ export default function ProductModal({
           <div className="flex flex-wrap gap-6">
             {/* Active/Inactive Toggle Switch */}
             <div className="flex items-center gap-3">
-              <span className="text-sm text-zinc-400">Ürün Durumu:</span>
+              <span className="text-sm text-neutral-500">Ürün Durumu:</span>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
@@ -672,21 +671,21 @@ export default function ProductModal({
               </span>
             </div>
             
-            <label className="flex items-center gap-2 text-zinc-300 cursor-pointer">
+            <label className="flex items-center gap-2 text-neutral-700 cursor-pointer">
               <input
                 type="checkbox"
                 checked={formData.isFeatured}
                 onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-                className="w-4 h-4 rounded bg-zinc-700 border-zinc-600"
+                className="w-4 h-4 rounded bg-neutral-200 border-zinc-600"
               />
               Öne Çıkan
             </label>
-            <label className="flex items-center gap-2 text-zinc-300 cursor-pointer">
+            <label className="flex items-center gap-2 text-neutral-700 cursor-pointer">
               <input
                 type="checkbox"
                 checked={formData.isNew}
                 onChange={(e) => setFormData({ ...formData, isNew: e.target.checked })}
-                className="w-4 h-4 rounded bg-zinc-700 border-zinc-600"
+                className="w-4 h-4 rounded bg-neutral-200 border-zinc-600"
               />
               Yeni
             </label>
@@ -696,7 +695,7 @@ export default function ProductModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
+              className="px-6 py-2 bg-neutral-50 text-neutral-900 rounded-lg hover:bg-neutral-200 transition-colors"
             >
               İptal
             </button>
@@ -713,9 +712,9 @@ export default function ProductModal({
         </form>
         
         {showPreview && (
-          <div className="w-1/2 p-6 bg-zinc-950/50 max-h-[calc(90vh-80px)] overflow-y-auto">
-            <div className="sticky top-0 bg-zinc-950/80 backdrop-blur-sm py-2 mb-4 -mt-2 z-10">
-              <h4 className="text-sm font-medium text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+          <div className="w-1/2 p-6 bg-white/50 max-h-[calc(90vh-80px)] overflow-y-auto">
+            <div className="sticky top-0 bg-white/80 backdrop-blur-sm py-2 mb-4 -mt-2 z-10">
+              <h4 className="text-sm font-medium text-neutral-500 uppercase tracking-wider flex items-center gap-2">
                 <Eye className="w-4 h-4" />
                 Müşteri Görünümü Önizlemesi
               </h4>
@@ -724,7 +723,7 @@ export default function ProductModal({
             <div className="space-y-6">
               {(formData.images.length > 0 || pendingFiles.length > 0) && (
                 <div className="space-y-3">
-                  <div className="aspect-[4/5] bg-zinc-800 rounded-xl overflow-hidden">
+                  <div className="aspect-[4/5] bg-neutral-50 rounded-xl overflow-hidden">
                     {formData.images[previewImage] ? (
                       <img 
                         src={formData.images[previewImage]} 
@@ -738,7 +737,7 @@ export default function ProductModal({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-zinc-600">
+                      <div className="w-full h-full flex items-center justify-center text-neutral-400">
                         <Package className="w-16 h-16" />
                       </div>
                     )}
@@ -763,21 +762,21 @@ export default function ProductModal({
               )}
               
               <div>
-                <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">
+                <p className="text-xs text-neutral-500 uppercase tracking-wider mb-1">
                   {formData.sku || 'SKU'}
                 </p>
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-neutral-900">
                   {formData.name || 'Ürün Adı'}
                 </h3>
-                <p className="text-2xl font-bold text-white mt-2">
+                <p className="text-2xl font-bold text-neutral-900 mt-2">
                   {formData.basePrice ? `${parseFloat(formData.basePrice).toLocaleString('tr-TR')} ₺` : '0 ₺'}
                 </p>
               </div>
               
               {formData.availableColors.length > 0 && (
                 <div>
-                  <p className="text-sm text-zinc-400 mb-2">
-                    Renk: <span className="text-white">{previewColor?.name || formData.availableColors[0]?.name}</span>
+                  <p className="text-sm text-neutral-500 mb-2">
+                    Renk: <span className="text-neutral-900">{previewColor?.name || formData.availableColors[0]?.name}</span>
                   </p>
                   <div className="flex gap-2">
                     {formData.availableColors.map((color) => {
@@ -800,8 +799,8 @@ export default function ProductModal({
               
               {formData.availableSizes.length > 0 && (
                 <div>
-                  <p className="text-sm text-zinc-400 mb-2">
-                    Beden: <span className="text-white">{previewSize || formData.availableSizes[0]}</span>
+                  <p className="text-sm text-neutral-500 mb-2">
+                    Beden: <span className="text-neutral-900">{previewSize || formData.availableSizes[0]}</span>
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {formData.availableSizes.map((size) => {
@@ -814,7 +813,7 @@ export default function ProductModal({
                           className={`min-w-[48px] h-10 px-3 rounded-lg text-sm font-medium transition-all ${
                             isSelected 
                               ? 'bg-white text-black' 
-                              : 'bg-zinc-800 text-white hover:bg-zinc-700'
+                              : 'bg-neutral-50 text-neutral-900 hover:bg-neutral-200'
                           }`}
                         >
                           {size}
@@ -827,8 +826,8 @@ export default function ProductModal({
               
               {formData.description && (
                 <div>
-                  <p className="text-sm text-zinc-400 mb-2">Açıklama</p>
-                  <p className="text-sm text-zinc-300 leading-relaxed">
+                  <p className="text-sm text-neutral-500 mb-2">Açıklama</p>
+                  <p className="text-sm text-neutral-700 leading-relaxed">
                     {formData.description}
                   </p>
                 </div>
@@ -844,8 +843,8 @@ export default function ProductModal({
                 </button>
               </div>
               
-              <div className="mt-4 p-3 bg-zinc-800/50 rounded-lg border border-zinc-700/50">
-                <p className="text-xs text-zinc-500">
+              <div className="mt-4 p-3 bg-neutral-100 rounded-lg border border-neutral-200/50">
+                <p className="text-xs text-neutral-500">
                   Bu önizleme, müşterilerin ürün sayfasında göreceği görünümü yansıtır. 
                   Kaydet'e tıkladığınızda seçtiğiniz bedenler ve renkler ürün sayfasında görünecektir.
                 </p>
@@ -854,8 +853,6 @@ export default function ProductModal({
           </div>
         )}
         </div>
-      </div>
-    </div>
+    </AdminModal>
   );
 }
-

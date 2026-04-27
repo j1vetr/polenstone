@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import type { BulkAIResult } from '../_shared/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { Sparkles, X, Loader2, Check } from 'lucide-react';
 import type { Category } from '../_shared/types';
+import AdminModal from '../_ui/AdminModal';
 
 interface BulkAIModalProps {
   categories: Category[];
@@ -18,7 +20,7 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
     running: boolean;
     done: boolean;
     message: string;
-    results?: any[];
+    results?: BulkAIResult[];
   }>({ running: false, done: false, message: '' });
 
   const handleClose = () => {
@@ -29,30 +31,28 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-400" />
-            Toplu AI Açıklama
-          </h3>
-          <button
-            onClick={handleClose}
-            className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white"
-            disabled={bulkAIProgress.running}
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <AdminModal
+      open
+      onClose={handleClose}
+      closeOnOutsideClick={!bulkAIProgress.running}
+      title={
+        <>
+          <Sparkles className="w-4 h-4 text-purple-500" />
+          Toplu AI Açıklama
+        </>
+      }
+      size="md"
+      testId="modal-bulk-ai"
+    >
 
         {!bulkAIProgress.running && !bulkAIProgress.done ? (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Açıklama Stili</label>
+              <label className="block text-sm font-medium text-neutral-500 mb-2">Açıklama Stili</label>
               <select
                 value={bulkAIStyle}
                 onChange={(e) => setBulkAIStyle(e.target.value)}
-                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white"
+                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900"
                 data-testid="select-bulk-ai-style"
               >
                 <option value="professional">Profesyonel - Kurumsal ve güvenilir ton</option>
@@ -64,11 +64,11 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Kategori Filtresi (Opsiyonel)</label>
+              <label className="block text-sm font-medium text-neutral-500 mb-2">Kategori Filtresi (Opsiyonel)</label>
               <select
                 value={bulkAICategory}
                 onChange={(e) => setBulkAICategory(e.target.value)}
-                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white"
+                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900"
                 data-testid="select-bulk-ai-category"
               >
                 <option value="">Tüm Kategoriler</option>
@@ -80,8 +80,8 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
               </select>
             </div>
 
-            <div className="space-y-3 bg-zinc-800/50 p-4 rounded-lg">
-              <label className="block text-sm font-medium text-zinc-400 mb-3">Hangi ürünlere uygulansın?</label>
+            <div className="space-y-3 bg-neutral-100 p-4 rounded-lg">
+              <label className="block text-sm font-medium text-neutral-500 mb-3">Hangi ürünlere uygulansın?</label>
               <div className="space-y-2">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -92,10 +92,10 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
                       setBulkAIOnlyEmpty(true);
                       setBulkAIOverwrite(false);
                     }}
-                    className="w-5 h-5 bg-zinc-700 border-zinc-600 text-purple-600 focus:ring-purple-500"
+                    className="w-5 h-5 bg-neutral-200 border-zinc-600 text-purple-600 focus:ring-purple-500"
                     data-testid="radio-bulk-ai-empty-only"
                   />
-                  <span className="text-zinc-300">Sadece açıklaması boş ürünler</span>
+                  <span className="text-neutral-700">Sadece açıklaması boş ürünler</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -106,16 +106,16 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
                       setBulkAIOnlyEmpty(false);
                       setBulkAIOverwrite(true);
                     }}
-                    className="w-5 h-5 bg-zinc-700 border-zinc-600 text-purple-600 focus:ring-purple-500"
+                    className="w-5 h-5 bg-neutral-200 border-zinc-600 text-purple-600 focus:ring-purple-500"
                     data-testid="radio-bulk-ai-overwrite"
                   />
-                  <span className="text-zinc-300">Tüm ürünler (mevcut açıklamalar silinir)</span>
+                  <span className="text-neutral-700">Tüm ürünler (mevcut açıklamalar silinir)</span>
                 </label>
               </div>
             </div>
 
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
-              <p className="text-amber-400 text-sm">
+            <div className="bg-neutral-900/10 border border-neutral-900/20 rounded-lg p-4">
+              <p className="text-neutral-900 text-sm">
                 ⚠️ Bu işlem, seçilen filtrelere göre tüm ürünlerin açıklamalarını AI ile oluşturacak. Her ürün için yaklaşık 2-3 saniye sürer.
               </p>
             </div>
@@ -146,7 +146,7 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
                   setBulkAIProgress({ running: false, done: true, message: 'Bağlantı hatası' });
                 }
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-500 hover:to-pink-500 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-neutral-900 rounded-lg font-medium hover:from-purple-500 hover:to-pink-500 transition-colors"
               data-testid="button-start-bulk-ai"
             >
               <Sparkles className="w-5 h-5" />
@@ -156,8 +156,8 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
         ) : bulkAIProgress.running ? (
           <div className="text-center py-8">
             <Loader2 className="w-12 h-12 animate-spin text-purple-400 mx-auto mb-4" />
-            <p className="text-zinc-300">{bulkAIProgress.message}</p>
-            <p className="text-zinc-500 text-sm mt-2">Bu işlem biraz zaman alabilir...</p>
+            <p className="text-neutral-700">{bulkAIProgress.message}</p>
+            <p className="text-neutral-500 text-sm mt-2">Bu işlem biraz zaman alabilir...</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -175,14 +175,14 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
 
             {bulkAIProgress.results && (
               <div className="max-h-60 overflow-y-auto space-y-2">
-                {bulkAIProgress.results.map((r: any, idx: number) => (
+                {bulkAIProgress.results.map((r: BulkAIResult, idx: number) => (
                   <div
                     key={idx}
                     className={`flex items-center justify-between p-2 rounded ${
-                      r.success ? 'bg-zinc-800' : 'bg-red-900/20'
+                      r.success ? 'bg-neutral-50' : 'bg-red-900/20'
                     }`}
                   >
-                    <span className="text-sm text-zinc-300 truncate flex-1">{r.productName}</span>
+                    <span className="text-sm text-neutral-700 truncate flex-1">{r.productName}</span>
                     {r.success ? (
                       <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
                     ) : (
@@ -198,14 +198,13 @@ export default function BulkAIModal({ categories, onClose }: BulkAIModalProps) {
                 onClose();
                 setBulkAIProgress({ running: false, done: false, message: '' });
               }}
-              className="w-full px-4 py-3 bg-zinc-800 text-white rounded-lg font-medium hover:bg-zinc-700 transition-colors"
+              className="w-full px-4 py-3 bg-neutral-50 text-neutral-900 rounded-lg font-medium hover:bg-neutral-200 transition-colors"
               data-testid="button-close-bulk-ai"
             >
               Kapat
             </button>
           </div>
         )}
-      </div>
-    </div>
+    </AdminModal>
   );
 }

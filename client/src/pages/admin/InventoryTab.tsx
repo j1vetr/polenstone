@@ -1,3 +1,4 @@
+import type { ProductVariant } from './_shared/types';
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Search, AlertTriangle, RefreshCw, Edit, Check, X, ChevronLeft, ChevronRight, Warehouse, Package } from 'lucide-react';
@@ -68,31 +69,31 @@ export default function InventoryPanel() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
+        <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6">
           <div className="flex items-center gap-3">
             <Warehouse className="w-8 h-8 text-blue-400" />
             <div>
-              <p className="text-sm text-zinc-400">Toplam Varyant</p>
-              <p className="text-2xl font-bold text-white">{allVariants.length}</p>
+              <p className="text-sm text-neutral-500">Toplam Varyant</p>
+              <p className="text-2xl font-bold text-neutral-900">{allVariants.length}</p>
             </div>
           </div>
         </div>
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
+        <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6">
           <div className="flex items-center gap-3">
             <AlertTriangle className="w-8 h-8 text-yellow-400" />
             <div>
-              <p className="text-sm text-zinc-400">Düşük Stok</p>
+              <p className="text-sm text-neutral-500">Düşük Stok</p>
               <p className="text-2xl font-bold text-yellow-400">{lowStockVariants.length}</p>
             </div>
           </div>
         </div>
-        <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
+        <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6">
           <div className="flex items-center gap-3">
             <Package className="w-8 h-8 text-green-400" />
             <div>
-              <p className="text-sm text-zinc-400">Toplam Stok</p>
-              <p className="text-2xl font-bold text-white">
-                {allVariants.reduce((sum: number, v: any) => sum + (v.stock || 0), 0)}
+              <p className="text-sm text-neutral-500">Toplam Stok</p>
+              <p className="text-2xl font-bold text-neutral-900">
+                {allVariants.reduce((sum: number, v: ProductVariant) => sum + (v.stock || 0), 0)}
               </p>
             </div>
           </div>
@@ -105,17 +106,17 @@ export default function InventoryPanel() {
             <AlertTriangle className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
             <div>
               <h3 className="font-medium text-yellow-400">Düşük Stok Uyarısı</h3>
-              <p className="text-sm text-zinc-400 mt-1">
+              <p className="text-sm text-neutral-500 mt-1">
                 {lowStockVariants.length} varyantın stoğu {lowStockThreshold} adetten az.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                {lowStockVariants.slice(0, 5).map((v: any) => (
-                  <span key={v.id} className="px-3 py-1 bg-zinc-800 rounded-lg text-sm text-white">
+                {lowStockVariants.slice(0, 5).map((v: ProductVariant) => (
+                  <span key={v.id} className="px-3 py-1 bg-neutral-50 rounded-lg text-sm text-neutral-900">
                     {v.product?.name} - {v.size} ({v.stock} adet)
                   </span>
                 ))}
                 {lowStockVariants.length > 5 && (
-                  <span className="px-3 py-1 bg-zinc-700 rounded-lg text-sm text-zinc-400">
+                  <span className="px-3 py-1 bg-neutral-200 rounded-lg text-sm text-neutral-500">
                     +{lowStockVariants.length - 5} daha
                   </span>
                 )}
@@ -125,10 +126,10 @@ export default function InventoryPanel() {
         </div>
       )}
 
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
-        <div className="p-6 border-b border-zinc-800 flex flex-col md:flex-row md:items-center gap-4">
+      <div className="bg-neutral-50 border border-neutral-200 rounded-xl overflow-hidden">
+        <div className="p-6 border-b border-neutral-200 flex flex-col md:flex-row md:items-center gap-4">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-white mb-3 md:mb-0">Stok Yönetimi</h3>
+            <h3 className="text-lg font-semibold text-neutral-900 mb-3 md:mb-0">Stok Yönetimi</h3>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -149,7 +150,7 @@ export default function InventoryPanel() {
                   alert('Varyant kontrolü başarısız');
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-neutral-900 rounded-lg hover:bg-purple-500 transition-colors"
               data-testid="button-fix-variants"
             >
               <Search className="w-4 h-4" />
@@ -160,14 +161,14 @@ export default function InventoryPanel() {
                 queryClient.invalidateQueries({ queryKey: ['admin-inventory'] });
                 queryClient.invalidateQueries({ queryKey: ['admin-low-stock'] });
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors border border-zinc-700"
+              className="flex items-center gap-2 px-4 py-2 bg-neutral-50 text-neutral-900 rounded-lg hover:bg-neutral-200 transition-colors border border-neutral-200"
               data-testid="button-refresh-inventory"
             >
               <RefreshCw className="w-4 h-4" />
               Yenile
             </button>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
               <input
                 type="text"
                 placeholder="Ürün ara..."
@@ -176,7 +177,7 @@ export default function InventoryPanel() {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="pl-10 pr-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 w-64"
+                className="pl-10 pr-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/20 w-64"
                 data-testid="input-inventory-search"
               />
             </div>
@@ -199,10 +200,10 @@ export default function InventoryPanel() {
 
         {variantsLoading ? (
           <div className="p-8 flex justify-center">
-            <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
+            <Loader2 className="w-6 h-6 animate-spin text-neutral-500" />
           </div>
         ) : (() => {
-          const filteredVariants = allVariants.filter((v: any) =>
+          const filteredVariants = allVariants.filter((v: ProductVariant) =>
             v.product?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             v.size?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             v.color?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -217,34 +218,34 @@ export default function InventoryPanel() {
             <>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-zinc-800/50">
+                  <thead className="bg-neutral-100">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">Ürün</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">Beden</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">Renk</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">Fiyat</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase">Stok</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase">Ürün</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase">Beden</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase">Renk</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase">Fiyat</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase">Stok</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-800">
-                    {paginatedVariants.map((v: any) => {
+                  <tbody className="divide-y divide-neutral-200">
+                    {paginatedVariants.map((v: ProductVariant) => {
                       const pendingChange = selectedVariants.find(sv => sv.id === v.id);
                       const currentStock = pendingChange?.stock ?? v.stock;
                       return (
                         <tr key={v.id} className={pendingChange ? 'bg-blue-500/5' : ''}>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-lg overflow-hidden bg-zinc-800">
+                              <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-50">
                                 {v.product?.images?.[0] && (
                                   <img src={v.product.images[0]} alt="" className="w-full h-full object-cover" />
                                 )}
                               </div>
-                              <span className="text-sm text-white">{v.product?.name || 'Bilinmeyen'}</span>
+                              <span className="text-sm text-neutral-900">{v.product?.name || 'Bilinmeyen'}</span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-zinc-400">{v.size || '-'}</td>
-                          <td className="px-6 py-4 text-sm text-zinc-400">{v.color || '-'}</td>
-                          <td className="px-6 py-4 text-sm text-white">{v.product?.basePrice || v.price} TL</td>
+                          <td className="px-6 py-4 text-sm text-neutral-500">{v.size || '-'}</td>
+                          <td className="px-6 py-4 text-sm text-neutral-500">{v.color || '-'}</td>
+                          <td className="px-6 py-4 text-sm text-neutral-900">{v.product?.basePrice || v.price} TL</td>
                           <td className="px-6 py-4">
                             <input
                               type="number"
@@ -253,7 +254,7 @@ export default function InventoryPanel() {
                               className={`w-20 px-2 py-1 rounded-lg text-sm ${
                                 currentStock <= lowStockThreshold
                                   ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400'
-                                  : 'bg-zinc-800 border-zinc-700 text-white'
+                                  : 'bg-neutral-50 border-neutral-200 text-neutral-900'
                               } border`}
                             />
                           </td>
@@ -264,15 +265,15 @@ export default function InventoryPanel() {
                 </table>
               </div>
               {totalPages > 1 && (
-                <div className="p-4 border-t border-zinc-800 flex items-center justify-between">
-                  <p className="text-sm text-zinc-400">
+                <div className="p-4 border-t border-neutral-200 flex items-center justify-between">
+                  <p className="text-sm text-neutral-500">
                     {filteredVariants.length} sonuçtan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filteredVariants.length)} arası gösteriliyor
                   </p>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
-                      className="px-3 py-1.5 text-sm bg-zinc-800 border border-zinc-700 rounded-lg text-white hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 text-sm bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 hover:bg-neutral-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Önceki
                     </button>
@@ -295,7 +296,7 @@ export default function InventoryPanel() {
                             className={`w-8 h-8 text-sm rounded-lg ${
                               currentPage === pageNum
                                 ? 'bg-white text-black'
-                                : 'bg-zinc-800 text-white hover:bg-zinc-700'
+                                : 'bg-neutral-50 text-neutral-900 hover:bg-neutral-200'
                             }`}
                           >
                             {pageNum}
@@ -306,7 +307,7 @@ export default function InventoryPanel() {
                     <button
                       onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1.5 text-sm bg-zinc-800 border border-zinc-700 rounded-lg text-white hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 text-sm bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 hover:bg-neutral-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Sonraki
                     </button>
@@ -315,7 +316,7 @@ export default function InventoryPanel() {
               )}
             </>
           ) : (
-            <div className="p-8 text-center text-zinc-500">
+            <div className="p-8 text-center text-neutral-500">
               {searchQuery ? 'Arama sonucu bulunamadı' : 'Henüz ürün varyantı yok'}
             </div>
           );

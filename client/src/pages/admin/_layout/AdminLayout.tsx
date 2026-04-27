@@ -168,9 +168,9 @@ export default function AdminLayout({
           </a>
         </header>
 
-        <div className="flex-1 overflow-auto">
-          <div className="bg-zinc-950 min-h-full">
-            <div className="p-4 md:p-8 text-white">{children}</div>
+        <div className="flex-1 overflow-auto bg-neutral-50">
+          <div className="admin-content min-h-full p-4 md:p-8 text-neutral-900">
+            {children}
           </div>
         </div>
       </main>

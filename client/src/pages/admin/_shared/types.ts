@@ -13,6 +13,7 @@ export interface Product {
   isActive: boolean;
   isFeatured: boolean;
   isNew: boolean;
+  discountBadge?: string | null;
   createdAt: string;
 }
 
@@ -62,10 +63,78 @@ export interface Stats {
 export interface ProductVariant {
   id: string;
   productId: string;
+  productName?: string;
+  productSlug?: string;
   size: string;
   color: string;
   price: string;
   stock: number;
+  product?: Product;
+}
+
+export type BulkPriceAction = 'increase' | 'decrease' | 'set' | 'percent_increase' | 'percent_decrease';
+
+export interface OrderItem {
+  id?: string;
+  productName?: string;
+  productImage?: string;
+  size?: string;
+  color?: string;
+  quantity: number;
+  price: number | string;
+  subtotal?: number | string;
+  variantDetails?: string;
+}
+
+export interface OrderNote {
+  id: string;
+  note?: string;
+  content?: string;
+  createdAt: string;
+  isPublic?: boolean;
+}
+
+export interface OrderUpdatePayload {
+  status?: string;
+  trackingNumber?: string;
+  cargoCompany?: string;
+  cancelReason?: string;
+  notes?: string;
+}
+
+export interface AnalyticsStatusRow {
+  status: string;
+  count: number;
+  revenue?: number;
+}
+
+export interface AnalyticsBestSeller {
+  productId: string;
+  productName: string;
+  totalSold: number;
+  revenue: number;
+  imageUrl?: string;
+  product?: Pick<Product, 'id' | 'name' | 'slug' | 'images'>;
+}
+
+export interface AnalyticsCountryRow {
+  country: string;
+  city?: string;
+  count: number;
+  revenue: number;
+}
+
+export type ProductDraft = Omit<Product, 'id' | 'createdAt'> & {
+  id?: string;
+  createdAt?: string;
+};
+
+export interface BulkAIResult {
+  productId: string;
+  productName?: string;
+  success: boolean;
+  error?: string;
+  message?: string;
 }
 
 export type TabType =

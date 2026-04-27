@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
+import type { Product, BulkPriceAction } from '../_shared/types';
 import { X, Edit, ChevronDown, ChevronUp, Search, Check, Loader2 } from 'lucide-react';
 import type { Category } from '../_shared/types';
+import AdminModal from '../_ui/AdminModal';
 
 export default function BulkPriceModal({ 
   categories,
@@ -9,7 +11,7 @@ export default function BulkPriceModal({
   onSuccess 
 }: { 
   categories: Category[];
-  products: any[];
+  products: Product[];
   onClose: () => void;
   onSuccess: () => void;
 }) {
@@ -124,7 +126,7 @@ export default function BulkPriceModal({
     setIsLoading(true);
     setResult(null);
     try {
-      const body: any = { action: priceAction, value: numericValue };
+      const body: { action: BulkPriceAction; value: number; categoryId?: string; productIds?: string[]; autoBadge?: boolean; badgeText?: string; discountBadge?: string | null } = { action: priceAction, value: numericValue };
       if (filterMode === 'select') {
         body.productIds = selectedProductIds;
       } else if (filterMode === 'category' && filterCategory) {
@@ -162,24 +164,46 @@ export default function BulkPriceModal({
     (filterMode !== 'select' || selectedProductIds.length > 0);
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <div className="p-5 border-b border-zinc-800 flex items-center justify-between shrink-0">
-          <div>
-            <h3 className="text-base font-semibold text-white">Toplu Fiyat Düzenleme</h3>
-            <p className="text-xs text-zinc-500 mt-0.5">Ürün seçin ve fiyat işlemi uygulayın</p>
+    <AdminModal
+      open
+      onClose={onClose}
+      title="Toplu Fiyat Düzenleme"
+      description="Ürün seçin ve fiyat işlemi uygulayın"
+      size="lg"
+      testId="modal-bulk-price"
+      footer={
+        <div className="flex items-center justify-between w-full">
+          <p className="text-xs text-neutral-500">
+            {affectedProducts.length > 0 ? `${affectedProducts.length} ürün etkilenecek` : '—'}
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-sm bg-neutral-100 text-neutral-900 rounded-lg hover:bg-neutral-200 transition-colors"
+            >
+              İptal
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+              className="px-4 py-2 text-sm bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-40 flex items-center gap-2"
+              data-testid="button-apply-bulk-price"
+            >
+              {isLoading ? (
+                <><Loader2 className="w-4 h-4 animate-spin" />Uygulanıyor...</>
+              ) : (
+                `${affectedProducts.length > 0 ? affectedProducts.length : ''} Ürüne Uygula`
+              )}
+            </button>
           </div>
-          <button onClick={onClose} className="text-zinc-400 hover:text-white p-1">
-            <X className="w-5 h-5" />
-          </button>
         </div>
-
-        <div className="overflow-y-auto flex-1 p-5 space-y-5">
+      }
+    >
+      <div className="space-y-5">
 
           {/* Step 1: Scope */}
           <div>
-            <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
               1 — Kapsam Seçin
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -193,13 +217,13 @@ export default function BulkPriceModal({
                   onClick={() => { setFilterMode(mode); setSelectedProductIds([]); setFilterCategory(''); setSearchQuery(''); }}
                   className={`p-3 rounded-lg border text-left transition-colors ${
                     filterMode === mode
-                      ? 'border-white/30 bg-white/8 text-white'
-                      : 'border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+                      ? 'border-white/30 bg-white/8 text-neutral-900'
+                      : 'border-neutral-200 bg-neutral-50 text-neutral-500 hover:border-zinc-600 hover:text-neutral-800'
                   }`}
                   data-testid={`button-filter-mode-${mode}`}
                 >
                   <p className="text-xs font-semibold">{label}</p>
-                  <p className="text-[10px] text-zinc-500 mt-0.5">{mode === 'all' ? sub : sub}</p>
+                  <p className="text-[10px] text-neutral-500 mt-0.5">{mode === 'all' ? sub : sub}</p>
                 </button>
               ))}
             </div>
@@ -208,11 +232,11 @@ export default function BulkPriceModal({
           {/* Category filter (for 'category' mode) */}
           {filterMode === 'category' && (
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Kategori</label>
+              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">Kategori</label>
               <select
                 value={filterCategory}
                 onChange={e => setFilterCategory(e.target.value)}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-zinc-500"
+                className="w-full bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-zinc-500"
                 data-testid="select-bulk-price-category"
               >
                 <option value="">— Kategori Seçin —</option>
@@ -228,20 +252,20 @@ export default function BulkPriceModal({
           {filterMode === 'select' && (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
                   Ürün Seçin
                   {selectedProductIds.length > 0 && (
-                    <span className="ml-2 text-white bg-white/10 px-1.5 py-0.5 rounded text-[10px] normal-case">
+                    <span className="ml-2 text-neutral-900 bg-white/10 px-1.5 py-0.5 rounded text-[10px] normal-case">
                       {selectedProductIds.length} seçili
                     </span>
                   )}
                 </label>
                 <div className="flex items-center gap-2">
-                  <button onClick={selectAllVisible} className="text-[10px] text-zinc-400 hover:text-white transition-colors">
+                  <button onClick={selectAllVisible} className="text-[10px] text-neutral-500 hover:text-neutral-900 transition-colors">
                     Tümünü Seç
                   </button>
                   <span className="text-zinc-700">|</span>
-                  <button onClick={clearVisible} className="text-[10px] text-zinc-400 hover:text-white transition-colors">
+                  <button onClick={clearVisible} className="text-[10px] text-neutral-500 hover:text-neutral-900 transition-colors">
                     Temizle
                   </button>
                 </div>
@@ -254,13 +278,13 @@ export default function BulkPriceModal({
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Ürün ara..."
-                  className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
+                  className="flex-1 bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-zinc-500"
                   data-testid="input-product-search"
                 />
                 <select
                   value={filterCategory}
                   onChange={e => setFilterCategory(e.target.value)}
-                  className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-500 max-w-[150px]"
+                  className="bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:border-zinc-500 max-w-[150px]"
                   data-testid="select-filter-category"
                 >
                   <option value="">Tüm Kategoriler</option>
@@ -269,7 +293,7 @@ export default function BulkPriceModal({
                 <select
                   value={sortOrder}
                   onChange={e => setSortOrder(e.target.value as typeof sortOrder)}
-                  className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-500 max-w-[145px]"
+                  className="bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:border-zinc-500 max-w-[145px]"
                   data-testid="select-sort-order"
                 >
                   <option value="newest">↓ En Yeni</option>
@@ -281,10 +305,10 @@ export default function BulkPriceModal({
               </div>
 
               {/* Scrollable product list */}
-              <div className="border border-zinc-700 rounded-lg overflow-hidden">
+              <div className="border border-neutral-200 rounded-lg overflow-hidden">
                 <div className="max-h-52 overflow-y-auto divide-y divide-zinc-700/50">
                   {listProducts.length === 0 ? (
-                    <div className="py-6 text-center text-xs text-zinc-500">Ürün bulunamadı</div>
+                    <div className="py-6 text-center text-xs text-neutral-500">Ürün bulunamadı</div>
                   ) : listProducts.map((p) => {
                     const checked = selectedProductIds.includes(p.id);
                     const catName = categories.find(c => c.id === p.categoryId)?.name || '';
@@ -295,7 +319,7 @@ export default function BulkPriceModal({
                     return (
                       <label
                         key={p.id}
-                        className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors ${checked ? 'bg-white/5' : 'hover:bg-zinc-800/60'}`}
+                        className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors ${checked ? 'bg-white/5' : 'hover:bg-neutral-50/60'}`}
                         data-testid={`label-product-${p.id}`}
                       >
                         <input
@@ -306,21 +330,21 @@ export default function BulkPriceModal({
                           data-testid={`checkbox-product-${p.id}`}
                         />
                         {p.images?.[0] ? (
-                          <img src={p.images[0]} alt={p.name} className="w-9 h-12 object-cover bg-zinc-700 rounded shrink-0" />
+                          <img src={p.images[0]} alt={p.name} className="w-9 h-12 object-cover bg-neutral-200 rounded shrink-0" />
                         ) : (
-                          <div className="w-9 h-12 bg-zinc-700 rounded shrink-0 flex items-center justify-center text-zinc-500 text-[9px]">IMG</div>
+                          <div className="w-9 h-12 bg-neutral-200 rounded shrink-0 flex items-center justify-center text-neutral-500 text-[9px]">IMG</div>
                         )}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <p className="text-xs text-white truncate font-medium">{p.name}</p>
+                            <p className="text-xs text-neutral-900 truncate font-medium">{p.name}</p>
                             {isRecentlyAdded && (
                               <span className="text-[8px] bg-emerald-500/20 text-emerald-400 px-1 py-0.5 rounded font-bold shrink-0">YENİ</span>
                             )}
                           </div>
-                          <p className="text-[10px] text-zinc-500 mt-0.5">{catName}{dateLabel ? ` · ${dateLabel}` : ''}</p>
+                          <p className="text-[10px] text-neutral-500 mt-0.5">{catName}{dateLabel ? ` · ${dateLabel}` : ''}</p>
                         </div>
                         <div className="shrink-0 text-right">
-                          <p className="text-xs font-semibold text-white">{price.toLocaleString('tr-TR')} ₺</p>
+                          <p className="text-xs font-semibold text-neutral-900">{price.toLocaleString('tr-TR')} ₺</p>
                           {p.discountBadge && (
                             <span className="text-[9px] bg-red-500/20 text-red-400 px-1.5 rounded">{p.discountBadge}</span>
                           )}
@@ -335,14 +359,14 @@ export default function BulkPriceModal({
 
           {/* Step 2: Action + Value */}
           <div>
-            <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
               2 — Fiyat İşlemi
             </label>
             <div className="grid grid-cols-2 gap-3">
               <select
                 value={priceAction}
-                onChange={e => { setPriceAction(e.target.value as any); setPriceValue(''); }}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-zinc-500"
+                onChange={e => { setPriceAction(e.target.value as BulkPriceAction); setPriceValue(''); }}
+                className="w-full bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-zinc-500"
                 data-testid="select-price-action"
               >
                 <option value="percent_decrease">% İndirim uygula</option>
@@ -357,13 +381,13 @@ export default function BulkPriceModal({
                   value={priceValue}
                   onChange={e => setPriceValue(e.target.value)}
                   placeholder={isPercent ? '20' : priceAction === 'set' ? '999' : '50'}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-3 pr-8 py-2.5 text-sm text-white focus:outline-none focus:border-zinc-500"
+                  className="w-full bg-neutral-50 border border-neutral-200 rounded-lg pl-3 pr-8 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-zinc-500"
                   min="0"
                   max={isPercent ? '100' : undefined}
                   step={isPercent ? '1' : '0.01'}
                   data-testid="input-price-value"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs pointer-events-none">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 text-xs pointer-events-none">
                   {isPercent ? '%' : '₺'}
                 </span>
               </div>
@@ -372,7 +396,7 @@ export default function BulkPriceModal({
 
           {/* Auto-badge option — only for percent_decrease */}
           {canAutoBadge && (
-            <div className={`rounded-lg border transition-colors ${autoBadge ? 'border-white/20 bg-white/4' : 'border-zinc-700 bg-zinc-800/40'}`}>
+            <div className={`rounded-lg border transition-colors ${autoBadge ? 'border-white/20 bg-white/4' : 'border-neutral-200 bg-neutral-50/40'}`}>
               <label className="flex items-center gap-3 px-3 py-3 cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -382,28 +406,28 @@ export default function BulkPriceModal({
                   data-testid="checkbox-auto-badge"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-white font-medium">Otomatik indirim etiketi ekle</p>
-                  <p className="text-[10px] text-zinc-500 mt-0.5">Seçilen ürünlere uygulanan indirim oranını etiket olarak bassın</p>
+                  <p className="text-xs text-neutral-900 font-medium">Otomatik indirim etiketi ekle</p>
+                  <p className="text-[10px] text-neutral-500 mt-0.5">Seçilen ürünlere uygulanan indirim oranını etiket olarak bassın</p>
                 </div>
                 {autoBadge && badgeTextToSend && (
-                  <div className="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded shrink-0 rotate-[-2deg]">
+                  <div className="bg-red-600 text-neutral-900 text-[10px] font-black px-2 py-1 rounded shrink-0 rotate-[-2deg]">
                     {badgeTextToSend}
                   </div>
                 )}
               </label>
               {autoBadge && (
                 <div className="px-3 pb-3 flex items-center gap-2">
-                  <span className="text-[10px] text-zinc-500 shrink-0">Etiket metni:</span>
+                  <span className="text-[10px] text-neutral-500 shrink-0">Etiket metni:</span>
                   <input
                     type="text"
                     value={customBadgeText}
                     onChange={e => setCustomBadgeText(e.target.value)}
                     placeholder={autoBadgeTextComputed || '%20'}
-                    className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-zinc-500 placeholder-zinc-600"
+                    className="flex-1 bg-neutral-50 border border-neutral-200 rounded px-2 py-1 text-xs text-neutral-900 focus:outline-none focus:border-zinc-500 placeholder-zinc-600"
                     data-testid="input-badge-custom-text"
                   />
                   {customBadgeText && (
-                    <button onClick={() => setCustomBadgeText('')} className="text-[10px] text-zinc-500 hover:text-white shrink-0">
+                    <button onClick={() => setCustomBadgeText('')} className="text-[10px] text-neutral-500 hover:text-neutral-900 shrink-0">
                       Sıfırla
                     </button>
                   )}
@@ -414,21 +438,21 @@ export default function BulkPriceModal({
 
           {/* Preview table */}
           {previewSamples.length > 0 && (
-            <div className="bg-zinc-800/60 rounded-lg overflow-hidden">
-              <div className="px-3 py-2 border-b border-zinc-700/50 flex items-center justify-between">
-                <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+            <div className="bg-neutral-50/60 rounded-lg overflow-hidden">
+              <div className="px-3 py-2 border-b border-neutral-200/50 flex items-center justify-between">
+                <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
                   Önizleme
                 </p>
-                <span className="text-[10px] text-zinc-500">{affectedProducts.length} ürün etkilenecek</span>
+                <span className="text-[10px] text-neutral-500">{affectedProducts.length} ürün etkilenecek</span>
               </div>
               <div className="divide-y divide-zinc-700/40">
                 {previewSamples.map((s, i) => (
                   <div key={i} className="flex items-center justify-between px-3 py-2.5">
-                    <p className="text-xs text-zinc-300 truncate flex-1 mr-3">{s.name}</p>
+                    <p className="text-xs text-neutral-700 truncate flex-1 mr-3">{s.name}</p>
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-zinc-500 line-through">{s.before.toLocaleString('tr-TR')} ₺</span>
-                      <span className="text-[10px] text-zinc-600">→</span>
-                      <span className={`text-xs font-semibold ${isDecrease ? 'text-emerald-400' : priceAction.includes('increase') ? 'text-blue-400' : 'text-white'}`}>
+                      <span className="text-xs text-neutral-500 line-through">{s.before.toLocaleString('tr-TR')} ₺</span>
+                      <span className="text-[10px] text-neutral-400">→</span>
+                      <span className={`text-xs font-semibold ${isDecrease ? 'text-emerald-400' : priceAction.includes('increase') ? 'text-blue-400' : 'text-neutral-900'}`}>
                         {s.after.toLocaleString('tr-TR')} ₺
                       </span>
                       {s.before > 0 && s.before !== s.after && (
@@ -441,7 +465,7 @@ export default function BulkPriceModal({
                 ))}
                 {affectedProducts.length > 5 && (
                   <div className="px-3 py-2 text-center">
-                    <span className="text-xs text-zinc-600">+{affectedProducts.length - 5} ürün daha</span>
+                    <span className="text-xs text-neutral-400">+{affectedProducts.length - 5} ürün daha</span>
                   </div>
                 )}
               </div>
@@ -450,9 +474,9 @@ export default function BulkPriceModal({
 
           {/* Roundtrip warning */}
           {isPercent && priceValue && numericValue > 0 && (
-            <div className="flex items-start gap-2 p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
-              <span className="text-amber-500 text-xs mt-0.5">⚠</span>
-              <p className="text-xs text-amber-500/80">
+            <div className="flex items-start gap-2 p-3 bg-neutral-900/5 border border-neutral-900/20 rounded-lg">
+              <span className="text-neutral-900 text-xs mt-0.5">⚠</span>
+              <p className="text-xs text-neutral-900/80">
                 %{numericValue} {isDecrease ? 'indirim' : 'zam'} sonrası geri almak için{' '}
                 {isDecrease
                   ? `%${(numericValue / (100 - numericValue) * 100).toFixed(2)} zam`
@@ -468,33 +492,7 @@ export default function BulkPriceModal({
               {result.message}
             </div>
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="p-5 border-t border-zinc-800 flex items-center justify-between shrink-0">
-          <p className="text-xs text-zinc-600">
-            {affectedProducts.length > 0 ? `${affectedProducts.length} ürün etkilenecek` : '—'}
-          </p>
-          <div className="flex gap-3">
-            <button onClick={onClose} className="px-4 py-2 text-sm bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors">
-              İptal
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={!canSubmit}
-              className="px-4 py-2 text-sm bg-white text-black rounded-lg hover:bg-zinc-200 transition-colors disabled:opacity-40 flex items-center gap-2"
-              data-testid="button-apply-bulk-price"
-            >
-              {isLoading ? (
-                <><Loader2 className="w-4 h-4 animate-spin" />Uygulanıyor...</>
-              ) : (
-                `${affectedProducts.length > 0 ? affectedProducts.length : ''} Ürüne Uygula`
-              )}
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
+    </AdminModal>
   );
 }
-

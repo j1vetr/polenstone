@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Truck, Package, Clock, CheckCircle, XCircle, User, MapPin, Phone, Mail, Tag, Hash, Calendar, MessageSquare, ExternalLink, Loader2, FileText, Send } from 'lucide-react';
-import type { Order } from '../_shared/types';
+import type { Order, OrderItem, OrderNote, OrderUpdatePayload } from '../_shared/types';
+import AdminModal from '../_ui/AdminModal';
 
 export default function OrderDetailModal({ order, onClose, onRefresh }: { order: Order; onClose: () => void; onRefresh?: () => void }) {
   const [status, setStatus] = useState(order.status);
@@ -9,8 +10,8 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [orderItems, setOrderItems] = useState<any[]>([]);
-  const [notes, setNotes] = useState<any[]>([]);
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [notes, setNotes] = useState<OrderNote[]>([]);
   const [newNote, setNewNote] = useState('');
 
   useEffect(() => {
@@ -32,7 +33,7 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
   const handleStatusUpdate = async () => {
     setIsUpdating(true);
     try {
-      const payload: any = { status };
+      const payload: OrderUpdatePayload = { status };
       
       // Include tracking number when changing to shipped
       if (status === 'shipped' && trackingNumber) {
@@ -131,69 +132,66 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-2xl my-4">
-        <div className="flex items-center justify-between p-6 border-b border-zinc-800">
-          <div>
-            <h3 className="text-xl font-semibold text-white">Sipariş Detayı</h3>
-            <p className="text-sm text-zinc-400 font-mono">{order.orderNumber}</p>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <AdminModal
+      open
+      onClose={onClose}
+      title="Sipariş Detayı"
+      description={<span className="font-mono">{order.orderNumber}</span>}
+      size="lg"
+      testId="modal-order-detail"
+    >
         
         <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
           {/* Customer Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-zinc-500 mb-1">Müşteri</p>
-              <p className="text-white font-medium">{order.customerName}</p>
-              <p className="text-zinc-400 text-sm">{order.customerEmail}</p>
-              <p className="text-zinc-400 text-sm">{order.customerPhone}</p>
+              <p className="text-sm text-neutral-500 mb-1">Müşteri</p>
+              <p className="text-neutral-900 font-medium">{order.customerName}</p>
+              <p className="text-neutral-500 text-sm">{order.customerEmail}</p>
+              <p className="text-neutral-500 text-sm">{order.customerPhone}</p>
             </div>
             <div>
-              <p className="text-sm text-zinc-500 mb-1">Teslimat Adresi</p>
-              <p className="text-zinc-300 text-sm">{order.shippingAddress?.address}</p>
-              <p className="text-zinc-400 text-sm">{order.shippingAddress?.district}, {order.shippingAddress?.city}</p>
-              <p className="text-zinc-400 text-sm">{order.shippingAddress?.postalCode}</p>
+              <p className="text-sm text-neutral-500 mb-1">Teslimat Adresi</p>
+              <p className="text-neutral-700 text-sm">{order.shippingAddress?.address}</p>
+              <p className="text-neutral-500 text-sm">{order.shippingAddress?.district}, {order.shippingAddress?.city}</p>
+              <p className="text-neutral-500 text-sm">{order.shippingAddress?.postalCode}</p>
             </div>
           </div>
 
           {/* Order Items */}
           {orderItems.length > 0 && (
             <div>
-              <p className="text-sm text-zinc-500 mb-2">Sipariş Kalemleri</p>
-              <div className="bg-zinc-800 rounded-lg p-3 space-y-2">
-                {orderItems.map((item: any, index: number) => (
+              <p className="text-sm text-neutral-500 mb-2">Sipariş Kalemleri</p>
+              <div className="bg-neutral-50 rounded-lg p-3 space-y-2">
+                {orderItems.map((item: OrderItem, index: number) => (
                   <div key={index} className="flex justify-between items-center text-sm">
                     <div>
-                      <p className="text-white">{item.productName}</p>
-                      {item.variantDetails && <p className="text-zinc-400 text-xs">{item.variantDetails}</p>}
+                      <p className="text-neutral-900">{item.productName}</p>
+                      {item.variantDetails && <p className="text-neutral-500 text-xs">{item.variantDetails}</p>}
                     </div>
                     <div className="text-right">
-                      <p className="text-white">{item.quantity} x {item.price}₺</p>
-                      <p className="text-zinc-400 text-xs">{item.subtotal}₺</p>
+                      <p className="text-neutral-900">{item.quantity} x {item.price}₺</p>
+                      <p className="text-neutral-500 text-xs">{item.subtotal}₺</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="flex justify-between mt-3 pt-3 border-t border-zinc-700">
-                <span className="text-zinc-400">Toplam</span>
-                <span className="text-xl font-bold text-white">{order.total}₺</span>
+              <div className="flex justify-between mt-3 pt-3 border-t border-neutral-200">
+                <span className="text-neutral-500">Toplam</span>
+                <span className="text-xl font-bold text-neutral-900">{order.total}₺</span>
               </div>
             </div>
           )}
 
           {/* Status Management */}
-          <div className="bg-zinc-800/50 rounded-lg p-4">
-            <p className="text-sm text-zinc-500 mb-3">Sipariş Durumu</p>
+          <div className="bg-neutral-100 rounded-lg p-4">
+            <p className="text-sm text-neutral-500 mb-3">Sipariş Durumu</p>
             <div className="flex gap-3 items-center">
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 disabled={status === 'cancelled'}
-                className="flex-1 px-4 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white focus:outline-none"
+                className="flex-1 px-4 py-2 bg-neutral-200 border border-zinc-600 rounded-lg text-neutral-900 focus:outline-none"
               >
                 {statusOptions.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -210,27 +208,27 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
           </div>
 
           {/* DHL Tracking */}
-          <div className="bg-zinc-800/50 rounded-lg p-4">
-            <p className="text-sm text-zinc-500 mb-3">DHL E-Commerce Kargo</p>
+          <div className="bg-neutral-100 rounded-lg p-4">
+            <p className="text-sm text-neutral-500 mb-3">DHL E-Commerce Kargo</p>
             <div className="space-y-3">
               <input
                 type="text"
                 placeholder="Takip Numarası"
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
-                className="w-full px-4 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white focus:outline-none"
+                className="w-full px-4 py-2 bg-neutral-200 border border-zinc-600 rounded-lg text-neutral-900 focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Takip URL (opsiyonel - otomatik oluşturulur)"
                 value={trackingUrl}
                 onChange={(e) => setTrackingUrl(e.target.value)}
-                className="w-full px-4 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white focus:outline-none"
+                className="w-full px-4 py-2 bg-neutral-200 border border-zinc-600 rounded-lg text-neutral-900 focus:outline-none"
               />
               <button
                 onClick={handleTrackingUpdate}
                 disabled={isUpdating || !trackingNumber}
-                className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50"
+                className="w-full px-4 py-2 bg-purple-600 text-neutral-900 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50"
               >
                 Kargoya Ver
               </button>
@@ -239,28 +237,28 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
 
           {/* Notes */}
           <div>
-            <p className="text-sm text-zinc-500 mb-2">Notlar</p>
+            <p className="text-sm text-neutral-500 mb-2">Notlar</p>
             <div className="flex gap-2 mb-3">
               <input
                 type="text"
                 placeholder="Not ekle..."
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
-                className="flex-1 px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none"
+                className="flex-1 px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none"
               />
               <button
                 onClick={handleAddNote}
-                className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600"
+                className="px-4 py-2 bg-neutral-200 text-neutral-900 rounded-lg hover:bg-zinc-600"
               >
                 Ekle
               </button>
             </div>
             {notes.length > 0 && (
               <div className="space-y-2 max-h-32 overflow-y-auto">
-                {notes.map((note: any) => (
-                  <div key={note.id} className="bg-zinc-800 rounded-lg p-2 text-sm">
-                    <p className="text-white">{note.content}</p>
-                    <p className="text-zinc-500 text-xs mt-1">
+                {notes.map((note: OrderNote) => (
+                  <div key={note.id} className="bg-neutral-50 rounded-lg p-2 text-sm">
+                    <p className="text-neutral-900">{note.content}</p>
+                    <p className="text-neutral-500 text-xs mt-1">
                       {new Date(note.createdAt).toLocaleString('tr-TR')}
                     </p>
                   </div>
@@ -271,7 +269,7 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
 
           {/* Cancel Order */}
           {status !== 'cancelled' && status !== 'delivered' && (
-            <div className="pt-4 border-t border-zinc-800">
+            <div className="pt-4 border-t border-neutral-200">
               {!showCancelConfirm ? (
                 <button
                   onClick={() => setShowCancelConfirm(true)}
@@ -287,19 +285,19 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
                     placeholder="İptal sebebi (opsiyonel)"
                     value={cancelReason}
                     onChange={(e) => setCancelReason(e.target.value)}
-                    className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none"
+                    className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none"
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={() => setShowCancelConfirm(false)}
-                      className="flex-1 px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600"
+                      className="flex-1 px-4 py-2 bg-neutral-200 text-neutral-900 rounded-lg hover:bg-zinc-600"
                     >
                       Vazgeç
                     </button>
                     <button
                       onClick={handleCancelOrder}
                       disabled={isUpdating}
-                      className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                      className="flex-1 px-4 py-2 bg-red-600 text-neutral-900 rounded-lg hover:bg-red-700 disabled:opacity-50"
                     >
                       İptal Et
                     </button>
@@ -309,8 +307,6 @@ export default function OrderDetailModal({ order, onClose, onRefresh }: { order:
             </div>
           )}
         </div>
-      </div>
-    </div>
+    </AdminModal>
   );
 }
-

@@ -36,7 +36,7 @@ const STATUS_OPTIONS = [
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; dot: string; icon: React.ElementType }> = {
   confirmed:  { label: 'Yeni Sipariş', color: 'text-orange-400', bg: 'bg-orange-500/15 border-orange-500/30', dot: 'bg-orange-400', icon: Banknote },
-  pending:    { label: 'Beklemede',  color: 'text-amber-400',   bg: 'bg-amber-500/15 border-amber-500/30',   dot: 'bg-amber-400',   icon: Clock },
+  pending:    { label: 'Beklemede',  color: 'text-neutral-900',   bg: 'bg-neutral-900/15 border-neutral-900/30',   dot: 'bg-amber-400',   icon: Clock },
   processing: { label: 'İşleniyor', color: 'text-blue-400',    bg: 'bg-blue-500/15 border-blue-500/30',     dot: 'bg-blue-400',    icon: RefreshCw },
   shipped:    { label: 'Kargoda',   color: 'text-purple-400',  bg: 'bg-purple-500/15 border-purple-500/30', dot: 'bg-purple-400',  icon: Truck },
   completed:  { label: 'Tamamlandı',color: 'text-emerald-400', bg: 'bg-emerald-500/15 border-emerald-500/30',dot: 'bg-emerald-400', icon: CheckCircle2 },
@@ -101,12 +101,12 @@ function StatusSelect({ orderId, currentStatus, onChange }: { orderId: string; c
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-full mt-1 z-20 bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl overflow-hidden min-w-[140px]">
+          <div className="absolute left-0 top-full mt-1 z-20 bg-white border border-neutral-200 rounded-lg shadow-2xl overflow-hidden min-w-[140px]">
             {Object.entries(STATUS_CONFIG).map(([val, conf]) => (
               <button
                 key={val}
                 onClick={(e) => { e.stopPropagation(); onChange(orderId, val); setOpen(false); }}
-                className={`w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-zinc-800 transition-colors ${val === currentStatus ? conf.color : 'text-zinc-300'}`}
+                className={`w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-neutral-50 transition-colors ${val === currentStatus ? conf.color : 'text-neutral-700'}`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${conf.dot}`} />
                 {conf.label}
@@ -221,18 +221,18 @@ export default function OrdersPanel() {
     <div className="space-y-6">
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <div className="bg-white border border-neutral-200 rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
               <ShoppingBag className="w-4 h-4 text-blue-400" />
             </div>
-            <span className="text-xs text-zinc-500">Bu ay</span>
+            <span className="text-xs text-neutral-500">Bu ay</span>
           </div>
-          <p className="text-2xl font-bold text-white">{stats.thisMonthOrders}</p>
-          <p className="text-xs text-zinc-500 mt-1">Sipariş alındı</p>
+          <p className="text-2xl font-bold text-neutral-900">{stats.thisMonthOrders}</p>
+          <p className="text-xs text-neutral-500 mt-1">Sipariş alındı</p>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <div className="bg-white border border-neutral-200 rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center">
               <Banknote className="w-4 h-4 text-orange-400" />
@@ -244,11 +244,11 @@ export default function OrdersPanel() {
               </span>
             )}
           </div>
-          <p className="text-2xl font-bold text-white">{stats.awaitingAction}</p>
-          <p className="text-xs text-zinc-500 mt-1">Yeni / Beklemede</p>
+          <p className="text-2xl font-bold text-neutral-900">{stats.awaitingAction}</p>
+          <p className="text-xs text-neutral-500 mt-1">Yeni / Beklemede</p>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <div className="bg-white border border-neutral-200 rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center">
               <TrendingUp className="w-4 h-4 text-emerald-400" />
@@ -260,31 +260,31 @@ export default function OrdersPanel() {
               </span>
             )}
           </div>
-          <p className="text-2xl font-bold text-white">₺{formatCurrency(stats.thisMonthRevenue)}</p>
-          <p className="text-xs text-zinc-500 mt-1">Bu ay ciro</p>
+          <p className="text-2xl font-bold text-neutral-900">₺{formatCurrency(stats.thisMonthRevenue)}</p>
+          <p className="text-xs text-neutral-500 mt-1">Bu ay ciro</p>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+        <div className="bg-white border border-neutral-200 rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <div className="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center">
               <BarChart3 className="w-4 h-4 text-purple-400" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-white">₺{formatCurrency(stats.avgOrder)}</p>
-          <p className="text-xs text-zinc-500 mt-1">Ortalama sepet</p>
+          <p className="text-2xl font-bold text-neutral-900">₺{formatCurrency(stats.avgOrder)}</p>
+          <p className="text-xs text-neutral-500 mt-1">Ortalama sepet</p>
         </div>
       </div>
 
       {/* Monthly Chart */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+      <div className="bg-white border border-neutral-200 rounded-xl p-6">
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h3 className="text-sm font-semibold text-white">Aylık Ciro</h3>
-            <p className="text-xs text-zinc-500 mt-0.5">Son 6 ay (iptal edilen siparişler hariç)</p>
+            <h3 className="text-sm font-semibold text-neutral-900">Aylık Ciro</h3>
+            <p className="text-xs text-neutral-500 mt-0.5">Son 6 ay (iptal edilen siparişler hariç)</p>
           </div>
           <div className="text-right">
-            <p className="text-lg font-bold text-white">₺{formatCurrency(stats.totalRevenue)}</p>
-            <p className="text-xs text-zinc-500">Toplam</p>
+            <p className="text-lg font-bold text-neutral-900">₺{formatCurrency(stats.totalRevenue)}</p>
+            <p className="text-xs text-neutral-500">Toplam</p>
           </div>
         </div>
         <div className="flex items-end gap-3 h-28">
@@ -295,17 +295,17 @@ export default function OrdersPanel() {
               <div key={m.label} className="flex-1 flex flex-col items-center gap-2">
                 <div className="w-full flex items-end justify-center" style={{ height: '88px' }}>
                   <div
-                    className={`w-full rounded-t-md transition-all duration-500 group relative ${isCurrent ? 'bg-white' : 'bg-zinc-700 hover:bg-zinc-600'}`}
+                    className={`w-full rounded-t-md transition-all duration-500 group relative ${isCurrent ? 'bg-white' : 'bg-neutral-200 hover:bg-zinc-600'}`}
                     style={{ height: `${height}%`, minHeight: m.revenue > 0 ? '6px' : '0px' }}
                   >
                     {m.revenue > 0 && (
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:flex bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-[10px] text-white whitespace-nowrap shadow-xl z-10">
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:flex bg-neutral-50 border border-neutral-200 rounded px-2 py-1 text-[10px] text-neutral-900 whitespace-nowrap shadow-xl z-10">
                         ₺{formatCurrency(m.revenue)} · {m.count} sipariş
                       </div>
                     )}
                   </div>
                 </div>
-                <span className={`text-[10px] font-medium ${isCurrent ? 'text-white' : 'text-zinc-500'}`}>{m.label}</span>
+                <span className={`text-[10px] font-medium ${isCurrent ? 'text-neutral-900' : 'text-neutral-500'}`}>{m.label}</span>
               </div>
             );
           })}
@@ -326,12 +326,12 @@ export default function OrdersPanel() {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   active
                     ? 'bg-white text-black'
-                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
+                    : 'bg-neutral-50 text-neutral-500 hover:bg-neutral-200 hover:text-neutral-900'
                 }`}
               >
                 {opt.label}
                 {count > 0 && (
-                  <span className={`text-[10px] font-bold min-w-[16px] text-center ${active ? 'text-black/60' : (opt.value === 'confirmed' || opt.value === 'pending') && count > 0 ? 'text-orange-400' : 'text-zinc-500'}`}>
+                  <span className={`text-[10px] font-bold min-w-[16px] text-center ${active ? 'text-black/60' : (opt.value === 'confirmed' || opt.value === 'pending') && count > 0 ? 'text-orange-400' : 'text-neutral-500'}`}>
                     {count}
                   </span>
                 )}
@@ -341,28 +341,28 @@ export default function OrdersPanel() {
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
           <input
             type="text"
             placeholder="Sipariş no, müşteri, şehir..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500"
+            className="w-full pl-9 pr-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:border-zinc-500"
             data-testid="input-search-orders"
           />
         </div>
       </div>
 
       {/* Orders Table */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+      <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-6 h-6 border-2 border-zinc-700 border-t-white rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-neutral-200 border-t-white rounded-full animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Package className="w-10 h-10 text-zinc-700" />
-            <p className="text-zinc-500 text-sm">
+            <p className="text-neutral-500 text-sm">
               {search || statusFilter !== 'all' ? 'Eşleşen sipariş bulunamadı' : 'Henüz sipariş yok'}
             </p>
           </div>
@@ -372,40 +372,40 @@ export default function OrdersPanel() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-zinc-800">
-                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Müşteri</th>
-                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Sipariş</th>
-                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Şehir</th>
-                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Durum</th>
-                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Tutar</th>
-                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Tarih</th>
-                    <th className="text-right px-5 py-3.5 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">İşlem</th>
+                  <tr className="border-b border-neutral-200">
+                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Müşteri</th>
+                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Sipariş</th>
+                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Şehir</th>
+                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Durum</th>
+                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Tutar</th>
+                    <th className="text-left px-5 py-3.5 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">Tarih</th>
+                    <th className="text-right px-5 py-3.5 text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">İşlem</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-800/60">
+                <tbody className="divide-y divide-neutral-200/60">
                   {filtered.map(order => (
                     <tr
                       key={order.id}
-                      className="hover:bg-zinc-800/40 transition-colors group cursor-pointer"
+                      className="hover:bg-neutral-50/40 transition-colors group cursor-pointer"
                       data-testid={`row-order-${order.id}`}
                       onClick={() => navigate(`/toov-admin/orders/${order.id}`)}
                     >
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${avatarGradient(order.customerName)} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
+                          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${avatarGradient(order.customerName)} flex items-center justify-center text-neutral-900 text-xs font-bold shrink-0`}>
                             {getInitials(order.customerName)}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-white truncate max-w-[140px]">{order.customerName}</p>
-                            <p className="text-xs text-zinc-500 truncate max-w-[140px]">{order.customerEmail}</p>
+                            <p className="text-sm font-medium text-neutral-900 truncate max-w-[140px]">{order.customerName}</p>
+                            <p className="text-xs text-neutral-500 truncate max-w-[140px]">{order.customerEmail}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-5 py-3.5">
-                        <span className="font-mono text-sm text-zinc-300">{order.orderNumber}</span>
+                        <span className="font-mono text-sm text-neutral-700">{order.orderNumber}</span>
                       </td>
                       <td className="px-5 py-3.5">
-                        <span className="text-sm text-zinc-400">{order.shippingAddress?.city || '—'}</span>
+                        <span className="text-sm text-neutral-500">{order.shippingAddress?.city || '—'}</span>
                       </td>
                       <td className="px-5 py-3.5" onClick={e => e.stopPropagation()}>
                         <StatusSelect
@@ -415,18 +415,18 @@ export default function OrdersPanel() {
                         />
                       </td>
                       <td className="px-5 py-3.5">
-                        <span className="text-sm font-semibold text-white">₺{formatCurrency(order.total)}</span>
+                        <span className="text-sm font-semibold text-neutral-900">₺{formatCurrency(order.total)}</span>
                       </td>
                       <td className="px-5 py-3.5">
                         <div>
-                          <p className="text-sm text-zinc-400">{timeAgo(order.createdAt)}</p>
-                          <p className="text-[11px] text-zinc-600">{new Date(order.createdAt).toLocaleDateString('tr-TR')}</p>
+                          <p className="text-sm text-neutral-500">{timeAgo(order.createdAt)}</p>
+                          <p className="text-[11px] text-neutral-400">{new Date(order.createdAt).toLocaleDateString('tr-TR')}</p>
                         </div>
                       </td>
                       <td className="px-5 py-3.5">
                         <div className="flex justify-end">
                           <div
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-50 hover:bg-neutral-200 text-xs text-neutral-700 hover:text-neutral-900 transition-colors opacity-0 group-hover:opacity-100"
                             data-testid={`button-view-order-${order.id}`}
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -441,20 +441,20 @@ export default function OrdersPanel() {
             </div>
 
             {/* Mobile Cards */}
-            <div className="md:hidden divide-y divide-zinc-800">
+            <div className="md:hidden divide-y divide-neutral-200">
               {filtered.map(order => (
                 <div key={order.id} className="p-4" data-testid={`card-order-${order.id}`}>
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${avatarGradient(order.customerName)} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
+                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${avatarGradient(order.customerName)} flex items-center justify-center text-neutral-900 text-xs font-bold shrink-0`}>
                         {getInitials(order.customerName)}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-white truncate">{order.customerName}</p>
-                        <p className="text-xs text-zinc-500 font-mono">{order.orderNumber}</p>
+                        <p className="text-sm font-medium text-neutral-900 truncate">{order.customerName}</p>
+                        <p className="text-xs text-neutral-500 font-mono">{order.orderNumber}</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-white shrink-0">₺{formatCurrency(order.total)}</span>
+                    <span className="text-sm font-bold text-neutral-900 shrink-0">₺{formatCurrency(order.total)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -463,13 +463,13 @@ export default function OrdersPanel() {
                         currentStatus={order.status}
                         onChange={(id, status) => updateStatusMutation.mutate({ id, status })}
                       />
-                      <span className="text-xs text-zinc-500">{order.shippingAddress?.city}</span>
+                      <span className="text-xs text-neutral-500">{order.shippingAddress?.city}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-zinc-500">{timeAgo(order.createdAt)}</span>
+                      <span className="text-xs text-neutral-500">{timeAgo(order.createdAt)}</span>
                       <Link
                         href={`/toov-admin/orders/${order.id}`}
-                        className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors"
+                        className="p-1.5 rounded-lg bg-neutral-50 hover:bg-neutral-200 text-neutral-500 hover:text-neutral-900 transition-colors"
                         data-testid={`button-view-order-mobile-${order.id}`}
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -481,14 +481,14 @@ export default function OrdersPanel() {
             </div>
 
             {/* Table Footer */}
-            <div className="px-5 py-3 border-t border-zinc-800 flex items-center justify-between">
-              <p className="text-xs text-zinc-500">
+            <div className="px-5 py-3 border-t border-neutral-200 flex items-center justify-between">
+              <p className="text-xs text-neutral-500">
                 {filtered.length} sipariş {statusFilter !== 'all' || search ? `(toplam ${orders.length})` : ''}
               </p>
               {statusFilter !== 'all' || search ? (
                 <button
                   onClick={() => { setStatusFilter('all'); setSearch(''); }}
-                  className="text-xs text-zinc-400 hover:text-white transition-colors"
+                  className="text-xs text-neutral-500 hover:text-neutral-900 transition-colors"
                 >
                   Filtreyi temizle
                 </button>

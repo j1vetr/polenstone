@@ -91,7 +91,7 @@ export default function SettingsPanel() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-white" />
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-900" />
       </div>
     );
   }
@@ -99,8 +99,8 @@ export default function SettingsPanel() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white">Ayarlar</h2>
-        <p className="text-zinc-400">E-posta ve sistem ayarlarını yönetin</p>
+        <h2 className="text-2xl font-bold text-neutral-900">Ayarlar</h2>
+        <p className="text-neutral-500">E-posta ve sistem ayarlarını yönetin</p>
       </div>
 
       {message && (
@@ -112,59 +112,59 @@ export default function SettingsPanel() {
         </div>
       )}
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+      <div className="bg-white border border-neutral-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-zinc-800 rounded-lg">
-            <Server className="w-5 h-5 text-white" />
+          <div className="p-2 bg-neutral-50 rounded-lg">
+            <Server className="w-5 h-5 text-neutral-900" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">SMTP Ayarları</h3>
-            <p className="text-sm text-zinc-400">E-posta gönderimi için SMTP sunucu yapılandırması</p>
+            <h3 className="text-lg font-semibold text-neutral-900">SMTP Ayarları</h3>
+            <p className="text-sm text-neutral-500">E-posta gönderimi için SMTP sunucu yapılandırması</p>
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">SMTP Sunucu</label>
+            <label className="block text-sm font-medium text-neutral-500 mb-2">SMTP Sunucu</label>
             <input
               type="text"
               value={settings.smtp_host}
               onChange={(e) => setSettings(s => ({ ...s, smtp_host: e.target.value }))}
               placeholder="mail.example.com"
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white transition-colors"
+              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white transition-colors"
               data-testid="input-smtp-host"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Port</label>
+            <label className="block text-sm font-medium text-neutral-500 mb-2">Port</label>
             <input
               type="text"
               value={settings.smtp_port}
               onChange={(e) => setSettings(s => ({ ...s, smtp_port: e.target.value }))}
               placeholder="587"
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white transition-colors"
+              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white transition-colors"
               data-testid="input-smtp-port"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Kullanıcı Adı (E-posta)</label>
+            <label className="block text-sm font-medium text-neutral-500 mb-2">Kullanıcı Adı (E-posta)</label>
             <input
               type="text"
               value={settings.smtp_user}
               onChange={(e) => setSettings(s => ({ ...s, smtp_user: e.target.value }))}
               placeholder="no-reply@example.com"
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white transition-colors"
+              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white transition-colors"
               data-testid="input-smtp-user"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Şifre</label>
+            <label className="block text-sm font-medium text-neutral-500 mb-2">Şifre</label>
             <input
               type="password"
               value={settings.smtp_pass}
               onChange={(e) => setSettings(s => ({ ...s, smtp_pass: e.target.value }))}
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white transition-colors"
+              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white transition-colors"
               data-testid="input-smtp-pass"
             />
           </div>
@@ -174,61 +174,61 @@ export default function SettingsPanel() {
                 type="checkbox"
                 checked={settings.smtp_secure === 'true'}
                 onChange={(e) => setSettings(s => ({ ...s, smtp_secure: e.target.checked ? 'true' : 'false' }))}
-                className="w-5 h-5 rounded bg-zinc-800 border-zinc-700"
+                className="w-5 h-5 rounded bg-neutral-50 border-neutral-200"
               />
-              <span className="text-sm text-white">SSL/TLS Kullan (Port 465 için)</span>
+              <span className="text-sm text-neutral-900">SSL/TLS Kullan (Port 465 için)</span>
             </label>
           </div>
         </div>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+      <div className="bg-white border border-neutral-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-zinc-800 rounded-lg">
-            <Mail className="w-5 h-5 text-white" />
+          <div className="p-2 bg-neutral-50 rounded-lg">
+            <Mail className="w-5 h-5 text-neutral-900" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">Bildirim Ayarları</h3>
-            <p className="text-sm text-zinc-400">Sipariş bildirimleri için admin e-posta adresi</p>
+            <h3 className="text-lg font-semibold text-neutral-900">Bildirim Ayarları</h3>
+            <p className="text-sm text-neutral-500">Sipariş bildirimleri için admin e-posta adresi</p>
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Admin E-posta</label>
+            <label className="block text-sm font-medium text-neutral-500 mb-2">Admin E-posta</label>
             <input
               type="email"
               value={settings.admin_email}
               onChange={(e) => setSettings(s => ({ ...s, admin_email: e.target.value }))}
               placeholder="admin@example.com"
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white transition-colors"
+              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white transition-colors"
               data-testid="input-admin-email"
             />
-            <p className="text-xs text-zinc-500 mt-1">Yeni sipariş bildirimleri bu adrese gönderilir</p>
+            <p className="text-xs text-neutral-500 mt-1">Yeni sipariş bildirimleri bu adrese gönderilir</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Site URL</label>
+            <label className="block text-sm font-medium text-neutral-500 mb-2">Site URL</label>
             <input
               type="text"
               value={settings.site_url}
               onChange={(e) => setSettings(s => ({ ...s, site_url: e.target.value }))}
               placeholder="https://polenstone.com.tr"
-              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white transition-colors"
+              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white transition-colors"
               data-testid="input-site-url"
             />
-            <p className="text-xs text-zinc-500 mt-1">E-postalardaki bağlantılar için kullanılır</p>
+            <p className="text-xs text-neutral-500 mt-1">E-postalardaki bağlantılar için kullanılır</p>
           </div>
         </div>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+      <div className="bg-white border border-neutral-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-zinc-800 rounded-lg">
-            <Send className="w-5 h-5 text-white" />
+          <div className="p-2 bg-neutral-50 rounded-lg">
+            <Send className="w-5 h-5 text-neutral-900" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">Test E-postası</h3>
-            <p className="text-sm text-zinc-400">SMTP ayarlarınızı test edin</p>
+            <h3 className="text-lg font-semibold text-neutral-900">Test E-postası</h3>
+            <p className="text-sm text-neutral-500">SMTP ayarlarınızı test edin</p>
           </div>
         </div>
 
@@ -238,13 +238,13 @@ export default function SettingsPanel() {
             value={testEmail}
             onChange={(e) => setTestEmail(e.target.value)}
             placeholder="test@example.com"
-            className="flex-1 px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white transition-colors"
+            className="flex-1 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white transition-colors"
             data-testid="input-test-email"
           />
           <button
             onClick={handleTestEmail}
             disabled={isTesting || !testEmail}
-            className="flex items-center gap-2 px-6 py-3 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-6 py-3 bg-neutral-50 text-neutral-900 rounded-lg hover:bg-neutral-200 transition-colors disabled:opacity-50"
             data-testid="button-send-test"
           >
             {isTesting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}

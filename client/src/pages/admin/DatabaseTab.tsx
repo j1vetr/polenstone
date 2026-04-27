@@ -55,8 +55,8 @@ export default function DatabasePanel() {
       setConfirmCode('');
       refetch();
       queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Silme işlemi başarısız' });
+    } catch (error) {
+      setMessage({ type: 'error', text: (error instanceof Error ? error.message : String(error)) || 'Silme işlemi başarısız' });
     } finally {
       setClearingTable(null);
     }
@@ -90,8 +90,8 @@ export default function DatabasePanel() {
       setShowClearAllModal(false);
       refetch();
       queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Silme işlemi başarısız' });
+    } catch (error) {
+      setMessage({ type: 'error', text: (error instanceof Error ? error.message : String(error)) || 'Silme işlemi başarısız' });
     } finally {
       setClearingTable(null);
     }
@@ -100,7 +100,7 @@ export default function DatabasePanel() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-zinc-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-500" />
       </div>
     );
   }
@@ -109,14 +109,14 @@ export default function DatabasePanel() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-white">Veritabanı Yönetimi</h2>
-          <p className="text-sm text-zinc-400 mt-1">
+          <h2 className="text-xl font-semibold text-neutral-900">Veritabanı Yönetimi</h2>
+          <p className="text-sm text-neutral-500 mt-1">
             Sipariş, sepet ve ciro verilerini sıfırlayın. Kullanıcılar, ürünler ve stoklar korunur.
           </p>
         </div>
         <button
           onClick={() => refetch()}
-          className="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-neutral-50 text-neutral-900 rounded-lg hover:bg-neutral-200 transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
           Yenile
@@ -132,23 +132,23 @@ export default function DatabasePanel() {
         </div>
       )}
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-        <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 text-amber-400" />
+      <div className="bg-white border border-neutral-200 rounded-xl p-6">
+        <h3 className="text-lg font-medium text-neutral-900 mb-4 flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5 text-neutral-900" />
           Dikkat
         </h3>
-        <p className="text-sm text-zinc-400 mb-4">
+        <p className="text-sm text-neutral-500 mb-4">
           Bu işlemler geri alınamaz. Silinen veriler kalıcı olarak kaybolur. İşlem yapmadan önce onay kodu girmeniz gerekir.
         </p>
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <label className="block text-xs text-zinc-500 mb-1">Onay Kodu</label>
+            <label className="block text-xs text-neutral-500 mb-1">Onay Kodu</label>
             <input
               type="text"
               value={confirmCode}
               onChange={(e) => setConfirmCode(e.target.value.toUpperCase())}
               placeholder="SIFIRLA yazın"
-              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder:text-zinc-500"
+              className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-500"
             />
           </div>
         </div>
@@ -156,20 +156,20 @@ export default function DatabasePanel() {
 
       <div className="grid gap-4">
         {tables.map((table) => (
-          <div key={table.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex items-center justify-between">
+          <div key={table.id} className="bg-white border border-neutral-200 rounded-xl p-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-zinc-800 rounded-lg flex items-center justify-center">
-                <table.icon className="w-6 h-6 text-zinc-400" />
+              <div className="w-12 h-12 bg-neutral-50 rounded-lg flex items-center justify-center">
+                <table.icon className="w-6 h-6 text-neutral-500" />
               </div>
               <div>
-                <h4 className="font-medium text-white">{table.name}</h4>
-                <p className="text-sm text-zinc-400">{table.description}</p>
+                <h4 className="font-medium text-neutral-900">{table.name}</h4>
+                <p className="text-sm text-neutral-500">{table.description}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <span className="text-2xl font-bold text-white">{table.count.toLocaleString('tr-TR')}</span>
-                <p className="text-xs text-zinc-500">kayıt</p>
+                <span className="text-2xl font-bold text-neutral-900">{table.count.toLocaleString('tr-TR')}</span>
+                <p className="text-xs text-neutral-500">kayıt</p>
               </div>
               <button
                 onClick={() => handleClearTable(table.id)}
@@ -195,13 +195,13 @@ export default function DatabasePanel() {
               <AlertTriangle className="w-5 h-5" />
               Tüm Satış Verilerini Sil
             </h3>
-            <p className="text-sm text-zinc-400 mt-1">
+            <p className="text-sm text-neutral-500 mt-1">
               Siparişler, sepetler, bekleyen ödemeler ve kupon kullanımları tek seferde silinir.
             </p>
           </div>
           <button
             onClick={() => setShowClearAllModal(true)}
-            className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+            className="px-6 py-3 bg-red-600 text-neutral-900 rounded-lg hover:bg-red-700 transition-colors font-medium"
           >
             Tümünü Sil
           </button>
@@ -211,25 +211,25 @@ export default function DatabasePanel() {
       {/* Clear All Modal */}
       {showClearAllModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md">
-            <div className="p-6 border-b border-zinc-800">
-              <h3 className="text-xl font-semibold text-white flex items-center gap-2">
+          <div className="bg-white border border-neutral-200 rounded-2xl w-full max-w-md">
+            <div className="p-6 border-b border-neutral-200">
+              <h3 className="text-xl font-semibold text-neutral-900 flex items-center gap-2">
                 <AlertTriangle className="w-6 h-6 text-red-400" />
                 Tüm Satış Verilerini Sil
               </h3>
             </div>
             <div className="p-6 space-y-4">
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-neutral-500">
                 Bu işlem aşağıdaki verileri kalıcı olarak silecek:
               </p>
-              <ul className="text-sm text-zinc-400 list-disc list-inside space-y-1">
+              <ul className="text-sm text-neutral-500 list-disc list-inside space-y-1">
                 <li>Tüm siparişler ve sipariş kalemleri</li>
                 <li>Tüm sepet öğeleri</li>
                 <li>Tüm bekleyen ödemeler</li>
                 <li>Tüm kupon kullanım kayıtları</li>
               </ul>
               <div className="pt-4">
-                <label className="block text-sm text-zinc-400 mb-2">
+                <label className="block text-sm text-neutral-500 mb-2">
                   Onaylamak için <span className="text-red-400 font-mono">TUM_SATISLARI_SIL</span> yazın:
                 </label>
                 <input
@@ -237,24 +237,24 @@ export default function DatabasePanel() {
                   value={clearAllCode}
                   onChange={(e) => setClearAllCode(e.target.value.toUpperCase())}
                   placeholder="TUM_SATISLARI_SIL"
-                  className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder:text-zinc-500 font-mono"
+                  className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-500 font-mono"
                 />
               </div>
             </div>
-            <div className="p-6 border-t border-zinc-800 flex justify-end gap-3">
+            <div className="p-6 border-t border-neutral-200 flex justify-end gap-3">
               <button
                 onClick={() => {
                   setShowClearAllModal(false);
                   setClearAllCode('');
                 }}
-                className="px-4 py-2 text-zinc-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-neutral-500 hover:text-neutral-900 transition-colors"
               >
                 İptal
               </button>
               <button
                 onClick={handleClearAllSales}
                 disabled={clearingTable !== null || clearAllCode !== 'TUM_SATISLARI_SIL'}
-                className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-6 py-2 bg-red-600 text-neutral-900 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {clearingTable === 'all' && <Loader2 className="w-4 h-4 animate-spin" />}
                 Tümünü Sil

@@ -195,7 +195,7 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-zinc-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-500" />
       </div>
     );
   }
@@ -204,8 +204,8 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Menü Yönetimi</h2>
-          <p className="text-zinc-400 text-sm mt-1">Sitenin ana navigasyon menüsünü düzenleyin</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-neutral-900">Menü Yönetimi</h2>
+          <p className="text-neutral-500 text-sm mt-1">Sitenin ana navigasyon menüsünü düzenleyin</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -217,25 +217,25 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
         </button>
       </div>
 
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+      <div className="bg-neutral-50 border border-neutral-200 rounded-xl overflow-hidden">
         {rootItems.length === 0 ? (
           <div className="text-center py-12">
-            <Menu className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-            <p className="text-zinc-400">Henüz menü öğesi eklenmemiş</p>
-            <p className="text-zinc-500 text-sm mt-1">Yeni öğe ekleyerek menünüzü oluşturmaya başlayın</p>
+            <Menu className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
+            <p className="text-neutral-500">Henüz menü öğesi eklenmemiş</p>
+            <p className="text-neutral-500 text-sm mt-1">Yeni öğe ekleyerek menünüzü oluşturmaya başlayın</p>
           </div>
         ) : (
-          <div className="divide-y divide-zinc-800">
+          <div className="divide-y divide-neutral-200">
             {rootItems.map((item, index) => {
               const children = menuItems.filter(child => child.parentId === item.id);
               return (
                 <div key={item.id}>
-                  <div className="flex items-center gap-4 p-4 hover:bg-zinc-800/50">
+                  <div className="flex items-center gap-4 p-4 hover:bg-neutral-100">
                     <div className="flex flex-col gap-1">
                       <button
                         onClick={() => moveItem(index, 'up')}
                         disabled={index === 0 || reorderMutation.isPending}
-                        className="p-1 hover:bg-zinc-700 rounded disabled:opacity-30"
+                        className="p-1 hover:bg-neutral-200 rounded disabled:opacity-30"
                         data-testid={`button-move-up-${item.id}`}
                       >
                         <ChevronUp className="w-4 h-4" />
@@ -243,7 +243,7 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                       <button
                         onClick={() => moveItem(index, 'down')}
                         disabled={index === rootItems.length - 1 || reorderMutation.isPending}
-                        className="p-1 hover:bg-zinc-700 rounded disabled:opacity-30"
+                        className="p-1 hover:bg-neutral-200 rounded disabled:opacity-30"
                         data-testid={`button-move-down-${item.id}`}
                       >
                         <ChevronDown className="w-4 h-4" />
@@ -252,13 +252,13 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">{item.title}</span>
+                        <span className="font-medium text-neutral-900">{item.title}</span>
                         {!item.isActive && (
-                          <span className="px-2 py-0.5 bg-zinc-700 text-zinc-400 text-xs rounded">Pasif</span>
+                          <span className="px-2 py-0.5 bg-neutral-200 text-neutral-500 text-xs rounded">Pasif</span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mt-1 text-sm text-zinc-500">
-                        <span className="px-2 py-0.5 bg-zinc-800 rounded text-xs">{getTypeLabel(item.type)}</span>
+                      <div className="flex items-center gap-2 mt-1 text-sm text-neutral-500">
+                        <span className="px-2 py-0.5 bg-neutral-50 rounded text-xs">{getTypeLabel(item.type)}</span>
                         {item.type === 'category' && item.category && (
                           <span>→ {item.category.name}</span>
                         )}
@@ -274,7 +274,7 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => openEditModal(item)}
-                        className="p-2 hover:bg-zinc-700 rounded text-zinc-400 hover:text-white"
+                        className="p-2 hover:bg-neutral-200 rounded text-neutral-500 hover:text-neutral-900"
                         data-testid={`button-edit-menu-${item.id}`}
                       >
                         <Edit className="w-4 h-4" />
@@ -286,7 +286,7 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                           }
                         }}
                         disabled={deleteMutation.isPending}
-                        className="p-2 hover:bg-red-900/50 rounded text-zinc-400 hover:text-red-400"
+                        className="p-2 hover:bg-red-900/50 rounded text-neutral-500 hover:text-red-400"
                         data-testid={`button-delete-menu-${item.id}`}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -295,18 +295,18 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                   </div>
 
                   {children.length > 0 && (
-                    <div className="ml-12 border-l border-zinc-700">
+                    <div className="ml-12 border-l border-neutral-200">
                       {children.map((child) => (
-                        <div key={child.id} className="flex items-center gap-4 p-4 pl-6 hover:bg-zinc-800/30">
+                        <div key={child.id} className="flex items-center gap-4 p-4 pl-6 hover:bg-neutral-50/30">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-zinc-300">{child.title}</span>
+                              <span className="text-neutral-700">{child.title}</span>
                               {!child.isActive && (
-                                <span className="px-2 py-0.5 bg-zinc-700 text-zinc-400 text-xs rounded">Pasif</span>
+                                <span className="px-2 py-0.5 bg-neutral-200 text-neutral-500 text-xs rounded">Pasif</span>
                               )}
                             </div>
-                            <div className="flex items-center gap-2 mt-1 text-sm text-zinc-500">
-                              <span className="px-2 py-0.5 bg-zinc-800 rounded text-xs">{getTypeLabel(child.type)}</span>
+                            <div className="flex items-center gap-2 mt-1 text-sm text-neutral-500">
+                              <span className="px-2 py-0.5 bg-neutral-50 rounded text-xs">{getTypeLabel(child.type)}</span>
                               {child.type === 'category' && child.category && (
                                 <span>→ {child.category.name}</span>
                               )}
@@ -319,7 +319,7 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => openEditModal(child)}
-                              className="p-2 hover:bg-zinc-700 rounded text-zinc-400 hover:text-white"
+                              className="p-2 hover:bg-neutral-200 rounded text-neutral-500 hover:text-neutral-900"
                               data-testid={`button-edit-submenu-${child.id}`}
                             >
                               <Edit className="w-4 h-4" />
@@ -331,7 +331,7 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                                 }
                               }}
                               disabled={deleteMutation.isPending}
-                              className="p-2 hover:bg-red-900/50 rounded text-zinc-400 hover:text-red-400"
+                              className="p-2 hover:bg-red-900/50 rounded text-neutral-500 hover:text-red-400"
                               data-testid={`button-delete-submenu-${child.id}`}
                             >
                               <Trash2 className="w-4 h-4" />
@@ -350,14 +350,14 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
 
       {showModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-zinc-800">
-              <h3 className="text-xl font-bold text-white">
+          <div className="bg-white border border-neutral-200 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-neutral-200">
+              <h3 className="text-xl font-bold text-neutral-900">
                 {editingItem ? 'Menü Öğesini Düzenle' : 'Yeni Menü Öğesi'}
               </h3>
               <button
                 onClick={closeModal}
-                className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white"
+                className="p-2 hover:bg-neutral-50 rounded-lg text-neutral-500 hover:text-neutral-900"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -365,19 +365,19 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
 
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Başlık</label>
+                <label className="block text-sm font-medium text-neutral-500 mb-2">Başlık</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white focus:ring-1 focus:ring-white"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white focus:ring-1 focus:ring-white"
                   placeholder="Menüde görünecek başlık"
                   data-testid="input-menu-title"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Tür</label>
+                <label className="block text-sm font-medium text-neutral-500 mb-2">Tür</label>
                 <div className="grid grid-cols-3 gap-2">
                   {(['category', 'link', 'submenu'] as const).map((type) => (
                     <button
@@ -387,7 +387,7 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                       className={`px-4 py-3 rounded-lg font-medium transition-colors ${
                         formData.type === type
                           ? 'bg-white text-black'
-                          : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                          : 'bg-neutral-50 text-neutral-500 hover:bg-neutral-200'
                       }`}
                       data-testid={`button-type-${type}`}
                     >
@@ -399,11 +399,11 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
 
               {formData.type === 'category' && (
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-2">Kategori</label>
+                  <label className="block text-sm font-medium text-neutral-500 mb-2">Kategori</label>
                   <select
                     value={formData.categoryId}
                     onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                    className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white focus:ring-1 focus:ring-white"
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white focus:ring-1 focus:ring-white"
                     data-testid="select-menu-category"
                   >
                     <option value="">Kategori seçin</option>
@@ -416,12 +416,12 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
 
               {formData.type === 'link' && (
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-2">URL</label>
+                  <label className="block text-sm font-medium text-neutral-500 mb-2">URL</label>
                   <input
                     type="text"
                     value={formData.url}
                     onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                    className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white focus:ring-1 focus:ring-white"
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white focus:ring-1 focus:ring-white"
                     placeholder="https://example.com veya /sayfa"
                     data-testid="input-menu-url"
                   />
@@ -438,11 +438,11 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
 
               {formData.type !== 'submenu' && submenuParents.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-2">Üst Menü (Opsiyonel)</label>
+                  <label className="block text-sm font-medium text-neutral-500 mb-2">Üst Menü (Opsiyonel)</label>
                   <select
                     value={formData.parentId}
                     onChange={(e) => setFormData({ ...formData, parentId: e.target.value })}
-                    className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:border-white focus:ring-1 focus:ring-white"
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 focus:border-white focus:ring-1 focus:ring-white"
                     data-testid="select-parent-menu"
                   >
                     <option value="">Ana menüde göster</option>
@@ -450,13 +450,13 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                       <option key={parent.id} value={parent.id}>{parent.title}</option>
                     ))}
                   </select>
-                  <p className="text-xs text-zinc-500 mt-1">Bir alt menünün altında göstermek için seçin</p>
+                  <p className="text-xs text-neutral-500 mt-1">Bir alt menünün altında göstermek için seçin</p>
                 </div>
               )}
 
               {formData.type !== 'submenu' && submenuParents.length === 0 && (
-                <div className="p-4 bg-zinc-800/50 border border-zinc-700 rounded-lg">
-                  <p className="text-sm text-zinc-400">
+                <div className="p-4 bg-neutral-100 border border-neutral-200 rounded-lg">
+                  <p className="text-sm text-neutral-500">
                     Alt menü öğesi eklemek için önce "Alt Menü" türünde bir öğe oluşturun.
                   </p>
                 </div>
@@ -468,10 +468,10 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                     type="checkbox"
                     checked={formData.isActive}
                     onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                    className="w-5 h-5 bg-zinc-700 border-zinc-600 rounded text-white focus:ring-white"
+                    className="w-5 h-5 bg-neutral-200 border-zinc-600 rounded text-neutral-900 focus:ring-white"
                     data-testid="checkbox-menu-active"
                   />
-                  <span className="text-zinc-300">Aktif</span>
+                  <span className="text-neutral-700">Aktif</span>
                 </label>
 
                 {formData.type === 'link' && (
@@ -480,19 +480,19 @@ export default function MenuManagementPanel({ categories }: MenuManagementPanelP
                       type="checkbox"
                       checked={formData.openInNewTab}
                       onChange={(e) => setFormData({ ...formData, openInNewTab: e.target.checked })}
-                      className="w-5 h-5 bg-zinc-700 border-zinc-600 rounded text-white focus:ring-white"
+                      className="w-5 h-5 bg-neutral-200 border-zinc-600 rounded text-neutral-900 focus:ring-white"
                       data-testid="checkbox-new-tab"
                     />
-                    <span className="text-zinc-300">Yeni sekmede aç</span>
+                    <span className="text-neutral-700">Yeni sekmede aç</span>
                   </label>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-zinc-800">
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-neutral-200">
               <button
                 onClick={closeModal}
-                className="px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg font-medium"
+                className="px-6 py-2.5 bg-neutral-50 hover:bg-neutral-200 rounded-lg font-medium"
               >
                 İptal
               </button>

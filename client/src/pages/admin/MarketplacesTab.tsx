@@ -15,7 +15,6 @@ import {
   History,
   Tags,
   AlertTriangle,
-  Search,
   Zap,
   Link2,
 } from 'lucide-react';
@@ -1223,8 +1222,8 @@ function CategoryMappingsDialog({
   const saveAllMutation = useMutation({
     mutationFn: async () => {
       const entries = Object.entries(drafts);
-      let success = 0;
-      let failed = 0;
+      const succeededIds: string[] = [];
+      const failedIds: string[] = [];
       for (const [id, siteCategoryId] of entries) {
         try {
           await apiRequest(
@@ -1232,23 +1231,30 @@ function CategoryMappingsDialog({
             `/api/admin/marketplaces/${marketplaceId}/category-mappings/${id}`,
             { siteCategoryId },
           );
-          success++;
+          succeededIds.push(id);
         } catch {
-          failed++;
+          failedIds.push(id);
         }
       }
-      return { success, failed };
+      return { succeededIds, failedIds };
     },
-    onSuccess: ({ success, failed }) => {
+    onSuccess: ({ succeededIds, failedIds }) => {
       qc.invalidateQueries({
         queryKey: ['/api/admin/marketplaces', marketplaceId, 'category-mappings'],
       });
-      setDrafts({});
-      if (failed === 0) {
-        toast({ title: `${success} eşleme kaydedildi` });
+      // Keep failed entries in drafts so retry is one-click; clear successes only
+      setDrafts((prev) => {
+        const next = { ...prev };
+        for (const id of succeededIds) delete next[id];
+        return next;
+      });
+      if (failedIds.length === 0) {
+        toast({ title: `${succeededIds.length} eşleme kaydedildi` });
       } else {
         toast({
-          title: `${success} kaydedildi, ${failed} hata`,
+          title: `${succeededIds.length} kaydedildi, ${failedIds.length} hata`,
+          description:
+            'Hatalı satırlar düzenleme modunda kaldı. Yeniden Kaydet ile tekrar deneyebilirsiniz.',
           variant: 'destructive',
         });
       }

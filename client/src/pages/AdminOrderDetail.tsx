@@ -376,8 +376,9 @@ export default function AdminOrderDetail() {
   const currentStatus =
     statusOptions.find((s) => s.value === status) || statusOptions[1];
   const StatusIcon = currentStatus.icon;
-  const canShip = status !== 'cancelled' && status !== 'delivered';
-  const canCancel = status !== 'cancelled' && status !== 'delivered';
+  const isTerminal = status === 'cancelled' || status === 'delivered' || status === 'completed';
+  const canShip = !isTerminal;
+  const canCancel = !isTerminal;
   const isInfluencer = order.couponCode && couponInfo?.isInfluencerCode;
 
   return (

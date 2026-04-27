@@ -6,7 +6,6 @@ import {
   Warehouse,
   ShoppingCart,
   Users,
-  Wand2,
   Globe,
   Menu as MenuIcon,
   Settings,
@@ -25,7 +24,6 @@ export const VALID_TABS: TabType[] = [
   'inventory',
   'settings',
   'database',
-  'ai-descriptions',
   'menu',
   'marketplaces',
 ];
@@ -53,10 +51,6 @@ export const SIDEBAR_CATEGORIES: SidebarCategory[] = [
   {
     title: 'Müşteriler',
     items: [{ id: 'users', icon: Users, label: 'Kullanıcılar' }],
-  },
-  {
-    title: 'AI Araçları',
-    items: [{ id: 'ai-descriptions', icon: Wand2, label: 'AI Açıklamalar' }],
   },
   {
     title: 'Entegrasyonlar',

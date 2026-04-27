@@ -129,14 +129,6 @@ export type ProductDraft = Omit<Product, 'id' | 'createdAt'> & {
   createdAt?: string;
 };
 
-export interface BulkAIResult {
-  productId: string;
-  productName?: string;
-  success: boolean;
-  error?: string;
-  message?: string;
-}
-
 export type TabType =
   | 'dashboard'
   | 'products'
@@ -147,6 +139,5 @@ export type TabType =
   | 'inventory'
   | 'settings'
   | 'database'
-  | 'ai-descriptions'
   | 'menu'
   | 'marketplaces';

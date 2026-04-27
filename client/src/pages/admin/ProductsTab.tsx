@@ -42,7 +42,6 @@ interface ProductsTabProps {
   setShowProductModal: (b: boolean) => void;
   setShowBulkBadgeModal: (b: boolean) => void;
   setShowBulkPriceModal: (b: boolean) => void;
-  setShowBulkAIModal: (b: boolean) => void;
   setBulkPreselectedIds?: (ids: string[]) => void;
   deleteProductMutation: { mutate: (id: string) => void };
   productsLoading?: boolean;
@@ -261,7 +260,6 @@ export default function ProductsTab({
   setShowProductModal,
   setShowBulkBadgeModal,
   setShowBulkPriceModal,
-  setShowBulkAIModal,
   setBulkPreselectedIds,
   deleteProductMutation,
   productsLoading,
@@ -421,17 +419,6 @@ export default function ProductsTab({
               <Tag className="w-3.5 h-3.5" />
               <span className="hidden md:inline">Toplu etiket</span>
             </GhostButton>
-            <GhostButton
-              onClick={() => {
-                setBulkPreselectedIds?.([]);
-                setShowBulkAIModal(true);
-              }}
-              data-testid="button-header-bulk-ai"
-              title="Tüm/kategori bazlı toplu AI açıklama"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Toplu AI</span>
-            </GhostButton>
             <SecondaryButton
               onClick={handleSyncVariants}
               disabled={isSyncing}
@@ -569,17 +556,6 @@ export default function ProductsTab({
             >
               <Tag className="w-3.5 h-3.5" />
               Toplu etiket
-            </SecondaryButton>
-            <SecondaryButton
-              onClick={() => {
-                setBulkPreselectedIds?.(Array.from(selectedIds));
-                setShowBulkAIModal(true);
-              }}
-              disabled={selectedIds.size === 0}
-              data-testid="button-bulk-ai"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              Toplu AI açıklama
             </SecondaryButton>
             <div className="ml-auto">
               <GhostButton onClick={clearSelection}>

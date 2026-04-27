@@ -13,7 +13,6 @@ import AnalyticsTab from './admin/AnalyticsTab';
 import InventoryTab from './admin/InventoryTab';
 import SettingsTab from './admin/SettingsTab';
 import DatabaseTab from './admin/DatabaseTab';
-import AIDescriptionsTab from './admin/AIDescriptionsTab';
 import MenuTab from './admin/MenuTab';
 
 import ProductModal from './admin/modals/ProductModal';
@@ -21,7 +20,6 @@ import CategoryModal from './admin/modals/CategoryModal';
 import UserDetailModal from './admin/modals/UserDetailModal';
 import BulkPriceModal from './admin/modals/BulkPriceModal';
 import BulkBadgeModal from './admin/modals/BulkBadgeModal';
-import BulkAIModal from './admin/modals/BulkAIModal';
 
 import type { Product, ProductDraft, Category, User, TabType } from './admin/_shared/types';
 import {
@@ -49,7 +47,6 @@ export default function AdminDashboard() {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showBulkPriceModal, setShowBulkPriceModal] = useState(false);
   const [showBulkBadgeModal, setShowBulkBadgeModal] = useState(false);
-  const [showBulkAIModal, setShowBulkAIModal] = useState(false);
   const [bulkPreselectedIds, setBulkPreselectedIds] = useState<string[] | undefined>(undefined);
 
   const data = useAdminDashboardData({
@@ -158,7 +155,6 @@ export default function AdminDashboard() {
             setShowProductModal={setShowProductModal}
             setShowBulkBadgeModal={setShowBulkBadgeModal}
             setShowBulkPriceModal={setShowBulkPriceModal}
-            setShowBulkAIModal={setShowBulkAIModal}
             setBulkPreselectedIds={setBulkPreselectedIds}
             deleteProductMutation={deleteProductMutation}
             productsLoading={productsLoading}
@@ -189,9 +185,6 @@ export default function AdminDashboard() {
         {activeTab === 'inventory' && <InventoryTab />}
         {activeTab === 'settings' && <SettingsTab />}
         {activeTab === 'database' && <DatabaseTab />}
-        {activeTab === 'ai-descriptions' && (
-          <AIDescriptionsTab products={products} categories={categories} />
-        )}
         {activeTab === 'menu' && <MenuTab categories={categories} />}
         {activeTab === 'marketplaces' && (
           <MarketplacesTab
@@ -253,16 +246,6 @@ export default function AdminDashboard() {
             setShowBulkBadgeModal(false);
             setBulkPreselectedIds(undefined);
             queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
-          }}
-        />
-      )}
-      {showBulkAIModal && (
-        <BulkAIModal
-          categories={categories}
-          preselectedProductIds={bulkPreselectedIds}
-          onClose={() => {
-            setShowBulkAIModal(false);
-            setBulkPreselectedIds(undefined);
           }}
         />
       )}

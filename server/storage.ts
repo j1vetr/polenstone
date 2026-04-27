@@ -74,9 +74,6 @@ import {
   type InsertQuote,
   type QuoteItem,
   type InsertQuoteItem,
-  productAttributes,
-  type ProductAttributes,
-  type InsertProductAttributes,
   sizeCharts,
   type SizeChart,
   type InsertSizeChart,
@@ -239,10 +236,6 @@ export interface IStorage {
   updateQuoteItem(id: string, item: Partial<InsertQuoteItem>): Promise<QuoteItem | undefined>;
   deleteQuoteItem(id: string): Promise<void>;
   deleteQuoteItems(quoteId: string): Promise<void>;
-
-  // Product Attributes for Chatbot
-  getProductAttributes(productId: string): Promise<ProductAttributes | undefined>;
-  upsertProductAttributes(productId: string, attrs: Partial<InsertProductAttributes>): Promise<ProductAttributes>;
 
   // Size Charts (Beden Tabloları)
   getSizeCharts(): Promise<SizeChart[]>;
@@ -1685,29 +1678,6 @@ export class DbStorage implements IStorage {
 
   async deleteQuoteItems(quoteId: string): Promise<void> {
     await db.delete(quoteItems).where(eq(quoteItems.quoteId, quoteId));
-  }
-
-  // Product Attributes for Chatbot
-  async getProductAttributes(productId: string): Promise<ProductAttributes | undefined> {
-    const [attrs] = await db.select().from(productAttributes).where(eq(productAttributes.productId, productId));
-    return attrs;
-  }
-
-  async upsertProductAttributes(productId: string, attrs: Partial<InsertProductAttributes>): Promise<ProductAttributes> {
-    const existing = await this.getProductAttributes(productId);
-    
-    if (existing) {
-      const [updated] = await db.update(productAttributes)
-        .set({ ...attrs, updatedAt: new Date() })
-        .where(eq(productAttributes.productId, productId))
-        .returning();
-      return updated;
-    } else {
-      const [created] = await db.insert(productAttributes)
-        .values({ productId, ...attrs })
-        .returning();
-      return created;
-    }
   }
 
   // Size Charts (Beden Tabloları)

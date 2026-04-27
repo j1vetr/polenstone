@@ -3,12 +3,8 @@ import {
   X,
   Upload,
   Loader2,
-  Sparkles,
-  Wand2,
-  Check,
   Package,
   Eye,
-  RefreshCw,
   Trash2,
 } from 'lucide-react';
 import type { Product, ProductDraft, Category } from '../_shared/types';
@@ -45,14 +41,6 @@ const COLOR_OPTIONS = [
   { name: 'Bordo', hex: '#7C2D12' },
   { name: 'Antrasit', hex: '#374151' },
   { name: 'Haki', hex: '#6B8E23' },
-];
-
-const AI_STYLES = [
-  { id: 'professional', name: 'Profesyonel', description: 'Kurumsal ve güvenilir ton' },
-  { id: 'energetic', name: 'Enerjik', description: 'Dinamik ve motive edici' },
-  { id: 'minimal', name: 'Minimal', description: 'Kısa ve öz' },
-  { id: 'luxury', name: 'Lüks', description: 'Premium ve sofistike' },
-  { id: 'natural', name: 'Doğal', description: 'Anadolu mirası ve el işçiliği vurgusu' },
 ];
 
 function generateSlug(name: string) {
@@ -116,11 +104,6 @@ export default function ProductModal({
   const [dragOver, setDragOver] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  const [aiStyle, setAiStyle] = useState<string>('professional');
-  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
-  const [aiPreview, setAiPreview] = useState<string | null>(null);
-  const [showAiPanel, setShowAiPanel] = useState(false);
-
   const [previewSize, setPreviewSize] = useState<string | null>(formData.availableSizes[0] || null);
   const [previewColor, setPreviewColor] = useState<{ name: string; hex: string } | null>(
     formData.availableColors[0] || null,
@@ -156,8 +139,6 @@ export default function ProductModal({
     });
     setPendingFiles([]);
     setUploadError(null);
-    setShowAiPanel(false);
-    setAiPreview(null);
     setPreviewImage(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product?.id]);
@@ -223,41 +204,6 @@ export default function ProductModal({
       return { ...prev, images: newImages };
     });
     setPreviewImage(0);
-  };
-
-  const generateAIDescription = async () => {
-    if (!product?.id) {
-      alert('Önce ürünü kaydedin, ardından AI açıklaması oluşturabilirsiniz.');
-      return;
-    }
-    setIsGeneratingAI(true);
-    try {
-      const res = await fetch(`/api/admin/products/${product.id}/generate-description`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ style: aiStyle }),
-      });
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || 'AI açıklaması oluşturulamadı');
-      }
-      const data = await res.json();
-      setAiPreview(data.description);
-    } catch (error) {
-      console.error('AI generation error:', error);
-      alert(error instanceof Error ? error.message : 'AI açıklaması oluşturulamadı');
-    } finally {
-      setIsGeneratingAI(false);
-    }
-  };
-
-  const applyAIDescription = () => {
-    if (aiPreview) {
-      setFormData((prev) => ({ ...prev, description: aiPreview }));
-      setAiPreview(null);
-      setShowAiPanel(false);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -479,113 +425,8 @@ export default function ProductModal({
           <section>
             <div className="flex items-center justify-between mb-3">
               <SectionHeading number={2} title="Açıklama" />
-              {product?.id && (
-                <SecondaryButton
-                  type="button"
-                  onClick={() => setShowAiPanel((v) => !v)}
-                  className="h-7 px-2.5"
-                  data-testid="button-ai-description"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  AI ile Oluştur
-                </SecondaryButton>
-              )}
             </div>
 
-            {showAiPanel && (
-              <div className="mb-3 p-3 bg-neutral-50 border border-neutral-200 rounded-md space-y-3">
-                <div className="flex items-center gap-1.5 text-[12px] text-neutral-700 font-medium">
-                  <Wand2 className="w-3.5 h-3.5" />
-                  AI Açıklama Oluşturucu
-                </div>
-
-                <div>
-                  <label className="block text-[11px] text-neutral-500 mb-1.5">Yazım Stili</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
-                    {AI_STYLES.map((style) => (
-                      <button
-                        key={style.id}
-                        type="button"
-                        onClick={() => setAiStyle(style.id)}
-                        className={`px-2 h-7 text-[12px] rounded-md transition-colors border ${
-                          aiStyle === style.id
-                            ? 'bg-neutral-900 text-white border-neutral-900'
-                            : 'bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-100'
-                        }`}
-                        title={style.description}
-                        data-testid={`button-ai-style-${style.id}`}
-                      >
-                        {style.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <PrimaryButton
-                  type="button"
-                  onClick={generateAIDescription}
-                  disabled={isGeneratingAI}
-                  className="w-full h-9"
-                  data-testid="button-ai-generate"
-                >
-                  {isGeneratingAI ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Oluşturuluyor…
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-3.5 h-3.5" />
-                      Açıklama Oluştur
-                    </>
-                  )}
-                </PrimaryButton>
-
-                {aiPreview && (
-                  <div className="space-y-2">
-                    <div className="text-[11px] text-neutral-500">Önizleme:</div>
-                    <div
-                      className="p-3 bg-white border border-neutral-200 rounded-md text-[13px] text-neutral-700 max-h-40 overflow-y-auto prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: aiPreview }}
-                    />
-                    <div className="flex gap-1.5">
-                      <PrimaryButton
-                        type="button"
-                        onClick={applyAIDescription}
-                        className="flex-1 h-8"
-                        data-testid="button-ai-apply"
-                      >
-                        <Check className="w-3.5 h-3.5" />
-                        Uygula
-                      </PrimaryButton>
-                      <SecondaryButton
-                        type="button"
-                        onClick={generateAIDescription}
-                        disabled={isGeneratingAI}
-                        className="flex-1 h-8"
-                        data-testid="button-ai-regenerate"
-                      >
-                        <RefreshCw
-                          className={`w-3.5 h-3.5 ${isGeneratingAI ? 'animate-spin' : ''}`}
-                        />
-                        Yeniden
-                      </SecondaryButton>
-                      <SecondaryButton
-                        type="button"
-                        onClick={() => {
-                          setAiPreview(null);
-                          setShowAiPanel(false);
-                        }}
-                        className="h-8"
-                        data-testid="button-ai-cancel"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </SecondaryButton>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
 
             <TextArea
               value={formData.description}

@@ -16,11 +16,34 @@ import {
   PageHeader,
   Card,
   EmptyState,
-  LoadingState,
   InlineAlert,
   PrimaryButton,
   IconButton,
 } from './_ui/AdminUI';
+
+function CategoryCardSkeleton() {
+  return (
+    <Card className="p-0 overflow-hidden">
+      <div className="flex items-stretch animate-pulse">
+        <div className="w-9 sm:w-10 bg-neutral-50 border-r border-neutral-200" />
+        <div className="w-20 sm:w-24 h-[68px] sm:h-[76px] bg-neutral-100 border-r border-neutral-200" />
+        <div className="flex-1 px-3 sm:px-4 py-3 flex items-center gap-3">
+          <div className="flex-1 space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="h-[18px] w-6 rounded bg-neutral-100" />
+              <div className="h-3 w-32 rounded bg-neutral-100" />
+            </div>
+            <div className="h-2.5 w-20 rounded bg-neutral-100" />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-7 h-7 rounded-md bg-neutral-100" />
+            <div className="w-7 h-7 rounded-md bg-neutral-100" />
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
 
 interface CategoriesTabProps {
   categories: Category[];
@@ -255,9 +278,11 @@ export default function CategoriesTab({
           sayfayı yenileyin.
         </InlineAlert>
       ) : categoriesLoading && categories.length === 0 ? (
-        <Card>
-          <LoadingState label="Kategoriler yükleniyor…" />
-        </Card>
+        <div className="space-y-2" data-testid="loading-categories">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <CategoryCardSkeleton key={i} />
+          ))}
+        </div>
       ) : items.length === 0 ? (
         <Card className="py-2">
           <EmptyState
@@ -282,7 +307,9 @@ export default function CategoriesTab({
           axis="y"
           values={items}
           onReorder={handleReorder}
-          className="space-y-2"
+          className={`space-y-2 transition-opacity ${
+            isSavingOrder ? 'opacity-70 pointer-events-none' : ''
+          }`}
           data-testid="list-categories"
         >
           {items.map((cat, index) => (

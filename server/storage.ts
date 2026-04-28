@@ -1518,6 +1518,11 @@ export class DbStorage implements IStorage {
     return result?.count || 0;
   }
 
+  async getProductsCount(): Promise<number> {
+    const [result] = await db.select({ count: sql<number>`count(*)::int` }).from(products);
+    return result?.count || 0;
+  }
+
   async getCartItemsCount(): Promise<number> {
     const [result] = await db.select({ count: sql<number>`count(*)::int` }).from(cartItems);
     return result?.count || 0;

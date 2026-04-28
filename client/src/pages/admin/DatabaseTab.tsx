@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Database, Trash2, AlertTriangle, CheckCircle2, XCircle, Loader2, RefreshCw, RotateCcw, Server, ShoppingCart, Package, Clock, MessageSquare, Tag, AlertCircle } from 'lucide-react';
+import { Database, Trash2, AlertTriangle, CheckCircle2, XCircle, Loader2, RefreshCw, RotateCcw, Server, ShoppingCart, Package, Clock, MessageSquare, Tag, AlertCircle, ImageIcon } from 'lucide-react';
 
 export default function DatabasePanel() {
   const queryClient = useQueryClient();
@@ -16,9 +16,15 @@ export default function DatabasePanel() {
     pendingPayments: number;
     reviews: number;
     couponUsage: number;
+    products: number;
   }>({
     queryKey: ['/api/admin/database/stats'],
   });
+
+  // Ürünler için ekstra güvenli onay kodu (yanlışlıkla katalog silinmesin)
+  const PRODUCTS_CODE = 'TUM_URUNLERI_SIL';
+  const [productsCode, setProductsCode] = useState('');
+  const [showProductsModal, setShowProductsModal] = useState(false);
 
   const tables = [
     { id: 'orders', name: 'Siparişler', description: 'Tüm siparişler ve sipariş kalemleri', count: dbStats?.orders || 0, icon: ShoppingCart },
@@ -55,6 +61,36 @@ export default function DatabasePanel() {
       setConfirmCode('');
       refetch();
       queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
+    } catch (error) {
+      setMessage({ type: 'error', text: (error instanceof Error ? error.message : String(error)) || 'Silme işlemi başarısız' });
+    } finally {
+      setClearingTable(null);
+    }
+  };
+
+  const handleClearProducts = async () => {
+    if (productsCode !== PRODUCTS_CODE) {
+      setMessage({ type: 'error', text: `Onay kodu hatalı. '${PRODUCTS_CODE}' yazmalısınız.` });
+      return;
+    }
+    setClearingTable('products');
+    setMessage(null);
+    try {
+      const res = await fetch('/api/admin/database/clear/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmCode: productsCode }),
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Hata oluştu');
+      setMessage({ type: 'success', text: `${data.deletedCount} ürün ve fotoğrafları silindi.` });
+      setProductsCode('');
+      setShowProductsModal(false);
+      refetch();
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
     } catch (error) {
       setMessage({ type: 'error', text: (error instanceof Error ? error.message : String(error)) || 'Silme işlemi başarısız' });
     } finally {
@@ -188,6 +224,42 @@ export default function DatabasePanel() {
         ))}
       </div>
 
+      {/* Tüm Ürünler ve Fotoğrafları */}
+      <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-6" data-testid="card-products-clear">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-red-500/10 rounded-lg flex items-center justify-center">
+              <ImageIcon className="w-6 h-6 text-red-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-red-400 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                Tüm Ürünler ve Fotoğrafları
+              </h3>
+              <p className="text-sm text-neutral-500 mt-1">
+                Tüm ürünler, varyantları, yorumları ve sunucudaki ürün fotoğrafları silinir. Sipariş geçmişi korunur (ürün referansı boş bırakılır).
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="text-right">
+              <span className="text-2xl font-bold text-neutral-900" data-testid="text-products-count">
+                {(dbStats?.products || 0).toLocaleString('tr-TR')}
+              </span>
+              <p className="text-xs text-neutral-500">ürün</p>
+            </div>
+            <button
+              onClick={() => setShowProductsModal(true)}
+              disabled={clearingTable !== null || (dbStats?.products || 0) === 0}
+              className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              data-testid="button-clear-products"
+            >
+              Tüm Ürünleri Sil
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-6">
         <div className="flex items-center justify-between">
           <div>
@@ -207,6 +279,69 @@ export default function DatabasePanel() {
           </button>
         </div>
       </div>
+
+      {/* Clear Products Modal */}
+      {showProductsModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border border-neutral-200 rounded-2xl w-full max-w-md" data-testid="modal-clear-products">
+            <div className="p-6 border-b border-neutral-200">
+              <h3 className="text-xl font-semibold text-neutral-900 flex items-center gap-2">
+                <AlertTriangle className="w-6 h-6 text-red-400" />
+                Tüm Ürünleri ve Fotoğrafları Sil
+              </h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-neutral-500">
+                Bu işlem aşağıdakileri kalıcı olarak silecek:
+              </p>
+              <ul className="text-sm text-neutral-500 list-disc list-inside space-y-1">
+                <li><strong className="text-neutral-900">{(dbStats?.products || 0).toLocaleString('tr-TR')}</strong> ürün</li>
+                <li>Tüm ürün varyantları (renk/ölçü)</li>
+                <li>Tüm ürün yorumları ve favoriler</li>
+                <li>Aktif sepetlerdeki ürün satırları</li>
+                <li><strong className="text-red-400">Sunucudaki tüm ürün fotoğrafları (geri alınamaz)</strong></li>
+              </ul>
+              <p className="text-xs text-neutral-500 italic">
+                Sipariş geçmişi korunur — sipariş kalemleri ürün adıyla birlikte saklanmaya devam eder, sadece ürün referansı boşaltılır.
+              </p>
+              <div className="pt-4">
+                <label className="block text-sm text-neutral-500 mb-2">
+                  Onaylamak için <span className="text-red-400 font-mono">{PRODUCTS_CODE}</span> yazın:
+                </label>
+                <input
+                  type="text"
+                  value={productsCode}
+                  onChange={(e) => setProductsCode(e.target.value.toUpperCase())}
+                  placeholder={PRODUCTS_CODE}
+                  className="w-full px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-500 font-mono"
+                  data-testid="input-products-confirm"
+                />
+              </div>
+            </div>
+            <div className="p-6 border-t border-neutral-200 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowProductsModal(false);
+                  setProductsCode('');
+                }}
+                className="px-4 py-2 text-neutral-500 hover:text-neutral-900 transition-colors"
+                data-testid="button-cancel-clear-products"
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleClearProducts}
+                disabled={clearingTable !== null || productsCode !== PRODUCTS_CODE}
+                className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                data-testid="button-confirm-clear-products"
+              >
+                {clearingTable === 'products' && <Loader2 className="w-4 h-4 animate-spin" />}
+                Hepsini Sil
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Clear All Modal */}
       {showClearAllModal && (

@@ -4467,12 +4467,13 @@ Sitemap: ${baseUrl}/sitemap.xml
   // Database Management Endpoints - for clearing specific tables
   app.get("/api/admin/database/stats", requireAdmin, async (req, res) => {
     try {
-      const [ordersCount, cartItemsCount, pendingPaymentsCount, reviewsCount, couponUsageCount] = await Promise.all([
+      const [ordersCount, cartItemsCount, pendingPaymentsCount, reviewsCount, couponUsageCount, productsCount] = await Promise.all([
         storage.getOrdersCount(),
         storage.getCartItemsCount(),
         storage.getPendingPaymentsCount(),
         storage.getReviewsCount(),
         storage.getCouponUsageCount(),
+        storage.getProductsCount(),
       ]);
       
       res.json({
@@ -4481,6 +4482,7 @@ Sitemap: ${baseUrl}/sitemap.xml
         pendingPayments: pendingPaymentsCount,
         reviews: reviewsCount,
         couponUsage: couponUsageCount,
+        products: productsCount,
       });
     } catch (error) {
       console.error('[Database] Stats error:', error);
@@ -4493,13 +4495,14 @@ Sitemap: ${baseUrl}/sitemap.xml
       const { table } = req.params;
       const { confirmCode } = req.body;
       
-      // Require confirmation code
-      if (confirmCode !== 'SIFIRLA') {
-        return res.status(400).json({ error: "Onay kodu hatalı. 'SIFIRLA' yazmalısınız." });
+      // Ürünler için ekstra güvenli onay kodu — yanlışlıkla katalog silinmesin
+      const requiredCode = table === 'products' ? 'TUM_URUNLERI_SIL' : 'SIFIRLA';
+      if (confirmCode !== requiredCode) {
+        return res.status(400).json({ error: `Onay kodu hatalı. '${requiredCode}' yazmalısınız.` });
       }
       
-      // List of safe-to-clear tables (NOT users, products, product_variants, categories)
-      const allowedTables = ['orders', 'order_items', 'cart_items', 'pending_payments', 'reviews', 'review_requests', 'coupon_usage', 'stock_adjustments'];
+      // List of safe-to-clear tables (NOT users, categories)
+      const allowedTables = ['orders', 'order_items', 'cart_items', 'pending_payments', 'reviews', 'review_requests', 'coupon_usage', 'stock_adjustments', 'products'];
       
       if (!allowedTables.includes(table)) {
         return res.status(403).json({ error: "Bu tablo silinemez" });
@@ -4536,6 +4539,27 @@ Sitemap: ${baseUrl}/sitemap.xml
         case 'stock_adjustments':
           deletedCount = await storage.clearStockAdjustments();
           break;
+        case 'products': {
+          // Tüm ürünleri ve bağlı kayıtları sil; order_items.product_id NULL olur (sipariş geçmişi korunur).
+          const result = await storage.deleteAllProducts();
+          deletedCount = result.deletedProducts;
+          // Ürün fotoğraflarını dosya sisteminden de temizle
+          let removedFiles = 0;
+          for (const imgPath of result.imagePaths) {
+            if (typeof imgPath !== 'string' || !imgPath.startsWith('/uploads/')) continue;
+            try {
+              const absolute = path.join(process.cwd(), 'client/public', imgPath);
+              await fs.promises.unlink(absolute);
+              removedFiles += 1;
+            } catch (e: any) {
+              if (e?.code !== 'ENOENT') {
+                console.warn(`[Database] Could not remove image ${imgPath}:`, e?.message || e);
+              }
+            }
+          }
+          console.log(`[Database] Products cleared: ${result.deletedProducts} products, ${result.deletedVariants} variants, ${removedFiles}/${result.imagePaths.length} images removed from disk.`);
+          break;
+        }
         default:
           return res.status(400).json({ error: "Geçersiz tablo adı" });
       }

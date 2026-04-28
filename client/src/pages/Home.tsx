@@ -303,46 +303,52 @@ function PinnedShowcaseScene({ products }: { products: Product[] }) {
       </div>
 
       <div className="relative">
-        <div className="flex gap-5 lg:gap-8 animate-marquee-hero will-change-transform">
-          {doubled.map((p, i) => (
-            <Link
-              key={`${p.id}-${i}`}
-              href={`/urun/${p.slug}`}
-              data-testid={`link-showcase-product-${p.id}-${i}`}
-              data-cursor="hover"
-              data-cursor-label="İncele"
-              aria-label={`${p.name} ürün sayfası`}
-              className="group shrink-0 w-[260px] lg:w-[340px]"
+        <div className="flex animate-marquee-hero will-change-transform">
+          {[0, 1].map((groupIdx) => (
+            <div
+              key={groupIdx}
+              className="flex gap-5 lg:gap-8 pr-5 lg:pr-8 shrink-0"
+              aria-hidden={groupIdx === 1 ? true : undefined}
             >
-              <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900">
-                <img
-                  src={p.images?.[0] || ''}
-                  alt={p.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
-                />
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/85 to-transparent" />
-                {p.discountBadge && (
-                  <div className="absolute top-3 right-3 bg-polen-orange text-white text-[10px] font-bold tracking-[0.2em] px-2 py-1 uppercase">
-                    {p.discountBadge}
-                  </div>
-                )}
-                <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5 flex items-end justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="text-[10px] font-mono tracking-[0.22em] uppercase text-white/55 mb-1">
-                      Doğal Taş
+              {items.map((p, i) => (
+                <Link
+                  key={`${groupIdx}-${p.id}-${i}`}
+                  href={`/urun/${p.slug}`}
+                  data-testid={`link-showcase-product-${p.id}-${groupIdx}-${i}`}
+                  aria-label={`${p.name} ürün sayfası`}
+                  className="group shrink-0 w-[260px] lg:w-[340px]"
+                >
+                  <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900">
+                    <img
+                      src={p.images?.[0] || ''}
+                      alt={p.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/85 to-transparent" />
+                    {p.discountBadge && (
+                      <div className="absolute top-3 right-3 bg-polen-orange text-white text-[10px] font-bold tracking-[0.2em] px-2 py-1 uppercase">
+                        {p.discountBadge}
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5 flex items-end justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-mono tracking-[0.22em] uppercase text-white/55 mb-1">
+                          Doğal Taş
+                        </div>
+                        <div className="text-sm lg:text-base font-medium text-white truncate">
+                          {p.name}
+                        </div>
+                      </div>
+                      <div className="text-sm lg:text-base font-semibold text-polen-orange whitespace-nowrap">
+                        {formatPrice(p.basePrice)} ₺
+                      </div>
                     </div>
-                    <div className="text-sm lg:text-base font-medium text-white truncate">
-                      {p.name}
-                    </div>
                   </div>
-                  <div className="text-sm lg:text-base font-semibold text-polen-orange whitespace-nowrap">
-                    {formatPrice(p.basePrice)} ₺
-                  </div>
-                </div>
-              </div>
-            </Link>
+                </Link>
+              ))}
+            </div>
           ))}
         </div>
       </div>

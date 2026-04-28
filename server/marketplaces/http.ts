@@ -110,10 +110,13 @@ export class MarketplaceHttpClient {
         }
 
         if (resp.status === 429 || resp.status >= 500) {
+          // Sunucu Retry-After önerdiyse onu honor et (Trendyol limitlere takıldığında
+          // saniye cinsinden veya HTTP-date olarak bunu döner).
+          const retryAfterMs = parseRetryAfterMs(resp.headers.get("retry-after"));
           const text = await safeText(resp);
           throw new MarketplaceError(
             `Marketplace upstream ${resp.status}: ${text.slice(0, 200)}`,
-            { statusCode: resp.status, retryable: true },
+            { statusCode: resp.status, retryable: true, retryAfterMs },
           );
         }
 
@@ -148,9 +151,18 @@ export class MarketplaceHttpClient {
         if (!retryable || attempt === maxAttempts) break;
         const status =
           err instanceof MarketplaceError && err.statusCode != null ? err.statusCode : "net";
-        const backoff = 1000 * Math.pow(2, attempt - 1) + Math.floor(Math.random() * 500);
+        const retryAfter =
+          err instanceof MarketplaceError && err.retryAfterMs != null
+            ? err.retryAfterMs
+            : null;
+        const expBackoff = 1000 * Math.pow(2, attempt - 1) + Math.floor(Math.random() * 500);
+        // Sunucu Retry-After verdiyse en az o kadar bekle; aksi halde exponential.
+        // Üst sınır 60s (saatte-1 endpoint'lere takıldığımızda boş yere blocklanmayalım).
+        const backoff = Math.min(60_000, Math.max(retryAfter ?? 0, expBackoff));
         console.warn(
-          `[marketplaces.http] retryable error (status=${status}) attempt=${attempt}/${maxAttempts} url=${url} — backing off ${backoff}ms`,
+          `[marketplaces.http] retryable error (status=${status}) attempt=${attempt}/${maxAttempts} url=${url} — backing off ${backoff}ms${
+            retryAfter != null ? ` (Retry-After=${retryAfter}ms)` : ""
+          }`,
         );
         await new Promise((r) => setTimeout(r, backoff));
       }
@@ -170,4 +182,22 @@ async function safeText(resp: Response): Promise<string> {
   } catch {
     return "";
   }
+}
+
+/**
+ * RFC 7231 Retry-After: ya saniye sayısı ("120") ya da HTTP-date.
+ * Trendyol genelde saniye döner. Bilinmeyen format → null.
+ */
+function parseRetryAfterMs(raw: string | null): number | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (/^\d+$/.test(trimmed)) {
+    return Math.max(0, Number(trimmed) * 1000);
+  }
+  const t = Date.parse(trimmed);
+  if (!Number.isNaN(t)) {
+    const ms = t - Date.now();
+    return ms > 0 ? ms : 0;
+  }
+  return null;
 }

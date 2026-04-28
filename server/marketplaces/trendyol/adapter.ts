@@ -3,12 +3,22 @@
  *
  * API kökü: https://apigw.trendyol.com/integration/
  * Auth: Basic ${apiKey}:${apiSecret}
- * User-Agent zorunlu (Trendyol denetler).
+ * User-Agent zorunlu format: `${supplierId} - SelfIntegration`.
+ *
+ * --------------------------------------------------------------------
+ * Servis limitleri (https://developers.trendyol.com/docs/1-servis-limitleri)
+ *   - Ürün Filtreleme (/products) ......... 2000 req/min   ← bizim hot path
+ *   - Stok ve Fiyat Güncelleme ............ NO LIMIT
+ *   - TY Kategori Listesi ................. 50   req/min   (artık çağırmıyoruz)
+ *   - İade/Sevkiyat Adres Bilgileri ....... 1    req/HOUR  (sadece debug)
+ *   - Ürün Silme .......................... 100  req/min
+ * Biz default 1500 req/min ile çalışıyoruz (limitin %75'i, headroom için).
+ * --------------------------------------------------------------------
  *
  * Yalnız okuma fonksiyonları:
- *   - testConnection: brands endpoint'iyle hafif bir GET
- *   - fetchCategoryTree: /product/product-categories
- *   - fetchProductsPage: /product/sellers/{sellerId}/products?page=N&size=200&approved=true
+ *   - testConnection: /products?page=0&size=1
+ *   - fetchCategoryTree: /product/product-categories (engine artık çağırmıyor)
+ *   - fetchProductsPage: /product/sellers/{sellerId}/products?page=N&size=50
  *   - fetchStockAndPrice: aynı listing endpoint'ten yalnız barkode/stok/price alanları
  *
  * Sayfalama: cursor = page numarası (string). null → sayfa biter.
@@ -112,7 +122,10 @@ class TrendyolAdapter implements MarketplaceAdapter {
       basicAuthUser: String(creds.apiKey),
       basicAuthPass: String(creds.apiSecret),
       userAgent: `${this.supplierId} - SelfIntegration`,
-      rateLimitPerMinute: typeof config.rateLimit === "number" ? (config.rateLimit as number) : 600,
+      // Trendyol "Ürün Filtreleme" 2000 req/min — biz 1500 ile %75 headroom bırakıyoruz.
+      // Diğer endpoint'lere bu adapter çağrı yapmadığından tek bir bucket yeterli.
+      rateLimitPerMinute:
+        typeof config.rateLimit === "number" ? (config.rateLimit as number) : 1500,
     });
   }
 

@@ -145,10 +145,16 @@ export type MarketplaceAdapterFactory = (
 export class MarketplaceError extends Error {
   readonly statusCode?: number;
   readonly retryable: boolean;
-  constructor(message: string, opts: { statusCode?: number; retryable?: boolean } = {}) {
+  /** Sunucu Retry-After header'ı verdiyse, milisaniye cinsinden bekleme önerisi. */
+  readonly retryAfterMs?: number | null;
+  constructor(
+    message: string,
+    opts: { statusCode?: number; retryable?: boolean; retryAfterMs?: number | null } = {},
+  ) {
     super(message);
     this.name = "MarketplaceError";
     this.statusCode = opts.statusCode;
     this.retryable = opts.retryable ?? false;
+    this.retryAfterMs = opts.retryAfterMs ?? null;
   }
 }

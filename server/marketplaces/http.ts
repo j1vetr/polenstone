@@ -15,6 +15,21 @@ interface RequestOptions {
   timeoutMs?: number;
 }
 
+/**
+ * Retry telemetri callback'leri — sync engine bunları stats counter'larına bağlar.
+ * Sessiz başarısızlık: implementasyon hataları HTTP akışını etkilemez.
+ */
+export interface HttpClientMetrics {
+  /** Retryable bir hata sonrası backoff başlatıldığında çağrılır (her deneme için). */
+  onRetry?: (info: {
+    attempt: number;
+    statusCode?: number;
+    retryAfterMs?: number | null;
+  }) => void;
+  /** İlk denemede 2xx alınamayan ama sonraki denemede başarılı olan istek için bir kez çağrılır. */
+  onRecover?: (info: { attempts: number; statusCode: number }) => void;
+}
+
 interface ClientOptions {
   baseUrl: string;
   basicAuthUser: string;
@@ -22,6 +37,8 @@ interface ClientOptions {
   userAgent: string;
   /** Dakika başına izin verilen istek sayısı. */
   rateLimitPerMinute?: number;
+  /** Retry / recover telemetrisi (opsiyonel). */
+  metrics?: HttpClientMetrics;
 }
 
 /** Basit token bucket — saniyede yeniden dolar. */
@@ -56,11 +73,22 @@ class RateLimiter {
 export class MarketplaceHttpClient {
   private readonly authHeader: string;
   private readonly limiter: RateLimiter;
+  private metrics: HttpClientMetrics | undefined;
 
   constructor(private readonly opts: ClientOptions) {
     const credentials = `${opts.basicAuthUser}:${opts.basicAuthPass}`;
     this.authHeader = `Basic ${Buffer.from(credentials, "utf8").toString("base64")}`;
     this.limiter = new RateLimiter(opts.rateLimitPerMinute ?? 600);
+    this.metrics = opts.metrics;
+  }
+
+  /**
+   * Telemetri kanalını çalışma sırasında bağla / değiştir.
+   * Adapter constructor zamanında metrics belli olmadığı için (sync engine
+   * adapter'ı oluşturduktan sonra runId'ye bağlı counter'ları takar).
+   */
+  setMetrics(metrics: HttpClientMetrics | undefined): void {
+    this.metrics = metrics;
   }
 
   async request<T = unknown>(pathOrUrl: string, options: RequestOptions = {}): Promise<T> {
@@ -87,6 +115,7 @@ export class MarketplaceHttpClient {
     // 5 deneme + uzunca backoff (1s, 2s, 4s, 8s + jitter) genelde yeterli.
     const maxAttempts = 5;
     let lastErr: unknown;
+    let hadRetry = false; // bu request için en az bir retry yaşandı mı (recover sayımı için)
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       await this.limiter.take();
       const controller = new AbortController();
@@ -128,6 +157,15 @@ export class MarketplaceHttpClient {
           );
         }
 
+        // Başarılı dönüş — daha önce retry yaşandıysa bu bir "recover" demektir.
+        if (hadRetry) {
+          try {
+            this.metrics?.onRecover?.({ attempts: attempt, statusCode: resp.status });
+          } catch {
+            /* telemetri sessiz */
+          }
+        }
+
         if (resp.status === 204) return undefined as T;
 
         const ct = resp.headers.get("content-type") ?? "";
@@ -150,7 +188,7 @@ export class MarketplaceHttpClient {
 
         if (!retryable || attempt === maxAttempts) break;
         const status =
-          err instanceof MarketplaceError && err.statusCode != null ? err.statusCode : "net";
+          err instanceof MarketplaceError && err.statusCode != null ? err.statusCode : undefined;
         const retryAfter =
           err instanceof MarketplaceError && err.retryAfterMs != null
             ? err.retryAfterMs
@@ -160,10 +198,16 @@ export class MarketplaceHttpClient {
         // Üst sınır 60s (saatte-1 endpoint'lere takıldığımızda boş yere blocklanmayalım).
         const backoff = Math.min(60_000, Math.max(retryAfter ?? 0, expBackoff));
         console.warn(
-          `[marketplaces.http] retryable error (status=${status}) attempt=${attempt}/${maxAttempts} url=${url} — backing off ${backoff}ms${
+          `[marketplaces.http] retryable error (status=${status ?? "net"}) attempt=${attempt}/${maxAttempts} url=${url} — backing off ${backoff}ms${
             retryAfter != null ? ` (Retry-After=${retryAfter}ms)` : ""
           }`,
         );
+        try {
+          this.metrics?.onRetry?.({ attempt, statusCode: status, retryAfterMs: retryAfter });
+        } catch {
+          /* telemetri sessiz */
+        }
+        hadRetry = true;
         await new Promise((r) => setTimeout(r, backoff));
       }
     }

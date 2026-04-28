@@ -265,11 +265,27 @@ export interface IStorage {
     name: string,
     parentExternalId: string | null,
     siteCategoryId: string | null,
+    fullPath?: string | null,
   ): Promise<MarketplaceCategory>;
   setMarketplaceCategoryMapping(
     id: string,
     siteCategoryId: string | null,
   ): Promise<MarketplaceCategory | undefined>;
+
+  // Kategori ağacı snapshot cache (pazaryeri kategori listesini saatlik tazeleyip lookup için DB'de tutar).
+  getCategoryTreeFetchedAt(marketplaceId: string): Promise<Date | null>;
+  setCategoryTreeFetchedAt(marketplaceId: string, when: Date | null): Promise<void>;
+  bulkUpsertCategoryTree(
+    marketplaceId: string,
+    nodes: Array<{
+      externalId: string;
+      name: string;
+      parentExternalId: string | null;
+      fullPath: string | null;
+    }>,
+  ): Promise<{ inserted: number; updated: number }>;
+  /** "categoryTreeFetchedAt = NULL" — bir sonraki sync'in cache'i tazelemesini garantiler. */
+  clearCategoryTreeCache(marketplaceId: string): Promise<void>;
 
   // Marketplace product bridge
   getMarketplaceProducts(marketplaceId: string): Promise<MarketplaceProduct[]>;
@@ -283,10 +299,15 @@ export interface IStorage {
   createSyncRun(insert: InsertMarketplaceSyncRun): Promise<MarketplaceSyncRun>;
   completeSyncRun(
     id: string,
-    patch: { status: string; stats: Record<string, number>; errors: Array<{ context: string; message: string }> },
+    patch: {
+      status: string;
+      stats: Record<string, unknown>;
+      errors: Array<{ context: string; message: string }>;
+      errorSummary?: Record<string, unknown>;
+    },
   ): Promise<MarketplaceSyncRun>;
   /** Live progress write — update only the stats jsonb on a running run. */
-  updateSyncRunStats(id: string, stats: Record<string, number>): Promise<void>;
+  updateSyncRunStats(id: string, stats: Record<string, unknown>): Promise<void>;
   getRunningSyncRun(marketplaceId: string): Promise<MarketplaceSyncRun | undefined>;
   getRecentSyncRuns(marketplaceId: string, limit?: number): Promise<MarketplaceSyncRun[]>;
 }
@@ -1831,6 +1852,7 @@ export class DbStorage implements IStorage {
     name: string,
     parentExternalId: string | null,
     siteCategoryId: string | null,
+    fullPath: string | null = null,
   ): Promise<MarketplaceCategory> {
     const existing = await this.getMarketplaceCategoryByExternal(marketplaceId, externalId);
     if (existing) {
@@ -1839,6 +1861,8 @@ export class DbStorage implements IStorage {
         .set({
           name,
           parentExternalId: parentExternalId ?? null,
+          // fullPath null olarak gelirse mevcut değeri ezme — başka bir akış set etmiş olabilir.
+          fullPath: fullPath ?? existing.fullPath ?? null,
           siteCategoryId: siteCategoryId ?? existing.siteCategoryId ?? null,
           updatedAt: new Date(),
         })
@@ -1853,10 +1877,96 @@ export class DbStorage implements IStorage {
         externalId,
         name,
         parentExternalId: parentExternalId ?? null,
+        fullPath: fullPath ?? null,
         siteCategoryId: siteCategoryId ?? null,
       })
       .returning();
     return row;
+  }
+
+  // ----- Kategori ağacı snapshot cache -----
+
+  async getCategoryTreeFetchedAt(marketplaceId: string): Promise<Date | null> {
+    const [row] = await db
+      .select({ at: marketplaces.categoryTreeFetchedAt })
+      .from(marketplaces)
+      .where(eq(marketplaces.id, marketplaceId));
+    return row?.at ?? null;
+  }
+
+  async setCategoryTreeFetchedAt(marketplaceId: string, when: Date | null): Promise<void> {
+    await db
+      .update(marketplaces)
+      .set({ categoryTreeFetchedAt: when, updatedAt: new Date() })
+      .where(eq(marketplaces.id, marketplaceId));
+  }
+
+  async clearCategoryTreeCache(marketplaceId: string): Promise<void> {
+    await this.setCategoryTreeFetchedAt(marketplaceId, null);
+  }
+
+  async bulkUpsertCategoryTree(
+    marketplaceId: string,
+    nodes: Array<{
+      externalId: string;
+      name: string;
+      parentExternalId: string | null;
+      fullPath: string | null;
+    }>,
+  ): Promise<{ inserted: number; updated: number }> {
+    if (nodes.length === 0) return { inserted: 0, updated: 0 };
+    // Aynı marketplace için tek tx içinde çalış: hangi externalId'ler zaten var?
+    return await db.transaction(async (tx) => {
+      const existing = await tx
+        .select({
+          id: marketplaceCategories.id,
+          externalId: marketplaceCategories.externalId,
+        })
+        .from(marketplaceCategories)
+        .where(eq(marketplaceCategories.marketplaceId, marketplaceId));
+      const existingMap = new Map(existing.map((r) => [r.externalId, r.id]));
+
+      let inserted = 0;
+      let updated = 0;
+      const now = new Date();
+
+      // INSERT batch — küçük partilere böl (PG parametre limiti 65535).
+      const toInsert = nodes
+        .filter((n) => !existingMap.has(n.externalId))
+        .map((n) => ({
+          marketplaceId,
+          externalId: n.externalId,
+          name: n.name,
+          parentExternalId: n.parentExternalId,
+          fullPath: n.fullPath,
+        }));
+      const BATCH = 500;
+      for (let i = 0; i < toInsert.length; i += BATCH) {
+        const slice = toInsert.slice(i, i + BATCH);
+        if (slice.length === 0) continue;
+        await tx.insert(marketplaceCategories).values(slice);
+        inserted += slice.length;
+      }
+
+      // UPDATE — sadece adı/parent/path değişmişse, ama yine de updated_at için tek geçiş yeter.
+      // Performansı kabul edilir tutmak için per-node update; tipik snapshot ~5-10K satır.
+      // siteCategoryId koru (admin elle eşlemiş olabilir).
+      for (const n of nodes) {
+        const id = existingMap.get(n.externalId);
+        if (!id) continue;
+        await tx
+          .update(marketplaceCategories)
+          .set({
+            name: n.name,
+            parentExternalId: n.parentExternalId,
+            fullPath: n.fullPath,
+            updatedAt: now,
+          })
+          .where(eq(marketplaceCategories.id, id));
+        updated += 1;
+      }
+      return { inserted, updated };
+    });
   }
 
   async setMarketplaceCategoryMapping(
@@ -1926,24 +2036,27 @@ export class DbStorage implements IStorage {
     id: string,
     patch: {
       status: string;
-      stats: Record<string, number>;
+      stats: Record<string, unknown>;
       errors: Array<{ context: string; message: string }>;
+      errorSummary?: Record<string, unknown>;
     },
   ): Promise<MarketplaceSyncRun> {
+    const setPatch: Record<string, unknown> = {
+      status: patch.status,
+      stats: patch.stats,
+      errors: patch.errors,
+      completedAt: new Date(),
+    };
+    if (patch.errorSummary !== undefined) setPatch.errorSummary = patch.errorSummary;
     const [row] = await db
       .update(marketplaceSyncRuns)
-      .set({
-        status: patch.status,
-        stats: patch.stats,
-        errors: patch.errors,
-        completedAt: new Date(),
-      })
+      .set(setPatch)
       .where(eq(marketplaceSyncRuns.id, id))
       .returning();
     return row;
   }
 
-  async updateSyncRunStats(id: string, stats: Record<string, number>): Promise<void> {
+  async updateSyncRunStats(id: string, stats: Record<string, unknown>): Promise<void> {
     await db
       .update(marketplaceSyncRuns)
       .set({ stats })

@@ -474,6 +474,28 @@ function MarketplaceCard({
       toast({ title: 'Bağlantı hatası', description: err.message, variant: 'destructive' }),
   });
 
+  // Kategori ağacı snapshot'ını "stale" olarak işaretle.
+  // Bir sonraki tam senkron yeniden indirir; idle'ken sunucu üzerinde
+  // ağır iş tetiklemiyoruz.
+  const refreshCategoryCacheMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest('POST', `/api/admin/marketplaces/${id}/refresh-category-cache`);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['/api/admin/marketplaces'] });
+      toast({
+        title: 'Kategori cache yenilendi',
+        description: 'Bir sonraki tam senkron pazaryeri kategorilerini yeniden indirecek.',
+      });
+    },
+    onError: (err: Error) =>
+      toast({
+        title: 'Yenilenemedi',
+        description: err.message,
+        variant: 'destructive',
+      }),
+  });
+
   // Latest run (running indicator + last result).
   // Çalışırken sıkı poll (1.5sn), aksi halde 5sn — ilerleme barı canlı hissetsin
   // ama bekleme/idle hâlinde sunucuyu yormasın.
@@ -609,33 +631,23 @@ function MarketplaceCard({
       {/* Live progress bar (running) — fades out shortly after completion */}
       <LiveProgressBar mp={mp} latestRun={latestRun} />
 
-      {/* Last error preview */}
+      {/* Hata özet paneli — gruplanmış (4xx/5xx/network/parse + imagesFailed).
+          errorSummary varsa onu göster (yeni format), yoksa eski "ilk hatayı göster"
+          davranışına düş. */}
       {latestRun &&
         !isRunning &&
         latestRun.errors &&
         latestRun.errors.length > 0 && (
-          <InlineAlert tone={latestRun.status === 'failed' ? 'error' : 'warning'}>
-            <div className="flex items-start gap-2">
-              <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-              <div className="min-w-0 flex-1">
-                <div className="font-medium">
-                  Son çalışmada {latestRun.errors.length} hata oluştu
-                </div>
-                <div className="mt-0.5 text-[11px] truncate opacity-80">
-                  <span className="opacity-70">{latestRun.errors[0].context}:</span>{' '}
-                  {latestRun.errors[0].message}
-                </div>
-                <button
-                  type="button"
-                  onClick={onHistory}
-                  className="mt-1 text-[11px] underline underline-offset-2 hover:no-underline"
-                  data-testid={`button-view-errors-${mp.id}`}
-                >
-                  Tümünü gör →
-                </button>
-              </div>
-            </div>
-          </InlineAlert>
+          <ErrorSummaryPanel
+            errors={latestRun.errors as Array<{ context: string; message: string }>}
+            errorSummary={
+              (latestRun as unknown as { errorSummary?: ErrorSummaryShape | null })
+                .errorSummary ?? null
+            }
+            tone={latestRun.status === 'failed' ? 'error' : 'warning'}
+            onView={onHistory}
+            mpId={mp.id}
+          />
         )}
 
       {/* Action row */}
@@ -680,6 +692,18 @@ function MarketplaceCard({
         <GhostButton onClick={onMappings} data-testid={`button-mappings-${mp.id}`}>
           <Tags className="w-3.5 h-3.5" />
           Kategori Eşleme
+        </GhostButton>
+        <GhostButton
+          onClick={() => refreshCategoryCacheMutation.mutate(mp.id)}
+          disabled={refreshCategoryCacheMutation.isPending || isRunning}
+          data-testid={`button-refresh-category-cache-${mp.id}`}
+        >
+          {refreshCategoryCacheMutation.isPending ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <RefreshCcw className="w-3.5 h-3.5" />
+          )}
+          Kategori cache'ini yenile
         </GhostButton>
       </div>
 
@@ -734,10 +758,17 @@ function LiveProgressBar({
   const run = lastRunRef.current ?? latestRun;
   if (!run) return null;
 
-  const stats = run.stats ?? {};
+  const stats = (run.stats ?? {}) as Record<string, unknown>;
   const processed = Math.max(0, Number(stats.processedTotal ?? 0));
   const expected = Math.max(0, Number(stats.expectedTotal ?? 0));
   const determinate = expected > 0;
+  // Canlı satır: hangi ürün, hangi sayfa, kaç retry. Sadece çalışıyorsa göster.
+  const currentProductName =
+    typeof stats.currentProductName === 'string' ? stats.currentProductName : null;
+  const currentPage =
+    typeof stats.currentPage === 'number' ? stats.currentPage : null;
+  const retried = Math.max(0, Number(stats.retriedRequests ?? 0));
+  const recovered = Math.max(0, Number(stats.recoveredRequests ?? 0));
   const pct = determinate
     ? Math.min(100, Math.round((processed / Math.max(1, expected)) * 100))
     : 0;
@@ -823,7 +854,145 @@ function LiveProgressBar({
           <div className="h-full w-1/3 bg-blue-500 rounded-full animate-progress-indeterminate" />
         )}
       </div>
+      {/* Detay satırı: şu anki ürün / sayfa / retry — sadece çalışıyorsa anlamlı */}
+      {isRunning && (currentProductName || currentPage !== null || retried > 0) && (
+        <div
+          className="mt-1 flex items-center gap-2 text-[10.5px] text-neutral-500"
+          data-testid={`text-progress-detail-${mp.id}`}
+        >
+          {currentProductName && (
+            <span
+              className="truncate min-w-0 flex-1"
+              title={currentProductName}
+              data-testid={`text-progress-product-${mp.id}`}
+            >
+              <span className="opacity-60">İşlenen:</span>{' '}
+              <span className="text-neutral-700">{currentProductName}</span>
+            </span>
+          )}
+          <span className="flex items-center gap-2 shrink-0 tabular-nums">
+            {currentPage !== null && (
+              <span data-testid={`text-progress-page-${mp.id}`}>
+                Sayfa #{currentPage + 1}
+              </span>
+            )}
+            {retried > 0 && (
+              <span
+                className="text-amber-600"
+                title={`${recovered} başarılı yeniden deneme`}
+                data-testid={`text-progress-retried-${mp.id}`}
+              >
+                ↻ {retried}
+              </span>
+            )}
+          </span>
+        </div>
+      )}
     </div>
+  );
+}
+
+// ============================================================================
+// ErrorSummaryPanel — sync hatalarını gruplanmış göster (4xx/5xx/network/parse).
+// errorSummary jsonb yoksa eski "ilk hatayı göster" davranışına yumuşak düşer.
+// ============================================================================
+type ErrorBucket = { count: number; samples: string[] };
+type ErrorSummaryShape = {
+  http4xx?: ErrorBucket;
+  http5xx?: ErrorBucket;
+  network?: ErrorBucket;
+  parse?: ErrorBucket;
+  other?: ErrorBucket;
+  imagesFailed?: number;
+};
+
+const ERROR_BUCKET_META: Array<{
+  key: keyof ErrorSummaryShape;
+  label: string;
+  className: string;
+}> = [
+  { key: 'http4xx', label: '4xx', className: 'bg-amber-100 text-amber-800' },
+  { key: 'http5xx', label: '5xx', className: 'bg-red-100 text-red-800' },
+  { key: 'network', label: 'Ağ', className: 'bg-orange-100 text-orange-800' },
+  { key: 'parse', label: 'Parse', className: 'bg-purple-100 text-purple-800' },
+  { key: 'other', label: 'Diğer', className: 'bg-neutral-200 text-neutral-700' },
+];
+
+function ErrorSummaryPanel({
+  errors,
+  errorSummary,
+  tone,
+  onView,
+  mpId,
+}: {
+  errors: Array<{ context: string; message: string }>;
+  errorSummary: ErrorSummaryShape | null;
+  tone: 'error' | 'warning';
+  onView: () => void;
+  mpId: string;
+}) {
+  const totalErrors = errors.length;
+  const imagesFailed =
+    typeof errorSummary?.imagesFailed === 'number' ? errorSummary.imagesFailed : 0;
+  // İçi dolu (count>0) bucket'ları seç. errorSummary yoksa boş kalır → fallback.
+  const buckets = errorSummary
+    ? ERROR_BUCKET_META.map((m) => ({
+        ...m,
+        bucket: (errorSummary[m.key] ?? null) as ErrorBucket | null,
+      })).filter((x) => (x.bucket?.count ?? 0) > 0)
+    : [];
+
+  return (
+    <InlineAlert tone={tone}>
+      <div className="flex items-start gap-2">
+        <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+        <div className="min-w-0 flex-1">
+          <div className="font-medium">
+            Son çalışmada {totalErrors} hata oluştu
+            {imagesFailed > 0 && (
+              <span className="ml-1.5 opacity-70">· {imagesFailed} görsel atlandı</span>
+            )}
+          </div>
+          {buckets.length > 0 ? (
+            <div
+              className="mt-1.5 flex flex-wrap gap-1.5"
+              data-testid={`error-summary-${mpId}`}
+            >
+              {buckets.map((b) => (
+                <span
+                  key={b.key}
+                  className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10.5px] font-medium ${b.className}`}
+                  title={b.bucket?.samples?.join('\n') ?? ''}
+                  data-testid={`error-bucket-${b.key}-${mpId}`}
+                >
+                  {b.label}
+                  <span className="font-mono tabular-nums">{b.bucket?.count ?? 0}</span>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-0.5 text-[11px] truncate opacity-80">
+              <span className="opacity-70">{errors[0].context}:</span>{' '}
+              {errors[0].message}
+            </div>
+          )}
+          {/* En sık görülen örnek (ilk dolu bucket'tan ilk örnek) */}
+          {buckets.length > 0 && buckets[0].bucket?.samples?.[0] && (
+            <div className="mt-1 text-[11px] opacity-70 truncate">
+              {buckets[0].bucket.samples[0]}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={onView}
+            className="mt-1 text-[11px] underline underline-offset-2 hover:no-underline"
+            data-testid={`button-view-errors-${mpId}`}
+          >
+            Tümünü gör →
+          </button>
+        </div>
+      </div>
+    </InlineAlert>
   );
 }
 

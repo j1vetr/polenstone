@@ -275,6 +275,21 @@ export function registerMarketplaceRoutes(
     res.json(rows);
   });
 
+  // Kategori ağacı snapshot cache'ini elle yenile.
+  // categoryTreeFetchedAt = NULL → bir sonraki sync (full) cache'i tazeler.
+  // Sync ANINDA fetchCategoryTree çağırmıyoruz; bu uçnokta sadece "stale" işaretler
+  // ki yetkisiz/çok ağır indirme ile admin isteğini bloklamayalım.
+  app.post(
+    "/api/admin/marketplaces/:id/refresh-category-cache",
+    requireAdmin,
+    async (req, res) => {
+      const mp = await storage.getMarketplace(req.params.id);
+      if (!mp) return res.status(404).json({ message: "Bulunamadı" });
+      await storage.clearCategoryTreeCache(req.params.id);
+      res.json({ ok: true });
+    },
+  );
+
   // Kategori eşleme — akıllı öneriler.
   // Sadece henüz eşlenmemiş (siteCategoryId=null) pazaryeri kategorileri için
   // string benzerliğine göre en olası site kategorisi adayını döner.

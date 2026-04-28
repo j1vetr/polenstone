@@ -704,6 +704,8 @@ export const marketplaces = pgTable("marketplaces", {
   config: jsonb("config").$type<Record<string, unknown>>().default({}).notNull(),
   lastFullSyncAt: timestamp("last_full_sync_at"),
   lastDeltaSyncAt: timestamp("last_delta_sync_at"),
+  /** Pazaryeri kategori ağacının en son DB'ye snapshot edildiği zaman (cache yaşı). */
+  categoryTreeFetchedAt: timestamp("category_tree_fetched_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -726,6 +728,8 @@ export const marketplaceCategories = pgTable("marketplace_categories", {
   externalId: text("external_id").notNull(), // pazaryeri kategori ID'si
   name: text("name").notNull(),
   parentExternalId: text("parent_external_id"),
+  /** Atalardan leaf'e kategori yolu — örn "Ev & Yaşam > Bahçe > Saksılar". Snapshot'tan üretilir. */
+  fullPath: text("full_path"),
   // Eşlenen Polen Stone kategorisi (NULL = otomatik üretildi / eşlenmedi)
   siteCategoryId: varchar("site_category_id").references(() => categories.id, {
     onDelete: "set null",
@@ -786,19 +790,52 @@ export const marketplaceSyncRuns = pgTable("marketplace_sync_runs", {
       productsUpdated?: number;
       productsDeactivated?: number;
       productsReactivated?: number;
+      variantsUpdated?: number;
+      variantsUnmatched?: number;
       imagesDownloaded?: number;
       imagesSkipped?: number;
+      imagesFailed?: number;
       pagesProcessed?: number;
       /** Live progress: how many products have been processed so far. */
       processedTotal?: number;
       /** Live progress: total products expected (from adapter or estimate). */
       expectedTotal?: number;
+      /** Live progress: ad of the currently processing product (UI marquee). */
+      currentProductName?: string;
+      /** Live progress: shu an okunmakta olan sayfa indeksi (0-based). */
+      currentPage?: number;
+      /** HTTP retried request sayısı (rate-limit / 5xx / network). */
+      retriedRequests?: number;
+      /** Recover edilen istek sayısı (retry sonunda 2xx). */
+      recoveredRequests?: number;
+      /** Bu sync sırasında kategori ağacı snapshot'ı kullanıldıysa eşleşen leaf sayısı. */
+      categoriesCachedFromTree?: number;
     }>()
     .default({})
     .notNull(),
   errors: jsonb("errors")
     .$type<Array<{ context: string; message: string }>>()
     .default([])
+    .notNull(),
+  /**
+   * Hata raporu — completeSyncRun aşamasında doldurulur. Gruplar:
+   *   - http4xx: client-side (auth/validation) hatalar
+   *   - http5xx: upstream/gateway hataları
+   *   - network: AbortError, ENOTFOUND, ECONNRESET, timeout
+   *   - parse: JSON / SyntaxError
+   *   - other: kategorize edilemeyen
+   * Her grup en fazla 5 örnek mesaj tutar (UI sample list için).
+   */
+  errorSummary: jsonb("error_summary")
+    .$type<{
+      http4xx?: { count: number; samples: string[] };
+      http5xx?: { count: number; samples: string[] };
+      network?: { count: number; samples: string[] };
+      parse?: { count: number; samples: string[] };
+      other?: { count: number; samples: string[] };
+      imagesFailed?: number;
+    }>()
+    .default({})
     .notNull(),
   startedAt: timestamp("started_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),

@@ -22,11 +22,14 @@ import { storage } from "../../storage";
 import { optimizeImageBuffer } from "../../imageOptimizer";
 import { decryptCredentials } from "../crypto";
 import { createAdapter } from "../registry";
+import { MarketplaceHttpClient } from "../http";
 import {
   MarketplaceAdapter,
   MarketplaceCredentials,
   MarketplaceConfig,
   MarketplaceType,
+  MarketplaceError,
+  NormalizedCategory,
   NormalizedProduct,
   PageCursor,
   ProductsPage,
@@ -45,11 +48,14 @@ export type SyncMode = "delta" | "full";
 export type SyncTrigger = "manual" | "cron";
 
 /**
- * SyncStats: bilinçli olarak Record<string, number>'a uyumlu yapıldı
- * (index signature) → storage interface ile cast'siz çalışır.
+ * SyncStats — sync sırasında biriken canlı sayım/dize alanları.
+ *
+ * Önceden `[k: string]: number` index signature'ı vardı ama "currentProductName"
+ * gibi string alanlar gerekince bu çıkarıldı. Storage tarafı `Record<string, unknown>`
+ * kabul ediyor, bu yüzden cast'siz geçer.
  */
-type SyncStats = {
-  [k: string]: number;
+interface SyncStats {
+  // Sayısal counter'lar
   categoriesAdded: number;
   categoriesUpdated: number;
   productsAdded: number;
@@ -62,17 +68,36 @@ type SyncStats = {
   variantsUnmatched: number;
   imagesDownloaded: number;
   imagesSkipped: number;
+  /** İndirme sırasında patlayıp atlanan görsel sayısı (404, SSRF, format vb.). */
+  imagesFailed: number;
   pagesProcessed: number;
   /** Canlı ilerleme — şu ana kadar işlenmiş ürün sayısı. */
   processedTotal: number;
   /** Canlı ilerleme — beklenen toplam ürün sayısı (adapter veya tahmin). */
   expectedTotal: number;
-};
+  /** HTTP retry sayacı — http.ts onRetry callback ile artar. */
+  retriedRequests: number;
+  /** Retry sonrası başarıyla dönen istek sayısı — onRecover callback ile artar. */
+  recoveredRequests: number;
+  /** Bu sync'te kategori ağacı snapshot'ından eşleşen leaf sayısı (debug/UX). */
+  categoriesCachedFromTree: number;
+  // Live UI alanları (string / nullable)
+  /** Şu an işlenmekte olan ürün adı (UI marquee). */
+  currentProductName?: string;
+  /** Şu an okunmakta olan sayfa indeksi (0-based). */
+  currentPage?: number;
+}
 
 interface SyncErrorEntry {
   context: string;
   message: string;
+  /** İsteğe bağlı: kategorize edilmiş HTTP status — error grouping için. */
+  statusCode?: number;
+  /** İsteğe bağlı: hata kategorisi (network/parse/...). Otomatik tespit için klasik hata mesajı kullanılır. */
+  kind?: ErrorKind;
 }
+
+type ErrorKind = "http4xx" | "http5xx" | "network" | "parse" | "other";
 
 const UPLOAD_DIR = path.join(process.cwd(), "client", "public", "uploads", "products");
 
@@ -88,10 +113,74 @@ function emptyStats(): SyncStats {
     variantsUnmatched: 0,
     imagesDownloaded: 0,
     imagesSkipped: 0,
+    imagesFailed: 0,
     pagesProcessed: 0,
     processedTotal: 0,
     expectedTotal: 0,
+    retriedRequests: 0,
+    recoveredRequests: 0,
+    categoriesCachedFromTree: 0,
   };
+}
+
+/**
+ * Bir Error/MarketplaceError kaydını gruba sokar.
+ * - statusCode varsa 4xx / 5xx kullan.
+ * - mesajda timeout/abort/ECONN/ENOTFOUND/socket → network
+ * - JSON.parse / SyntaxError / Unexpected token → parse
+ * - aksi → other
+ */
+function classifyError(err: unknown, statusCodeHint?: number): ErrorKind {
+  const status =
+    statusCodeHint ?? (err instanceof MarketplaceError ? err.statusCode : undefined);
+  if (typeof status === "number") {
+    if (status >= 400 && status < 500) return "http4xx";
+    if (status >= 500 && status < 700) return "http5xx"; // 556 dahil
+  }
+  const msg = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+  if (/abort|timeout|ETIMEDOUT|ENOTFOUND|ECONNRESET|ECONNREFUSED|EAI_AGAIN|socket hang up|network/i.test(msg)) {
+    return "network";
+  }
+  if (/SyntaxError|JSON\.parse|Unexpected token|Unexpected end of JSON/i.test(msg)) {
+    return "parse";
+  }
+  return "other";
+}
+
+/** Bir SyncErrorEntry zaten kind taşımıyorsa, mesajından çıkar. */
+function ensureClassified(entry: SyncErrorEntry): Required<Pick<SyncErrorEntry, "kind">> & SyncErrorEntry {
+  if (entry.kind) return entry as Required<Pick<SyncErrorEntry, "kind">> & SyncErrorEntry;
+  // Status'u mesajdan tahmin et: "(429)" veya "Marketplace upstream 503:" gibi
+  let status: number | undefined = entry.statusCode;
+  if (!status) {
+    const m = entry.message.match(/\((\d{3})\)|(?:upstream|failed)\s+(\d{3})/i);
+    if (m) status = Number(m[1] ?? m[2]);
+  }
+  const kind = classifyError(entry.message, status);
+  return { ...entry, kind, statusCode: status } as Required<Pick<SyncErrorEntry, "kind">> & SyncErrorEntry;
+}
+
+/** errors[] -> errorSummary jsonb'ı üret (her gruptan max 5 örnek). */
+function buildErrorSummary(
+  errors: SyncErrorEntry[],
+  imagesFailed: number,
+): Record<ErrorKind, { count: number; samples: string[] }> & { imagesFailed: number } {
+  const groups: Record<ErrorKind, { count: number; samples: string[] }> = {
+    http4xx: { count: 0, samples: [] },
+    http5xx: { count: 0, samples: [] },
+    network: { count: 0, samples: [] },
+    parse: { count: 0, samples: [] },
+    other: { count: 0, samples: [] },
+  };
+  for (const e of errors) {
+    const c = ensureClassified(e);
+    const g = groups[c.kind];
+    g.count += 1;
+    if (g.samples.length < 5) {
+      g.samples.push(`${c.context}: ${c.message}`.slice(0, 300));
+    }
+  }
+  return Object.assign(groups, { imagesFailed });
 }
 
 /**
@@ -104,7 +193,9 @@ async function publishProgress(
   stats: SyncStats,
 ): Promise<void> {
   try {
-    await storage.updateSyncRunStats(runId, stats);
+    // SyncStats interface'i index signature taşımaz; storage Record<string, unknown>
+    // bekliyor. Yapısal olarak uyumlu — spread ile genişletip cast'liyoruz.
+    await storage.updateSyncRunStats(runId, { ...stats } as Record<string, unknown>);
   } catch (err) {
     console.warn(
       `[marketplaces] live progress write failed for run ${runId}:`,
@@ -364,6 +455,7 @@ async function ensureSiteCategory(
   externalName: string,
   cache: Map<string, string>,
   stats: SyncStats,
+  fullPath: string | null = null,
 ): Promise<string | null> {
   if (cache.has(externalId)) return cache.get(externalId)!;
 
@@ -392,6 +484,7 @@ async function ensureSiteCategory(
     externalName,
     null,
     siteCat.id,
+    fullPath,
   );
   cache.set(externalId, siteCat.id);
   return siteCat.id;
@@ -550,6 +643,117 @@ export function adapterFromMarketplace(mp: Marketplace): MarketplaceAdapter {
 }
 
 /**
+ * Adapter'ın iç HTTP client'larını yakalayıp retry/recover sayaçlarını
+ * stats'a bağlar. Adapter implementasyonu MarketplaceHttpClient instance'ını
+ * `client` field'ında tutar (Trendyol bunu yapar). Field yoksa sessiz no-op.
+ */
+function attachHttpMetrics(adapter: MarketplaceAdapter, stats: SyncStats): void {
+  // Adapter sözleşmesinde public field değil; ama tüm built-in adapter'lar bu konvansiyonu
+  // izliyor. `as any` reflection — telemetri opsiyonel olduğu için risksiz.
+  const client = (adapter as unknown as { client?: MarketplaceHttpClient }).client;
+  if (!client || typeof client.setMetrics !== "function") return;
+  client.setMetrics({
+    onRetry: () => {
+      stats.retriedRequests += 1;
+    },
+    onRecover: () => {
+      stats.recoveredRequests += 1;
+    },
+  });
+}
+
+const CATEGORY_TREE_TTL_MS = 60 * 60 * 1000; // 1 saat
+
+/**
+ * Kategori ağacını "1 saatlik" snapshot olarak DB'de tutar.
+ * - categoryTreeFetchedAt > 1 saat eski (veya null) → adapter.fetchCategoryTree
+ *   çağrılır, fullPath hesaplanır, marketplaceCategories'e bulk upsert edilir.
+ * - Aksi halde DB'deki snapshot okunur ve döndürülür.
+ *
+ * @returns externalId → { name, fullPath } cache + isFresh (bu çağrıda ağ tazelendi mi)
+ */
+async function loadOrRefreshCategoryTree(
+  mp: Marketplace,
+  adapter: MarketplaceAdapter,
+  stats: SyncStats,
+  errors: SyncErrorEntry[],
+): Promise<{ map: Map<string, { name: string; fullPath: string | null }>; isFresh: boolean }> {
+  const fetchedAt = await storage.getCategoryTreeFetchedAt(mp.id);
+  const stale =
+    fetchedAt == null || Date.now() - fetchedAt.getTime() > CATEGORY_TREE_TTL_MS;
+  let isFresh = false;
+
+  if (stale) {
+    try {
+      const tree = await adapter.fetchCategoryTree();
+      const withPath = computeFullPaths(tree);
+      const result = await storage.bulkUpsertCategoryTree(mp.id, withPath);
+      stats.categoriesAdded += result.inserted;
+      stats.categoriesUpdated += result.updated;
+      await storage.setCategoryTreeFetchedAt(mp.id, new Date());
+      isFresh = true;
+    } catch (err) {
+      // Cache yenileme başarısız → eldeki snapshot'la devam et. Önemli: hata
+      // sync'i öldürmez, errors[]'a yazılır ve UI'da "kategori cache yenilenemedi"
+      // banner'ı gösterilir.
+      const status = err instanceof MarketplaceError ? err.statusCode : undefined;
+      errors.push({
+        context: "categoryTree.refresh",
+        message: err instanceof Error ? err.message : String(err),
+        statusCode: status,
+        kind: classifyError(err, status),
+      });
+    }
+  }
+
+  // DB'den tüm kategori satırlarını oku → lookup map.
+  const rows = await storage.getMarketplaceCategories(mp.id);
+  const map = new Map<string, { name: string; fullPath: string | null }>();
+  for (const r of rows) {
+    map.set(r.externalId, { name: r.name, fullPath: r.fullPath ?? null });
+  }
+  return { map, isFresh };
+}
+
+/** Tree'yi tarayıp her node için "Anne > Çocuk > Torun" şeklinde fullPath üretir. */
+function computeFullPaths(
+  tree: NormalizedCategory[],
+): Array<{
+  externalId: string;
+  name: string;
+  parentExternalId: string | null;
+  fullPath: string;
+}> {
+  const byId = new Map(tree.map((n) => [n.externalId, n]));
+  const out: Array<{
+    externalId: string;
+    name: string;
+    parentExternalId: string | null;
+    fullPath: string;
+  }> = [];
+  for (const n of tree) {
+    const parts: string[] = [];
+    let cursor: NormalizedCategory | undefined = n;
+    const visited = new Set<string>();
+    while (cursor) {
+      if (visited.has(cursor.externalId)) break; // siklik koruma
+      visited.add(cursor.externalId);
+      parts.unshift(cursor.name);
+      const parentId = cursor.parentExternalId;
+      if (!parentId) break;
+      cursor = byId.get(parentId);
+    }
+    out.push({
+      externalId: n.externalId,
+      name: n.name,
+      parentExternalId: n.parentExternalId ?? null,
+      fullPath: parts.join(" > "),
+    });
+  }
+  return out;
+}
+
+/**
  * Ana giriş: bir pazaryeri için sync çalıştır.
  *
  * @returns marketplace_sync_runs satırı
@@ -593,17 +797,22 @@ export async function runSync(
   try {
     adapter = adapterFromMarketplace(mp);
   } catch (err) {
+    const initErr: SyncErrorEntry = {
+      context: "adapter.init",
+      message: err instanceof Error ? err.message : String(err),
+      kind: "other",
+    };
     return await storage.completeSyncRun(run.id, {
       status: "failed",
-      stats,
-      errors: [
-        {
-          context: "adapter.init",
-          message: err instanceof Error ? err.message : String(err),
-        },
-      ],
+      stats: { ...stats } as Record<string, unknown>,
+      errors: [initErr],
+      errorSummary: buildErrorSummary([initErr], 0),
     });
   }
+
+  // Adapter'ın HTTP client'ına retry/recover metrics callback'lerini bağla.
+  // (Reflection — adapter sözleşmesi opsiyonel telemetri için yumuşak.)
+  attachHttpMetrics(adapter, stats);
 
   try {
     if (mode === "full") {
@@ -615,19 +824,27 @@ export async function runSync(
     const status = errors.length === 0 ? "completed" : "partial";
     const updated = await storage.completeSyncRun(run.id, {
       status,
-      stats,
+      stats: { ...stats } as Record<string, unknown>,
       errors: errors.slice(0, 100),
+      errorSummary: buildErrorSummary(errors, stats.imagesFailed),
     });
     if (mode === "full") await storage.updateMarketplaceSyncTime(marketplaceId, "full");
     else await storage.updateMarketplaceSyncTime(marketplaceId, "delta");
     return updated;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    errors.push({ context: "sync.fatal", message });
+    const status = err instanceof MarketplaceError ? err.statusCode : undefined;
+    errors.push({
+      context: "sync.fatal",
+      message,
+      statusCode: status,
+      kind: classifyError(err, status),
+    });
     return await storage.completeSyncRun(run.id, {
       status: "failed",
-      stats,
+      stats: { ...stats } as Record<string, unknown>,
       errors: errors.slice(0, 100),
+      errorSummary: buildErrorSummary(errors, stats.imagesFailed),
     });
   }
 }
@@ -651,12 +868,14 @@ async function runFullSync(
   } catch {
     /* tahmin opsiyonel — sessiz geç */
   }
-  // 1. Kategorileri lazy çek: pazaryerinin TÜM kategori ağacını indirmek
-  // yerine sadece ürünlerin gerçekten içinde bulunduğu kategorileri,
-  // ürün payload'ındaki `externalCategoryName` üzerinden upsert ediyoruz.
-  // Bu hem 556 riski olan ağır endpoint'ten kaçınır, hem de bizim site
-  // kategori listesini ürünlerle birebir hizalı tutar.
-  //
+
+  // 1. Kategori ağacını snapshot'la (1 saatlik TTL). Bu, ürün payload'ındaki
+  //    `categoryName`'in sıkça leaf değil parent olduğu durumda DB'den doğru
+  //    leaf adını + fullPath'i lookup edebilmek için. Snapshot başarısız olsa
+  //    bile DB'deki eski snapshot kullanılır; hiç snapshot yoksa payload adına
+  //    düşeriz (eski davranış).
+  const treeCache = await loadOrRefreshCategoryTree(mp, adapter, stats, errors);
+
   // 2. Sayfa sayfa ürünleri çek
   const seen = new Set<string>();
   const catCache = new Map<string, string>();
@@ -667,13 +886,17 @@ async function runFullSync(
   // bir sayfa hatası tüm kataloğun deactive edilmesine yol açabilir.
   let fullScanCompleted = false;
   while (true) {
+    stats.currentPage = page;
     let resp: ProductsPage;
     try {
       resp = await adapter.fetchProductsPage(cursor);
     } catch (err) {
+      const status = err instanceof MarketplaceError ? err.statusCode : undefined;
       errors.push({
         context: `fetchProductsPage page=${page}`,
         message: err instanceof Error ? err.message : String(err),
+        statusCode: status,
+        kind: classifyError(err, status),
       });
       break;
     }
@@ -685,20 +908,29 @@ async function runFullSync(
       // Total bilinmiyor: alt sınır olarak şimdiye kadar gördüklerimizi kullan.
       stats.expectedTotal = stats.processedTotal + resp.products.length;
     }
+    let processedSinceFlush = 0;
     for (const np of resp.products) {
       seen.add(np.externalId);
+      stats.currentProductName = np.name;
       try {
-        // Kategori adı önceliği:
-        //   1) Ürünün kendi payload'ından (`externalCategoryName`) — en taze isim.
-        //   2) Daha önce upsert edilmiş marketplace_categories satırı.
-        //   3) "Genel" — pazaryeri kategori adı vermezse.
-        let categoryName: string | null = np.externalCategoryName ?? null;
+        // Kategori adı önceliği (yeni):
+        //   1) Snapshot'tan leaf — `treeCache.map[externalCategoryId]` (en güvenilir).
+        //   2) Ürünün kendi payload'ı (`externalCategoryName`) — leaf olmayabilir
+        //      (Trendyol bazen parent adı veriyor; bu durumda snapshot kazanır).
+        //   3) Daha önce upsert edilmiş marketplace_categories satırı.
+        //   4) "Genel" — hiçbiri yoksa.
+        const treeHit = treeCache.map.get(np.externalCategoryId);
+        let categoryName: string | null = treeHit?.name ?? null;
+        let categoryFullPath: string | null = treeHit?.fullPath ?? null;
+        if (treeHit) stats.categoriesCachedFromTree += 1;
+        if (!categoryName) categoryName = np.externalCategoryName ?? null;
         if (!categoryName) {
           const existingMapping = await storage.getMarketplaceCategoryByExternal(
             mp.id,
             np.externalCategoryId,
           );
           categoryName = existingMapping?.name ?? "Genel";
+          categoryFullPath = categoryFullPath ?? existingMapping?.fullPath ?? null;
         }
         const finalCatId = await ensureSiteCategory(
           mp.id,
@@ -706,20 +938,30 @@ async function runFullSync(
           categoryName,
           catCache,
           stats,
+          categoryFullPath,
         );
         if (!finalCatId) continue;
         const mpRow = await storage.getMarketplaceProductByExternal(mp.id, np.externalId);
         await upsertProduct(mp, np, finalCatId, mpRow, stats, errors);
       } catch (err) {
+        const status = err instanceof MarketplaceError ? err.statusCode : undefined;
         errors.push({
           context: `product ${np.externalId}`,
           message: err instanceof Error ? err.message : String(err),
+          statusCode: status,
+          kind: classifyError(err, status),
         });
       } finally {
         stats.processedTotal += 1;
+        processedSinceFlush += 1;
+        // 10 üründe bir canlı ilerlemeyi yayımla (sayfa içi de görünsün).
+        if (processedSinceFlush >= 10) {
+          await publishProgress(runId, stats);
+          processedSinceFlush = 0;
+        }
       }
     }
-    // Sayfa tamamlanınca canlı ilerlemeyi yayımla — UI 1-2sn aralıkla poll'luyor.
+    // Sayfa tamamlanınca son ilerleme snapshot'ı.
     await publishProgress(runId, stats);
     if (resp.nextCursor == null) {
       fullScanCompleted = true;
@@ -729,6 +971,9 @@ async function runFullSync(
     page += 1;
     if (page > 1000) break; // sonsuz loop koruması; full scan kabul EDİLMEZ
   }
+  // Sync sonu — current* alanlarını temizle ki UI'da takılı kalmasın.
+  delete stats.currentProductName;
+  delete stats.currentPage;
 
   // 3. Yetimleri pasifle — yalnız tarama başarıyla tamamlandıysa.
   if (!fullScanCompleted) {

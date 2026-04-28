@@ -77,7 +77,9 @@ interface TrendyolProduct {
   title: string;
   description?: string;
   brand?: string;
-  categoryId: number;
+  categoryId?: number;
+  /** Trendyol Listings API'da gerçek leaf categoryId burada gelir. */
+  pimCategoryId?: number;
   categoryName?: string;
   listPrice?: number;
   salePrice: number;
@@ -290,7 +292,15 @@ function normalize(p: TrendyolProduct): NormalizedProduct {
   return {
     externalId,
     externalProductCode: code ?? null,
-    externalCategoryId: String(p.categoryId),
+    // Trendyol Listings API'da leaf kategori ID'si `pimCategoryId` alanında
+    // gelir; eski/bazı yanıtlarda `categoryId`. İkisi de yoksa string("undefined")
+    // basmamak için boş bırakıyoruz; engine bu durumda ürünü skip edecek.
+    externalCategoryId:
+      p.pimCategoryId != null
+        ? String(p.pimCategoryId)
+        : p.categoryId != null
+          ? String(p.categoryId)
+          : "",
     externalCategoryName: p.categoryName ?? null,
     name: p.title,
     description: p.description ?? null,

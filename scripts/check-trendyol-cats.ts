@@ -21,6 +21,41 @@ import { createAdapter } from "../server/marketplaces/registry";
 import { decryptCredentials } from "../server/marketplaces/crypto";
 import "../server/marketplaces/trendyol/adapter";
 
+/**
+ * Trendyol API'a doğrudan HTTP çağrısı atıp bir ürünün TÜM ham alanlarını
+ * yazdırır — adapter normalize öncesi gerçek field adlarını görmek için.
+ */
+async function dumpRawSample(creds: any) {
+  const auth = Buffer.from(`${creds.apiKey}:${creds.apiSecret}`).toString(
+    "base64",
+  );
+  const url = `https://apigw.trendyol.com/integration/product/sellers/${encodeURIComponent(
+    String(creds.supplierId),
+  )}/products?page=0&size=1`;
+  const resp = await fetch(url, {
+    headers: {
+      Authorization: `Basic ${auth}`,
+      "User-Agent": `${creds.supplierId} - SelfIntegration`,
+    },
+  });
+  const data: any = await resp.json();
+  const sample = data?.content?.[0];
+  if (!sample) {
+    console.log("  (örnek ürün bulunamadı)\n");
+    return;
+  }
+  console.log("--- HAM JSON (ilk ürünün TÜM alanları) ---");
+  console.log(JSON.stringify(sample, null, 2));
+  console.log("--- KATEGORİ ALANLARI ÖZETİ ---");
+  const catKeys = Object.keys(sample).filter((k) =>
+    /categor|pim/i.test(k),
+  );
+  for (const k of catKeys) {
+    console.log(`  ${k} = ${JSON.stringify(sample[k])}`);
+  }
+  console.log("");
+}
+
 type CategoryStat = {
   externalId: string;
   externalName: string;
@@ -52,6 +87,10 @@ async function main() {
   );
 
   const credentials = decryptCredentials(mp.encryptedCredentials);
+
+  // Önce ham JSON dump — hangi field adlarının geldiğini net görelim.
+  await dumpRawSample(credentials);
+
   const adapter = createAdapter(
     "trendyol",
     credentials as any,

@@ -6,6 +6,7 @@ import {
   Package,
   Eye,
   Trash2,
+  RefreshCw,
 } from 'lucide-react';
 import type { Product, ProductDraft, Category } from '../_shared/types';
 import AdminModal from '../_ui/AdminModal';

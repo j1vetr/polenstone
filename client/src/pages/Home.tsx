@@ -195,14 +195,7 @@ function HeroSceneInner() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/30" />
       </motion.div>
 
-      <div className="absolute top-0 left-0 right-0 z-20 px-5 lg:px-10 pt-24 lg:pt-12 flex items-center justify-between text-white/65 text-[10px] font-mono tracking-[0.28em] uppercase">
-        <motion.span
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-        >
-          ◢ Anadolu — Doğal Taş Atölyesi
-        </motion.span>
+      <div className="absolute top-0 left-0 right-0 z-20 px-5 lg:px-10 pt-24 lg:pt-12 flex items-center justify-end text-white/65 text-[10px] font-mono tracking-[0.28em] uppercase">
         <motion.span
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -437,15 +430,18 @@ function StatementMarqueeScene() {
       data-testid="scene-statement-marquee"
       aria-label="Marka bilgi şeridi"
     >
-      <div className="py-10 lg:py-12 overflow-hidden">
-        <div className="flex items-center gap-12 lg:gap-16 animate-marquee-slow whitespace-nowrap">
+      <div className="py-6 lg:py-9 overflow-hidden">
+        <div
+          className="flex items-center gap-7 lg:gap-12 animate-marquee-slow whitespace-nowrap"
+          style={{ animationDuration: '38s' }}
+        >
           {doubled.map((t, i) => (
             <span
               key={i}
               className={`font-display uppercase ${
                 t.length === 1
-                  ? 'text-polen-orange text-2xl lg:text-3xl'
-                  : 'text-3xl lg:text-4xl tracking-[0.02em]'
+                  ? 'text-polen-orange text-base lg:text-xl'
+                  : 'text-base lg:text-2xl tracking-[0.04em]'
               }`}
             >
               {t}

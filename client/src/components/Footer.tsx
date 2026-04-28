@@ -1,5 +1,5 @@
 import { Link } from 'wouter';
-import { Instagram } from 'lucide-react';
+import { Instagram, MapPin, Phone, Mail } from 'lucide-react';
 import { useCategories } from '@/hooks/useProducts';
 
 export function Footer() {
@@ -30,25 +30,29 @@ export function Footer() {
               Mermer, granit, traverten ve oniks koleksiyonumuzla doğanın ihtişamı evinizde.
             </p>
             <a
-              href="https://www.instagram.com/polenstone"
+              href="https://www.instagram.com/polenstonecom/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-white/55 hover:text-polen-orange transition-colors text-sm"
               data-testid="link-instagram-footer"
             >
               <Instagram className="w-4 h-4" />
-              @polenstone
+              @polenstonecom
             </a>
-            <div className="mt-6 text-xs text-white/35 space-y-1">
-              <p>Polen Stone Doğal Taş & Mermer</p>
-              <p>İletişim için bize ulaşın</p>
-              <p className="mt-2">
-                <a href="tel:+905000000000" className="hover:text-polen-orange transition-colors">0500 000 00 00</a>
-              </p>
-              <p>
-                <a href="mailto:info@polenstone.com.tr" className="hover:text-polen-orange transition-colors">info@polenstone.com.tr</a>
-              </p>
-            </div>
+            <ul className="mt-6 space-y-3 text-xs text-white/55">
+              <li className="flex items-start gap-2.5">
+                <MapPin className="w-3.5 h-3.5 text-polen-orange shrink-0 mt-0.5" strokeWidth={1.75} />
+                <span data-testid="text-footer-address">Yunus Emre, Barbaros Blv. 42 d, 34791 Sancaktepe / İstanbul</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Phone className="w-3.5 h-3.5 text-polen-orange shrink-0" strokeWidth={1.75} />
+                <a href="tel:+905326956183" className="hover:text-polen-orange transition-colors" data-testid="link-footer-phone">0532 695 61 83</a>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Mail className="w-3.5 h-3.5 text-polen-orange shrink-0" strokeWidth={1.75} />
+                <a href="mailto:info@polenstone.com.tr" className="hover:text-polen-orange transition-colors" data-testid="link-footer-email">info@polenstone.com.tr</a>
+              </li>
+            </ul>
           </div>
 
           <div>

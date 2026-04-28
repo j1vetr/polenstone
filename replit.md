@@ -35,8 +35,7 @@ Preferred communication style: Simple, everyday language.
 - **Multi-Category Product Support**: Products can be assigned to multiple categories.
 - **Stock Management**: Automatic stock reduction on orders, adjustments, and restoration on cancellation.
 - **AI Product Description Generation**: OpenAI GPT-4o for stone-context product copy with HTML formatting.
-- **Payment System**: iyzico Checkout Form (3DS) integration for credit card payments with success/failure callbacks.
-- **Invoice Integration**: Automatic invoice generation and submission to BizimHesap after successful payments.
+- **Payment System**: iyzico Checkout Form (3DS) integration for credit card payments with success/failure callbacks. Production-only; API keys are stored in `site_settings` and managed through the admin panel (no environment variables).
 - **Coupon System**: Percentage/fixed discounts, usage limits, validity periods.
 - **Shipping**: Domestic and international shipping with server-side validation. Sample request flow surfaced on the homepage.
 - **Email Notifications**: Database-configurable SMTP using Polen Stone-branded templates.
@@ -53,7 +52,6 @@ Preferred communication style: Simple, everyday language.
 ### Third-Party Services & APIs
 - **OpenAI**: AI product descriptions and chatbot.
 - **iyzico**: Payment gateway (Checkout Form / 3D Secure).
-- **BizimHesap**: Invoice integration.
 - **Facebook (Meta Pixel/CAPI)**: Advertising and event tracking.
 - **Google Merchant Center**: Product feed submission.
 

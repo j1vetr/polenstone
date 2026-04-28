@@ -41,7 +41,6 @@ import {
   testIyzicoConnection,
   type IyzicoBasketItem,
 } from "./iyzico";
-import { sendInvoiceToBizimHesap } from "./bizimhesap";
 import {
   buildGroupingPlan,
   AUTO_GROUP_DISPLAY_ORDER_BASE,
@@ -1862,7 +1861,7 @@ export async function registerRoutes(
       const serverTotal = Math.max(0, serverSubtotal - discountAmount + shippingCost);
 
       // Generate unique merchant order ID
-      const merchantOid = `HNK${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+      const merchantOid = `PLN${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 
       // Get user IP
       const userIp = req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || 
@@ -2195,9 +2194,6 @@ export async function registerRoutes(
             }
           }
         }
-
-        // Send invoice to BizimHesap
-        sendInvoiceToBizimHesap(order, orderItems, variantSkus).catch(err => console.error('[BizimHesap] Invoice failed:', err));
 
         // Create user account if requested during checkout
         if (pendingPayment.createAccount && pendingPayment.accountPasswordHash) {
@@ -4340,38 +4336,6 @@ export async function registerRoutes(
       }
     } catch (error) {
       res.status(500).json({ error: "E-posta gönderilemedi" });
-    }
-  });
-
-  // Send invoice to BizimHesap manually
-  app.post("/api/admin/orders/:id/send-invoice", requireAdmin, async (req, res) => {
-    try {
-      const order = await storage.getOrder(req.params.id);
-      if (!order) return res.status(404).json({ error: "Sipariş bulunamadı" });
-      
-      const orderItems = await storage.getOrderItems(order.id);
-      
-      // Fetch variant SKUs for invoice
-      const variantSkus = new Map<string, string>();
-      for (const item of orderItems) {
-        if (item.variantId) {
-          const variant = await storage.getProductVariant(item.variantId);
-          if (variant?.sku) {
-            variantSkus.set(item.variantId, variant.sku);
-          }
-        }
-      }
-      
-      const result = await sendInvoiceToBizimHesap(order, orderItems, variantSkus);
-      
-      if (result.success) {
-        res.json({ success: true, message: "Fatura BizimHesap'a gönderildi", guid: result.guid, url: result.url });
-      } else {
-        res.status(400).json({ error: result.error || "Fatura gönderilemedi" });
-      }
-    } catch (error) {
-      console.error('[BizimHesap] Manual invoice error:', error);
-      res.status(500).json({ error: "Fatura gönderilemedi" });
     }
   });
 

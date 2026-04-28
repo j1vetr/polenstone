@@ -17,7 +17,6 @@ import {
   MessageSquare,
   ExternalLink,
   Loader2,
-  FileText,
   Banknote,
   CheckCircle2,
 } from 'lucide-react';
@@ -152,12 +151,6 @@ export default function AdminOrderDetail() {
     isInfluencerCode: boolean;
     influencerInstagram?: string;
   } | null>(null);
-  const [isSendingInvoice, setIsSendingInvoice] = useState(false);
-  const [invoiceResult, setInvoiceResult] = useState<{
-    success: boolean;
-    message: string;
-  } | null>(null);
-
   useEffect(() => {
     let cancelled = false;
     const fetchOrder = async () => {
@@ -318,35 +311,6 @@ export default function AdminOrderDetail() {
     }
   };
 
-  const handleSendInvoice = async () => {
-    if (!order) return;
-    setIsSendingInvoice(true);
-    setInvoiceResult(null);
-    try {
-      const res = await fetch(`/api/admin/orders/${order.id}/send-invoice`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setInvoiceResult({
-          success: true,
-          message: data.message || 'Fatura gönderildi!',
-        });
-      } else {
-        setInvoiceResult({
-          success: false,
-          message: data.error || 'Fatura gönderilemedi',
-        });
-      }
-    } catch (error) {
-      console.error('Send invoice failed:', error);
-      setInvoiceResult({ success: false, message: 'Fatura gönderilemedi' });
-    } finally {
-      setIsSendingInvoice(false);
-    }
-  };
-
   if (isLoading) return <DetailSkeleton />;
 
   if (loadError || !order) {
@@ -437,18 +401,6 @@ export default function AdminOrderDetail() {
                   Kargo Bilgisi
                 </SecondaryButton>
               )}
-              <PrimaryButton
-                onClick={handleSendInvoice}
-                disabled={isSendingInvoice}
-                data-testid="button-send-invoice-header"
-              >
-                {isSendingInvoice ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <FileText className="w-3.5 h-3.5" />
-                )}
-                Fatura Gönder
-              </PrimaryButton>
             </div>
           </div>
         </Card>
@@ -760,39 +712,6 @@ export default function AdminOrderDetail() {
             </Card>
             </div>
 
-            {/* Invoice */}
-            <Card className="p-5">
-              <SectionHeading
-                title="BizimHesap Fatura"
-                description="Fatura entegrasyonu üzerinden gönderilir."
-              />
-              <div className="space-y-2">
-                <SecondaryButton
-                  onClick={handleSendInvoice}
-                  disabled={isSendingInvoice}
-                  className="w-full"
-                  data-testid="button-send-invoice"
-                >
-                  {isSendingInvoice ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Gönderiliyor…
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="w-3.5 h-3.5" />
-                      Fatura Gönder
-                    </>
-                  )}
-                </SecondaryButton>
-                {invoiceResult && (
-                  <InlineAlert tone={invoiceResult.success ? 'success' : 'error'}>
-                    {invoiceResult.message}
-                  </InlineAlert>
-                )}
-              </div>
-            </Card>
-
             {/* Cancel */}
             {canCancel && (
               <Card className="p-5 border-red-100">
@@ -829,19 +748,6 @@ export default function AdminOrderDetail() {
           <Truck className="w-3.5 h-3.5" />
           Kargo
         </SecondaryButton>
-        <PrimaryButton
-          onClick={handleSendInvoice}
-          disabled={isSendingInvoice}
-          className="flex-1 justify-center"
-          data-testid="button-mobile-invoice"
-        >
-          {isSendingInvoice ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <FileText className="w-3.5 h-3.5" />
-          )}
-          Fatura
-        </PrimaryButton>
       </div>
 
       {/* Cancel modal */}

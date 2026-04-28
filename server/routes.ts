@@ -1932,9 +1932,9 @@ export async function registerRoutes(
         expiresAt,
       });
 
-      if (!isIyzicoConfigured()) {
+      if (!(await isIyzicoConfigured())) {
         await storage.deletePendingPayment(merchantOid);
-        console.error('[iyzico] API anahtarları yapılandırılmamış (IYZICO_API_KEY / IYZICO_SECRET_KEY).');
+        console.error('[iyzico] API anahtarları yapılandırılmamış. Admin Paneli → Ayarlar → iyzico bölümünden ekleyin.');
         return res.status(500).json({
           error: 'Ödeme sistemi henüz yapılandırılmadı. Lütfen daha sonra tekrar deneyin.',
         });
@@ -2317,18 +2317,29 @@ export async function registerRoutes(
     }
   });
 
-  // ── iyzico mode (sandbox/live) admin controls ──────────────────────────
+  // ── iyzico admin controls (production-only, DB-backed credentials) ─────
+  // Mask helper: leaks only first 4 / last 4 characters of long secrets so
+  // the admin can verify the saved key without exposing the raw value.
+  const maskSecret = (raw: string): string => {
+    if (!raw) return '';
+    if (raw.length <= 8) return '••••••••';
+    return `${raw.slice(0, 4)}••••${raw.slice(-4)}`;
+  };
+
   app.get("/api/admin/iyzico/config", requireAdmin, async (_req, res) => {
     try {
-      const { getIyzicoMode } = await import('./iyzico');
-      const mode = await getIyzicoMode();
+      const apiKey = (await storage.getSiteSetting('iyzico_api_key')) || '';
+      const secretKey = (await storage.getSiteSetting('iyzico_secret_key')) || '';
       const baseUrl = process.env.PUBLIC_BASE_URL || 'https://polenstone.com.tr';
       res.json({
-        mode,
-        configured: isIyzicoConfigured(),
+        configured: Boolean(apiKey && secretKey),
+        apiKeyMasked: maskSecret(apiKey),
+        secretKeyMasked: maskSecret(secretKey),
+        hasApiKey: Boolean(apiKey),
+        hasSecretKey: Boolean(secretKey),
         callbackUrl: `${baseUrl}/api/payment/iyzico/callback`,
         baseUrl,
-        envOverride: Boolean(process.env.IYZICO_BASE_URL || process.env.IYZICO_MODE),
+        mode: 'live' as const,
       });
     } catch (error) {
       console.error('[iyzico config] error:', error);
@@ -2336,19 +2347,20 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/admin/iyzico/mode", requireAdmin, async (req, res) => {
+  app.post("/api/admin/iyzico/credentials", requireAdmin, async (req, res) => {
     try {
-      const mode = String(req.body?.mode || '').toLowerCase();
-      if (mode !== 'sandbox' && mode !== 'live') {
-        return res.status(400).json({ error: "mode must be 'sandbox' or 'live'" });
+      const apiKey = typeof req.body?.apiKey === 'string' ? req.body.apiKey.trim() : '';
+      const secretKey = typeof req.body?.secretKey === 'string' ? req.body.secretKey.trim() : '';
+      if (!apiKey || !secretKey) {
+        return res.status(400).json({ error: 'API anahtarı ve gizli anahtar zorunludur.' });
       }
-      const { setIyzicoMode } = await import('./iyzico');
-      await setIyzicoMode(mode as 'sandbox' | 'live');
-      console.log('[iyzico] mode switched →', mode);
-      res.json({ success: true, mode });
+      await storage.setSiteSetting('iyzico_api_key', apiKey);
+      await storage.setSiteSetting('iyzico_secret_key', secretKey);
+      console.log('[iyzico] credentials updated via admin panel');
+      res.json({ success: true });
     } catch (error) {
-      console.error('[iyzico mode] error:', error);
-      res.status(500).json({ error: 'Mod değiştirilemedi' });
+      console.error('[iyzico credentials] error:', error);
+      res.status(500).json({ error: 'iyzico anahtarları kaydedilemedi' });
     }
   });
 

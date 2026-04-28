@@ -1,44 +1,17 @@
 import Iyzipay from 'iyzipay';
 import { storage } from './storage';
 
-export type IyzicoMode = 'sandbox' | 'live';
-
-const SANDBOX_URL = 'https://sandbox-api.iyzipay.com';
+// iyzico LIVE/Production endpoint — sandbox kaldırıldı.
 const LIVE_URL = 'https://api.iyzipay.com';
 
-// Read iyzico credentials per call (not at module load) so secrets rotated
-// at runtime via the secrets panel are picked up without restarting the app.
-const getApiKey = () => process.env.IYZICO_API_KEY || '';
-const getSecretKey = () => process.env.IYZICO_SECRET_KEY || '';
-
-// Mode resolution priority:
-//   1. Admin panel toggle (site_settings.iyzico_mode)
-//   2. IYZICO_MODE env var ('live' | 'sandbox')
-//   3. IYZICO_BASE_URL env var (legacy override)
-//   4. Default: 'live' (production-first; explicitly opt in to sandbox)
-export async function getIyzicoMode(): Promise<IyzicoMode> {
-  try {
-    const dbMode = await storage.getSiteSetting('iyzico_mode');
-    if (dbMode === 'live' || dbMode === 'sandbox') return dbMode;
-  } catch {
-    // siteSettings unavailable — fall through to env var
-  }
-  const envMode = (process.env.IYZICO_MODE || '').toLowerCase();
-  if (envMode === 'live' || envMode === 'production') return 'live';
-  if (envMode === 'sandbox' || envMode === 'test') return 'sandbox';
-  if (process.env.IYZICO_BASE_URL && process.env.IYZICO_BASE_URL.includes('sandbox')) {
-    return 'sandbox';
-  }
-  return 'live';
+// Read iyzico credentials per call from site_settings so the admin can
+// rotate keys without restarting the app. Env vars are no longer read.
+async function getApiKey(): Promise<string> {
+  return (await storage.getSiteSetting('iyzico_api_key')) || '';
 }
 
-export async function setIyzicoMode(mode: IyzicoMode): Promise<void> {
-  await storage.setSiteSetting('iyzico_mode', mode);
-}
-
-function getBaseUrlForMode(mode: IyzicoMode): string {
-  if (process.env.IYZICO_BASE_URL) return process.env.IYZICO_BASE_URL;
-  return mode === 'live' ? LIVE_URL : SANDBOX_URL;
+async function getSecretKey(): Promise<string> {
+  return (await storage.getSiteSetting('iyzico_secret_key')) || '';
 }
 
 export type IyzicoBuyer = {
@@ -132,23 +105,24 @@ export type IyzicoCheckoutFormRetrieveResponse = {
 };
 
 async function buildClient(): Promise<Iyzipay> {
-  const apiKey = getApiKey();
-  const secretKey = getSecretKey();
+  const apiKey = await getApiKey();
+  const secretKey = await getSecretKey();
   if (!apiKey || !secretKey) {
     throw new Error(
-      '[iyzico] IYZICO_API_KEY ve IYZICO_SECRET_KEY ortam değişkenleri tanımlı değil.',
+      '[iyzico] iyzico API anahtarları yapılandırılmamış. Admin Paneli → Ayarlar → iyzico bölümünden ekleyin.',
     );
   }
-  const mode = await getIyzicoMode();
   return new Iyzipay({
     apiKey,
     secretKey,
-    uri: getBaseUrlForMode(mode),
+    uri: LIVE_URL,
   });
 }
 
-export function isIyzicoConfigured(): boolean {
-  return Boolean(getApiKey() && getSecretKey());
+export async function isIyzicoConfigured(): Promise<boolean> {
+  const apiKey = await getApiKey();
+  const secretKey = await getSecretKey();
+  return Boolean(apiKey && secretKey);
 }
 
 export async function createCheckoutFormInitialize(

@@ -95,6 +95,8 @@ export default function SettingsPanel() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [iyzicoSaving, setIyzicoSaving] = useState(false);
   const [callbackCopied, setCallbackCopied] = useState(false);
+  const [iyzicoApiKey, setIyzicoApiKey] = useState('');
+  const [iyzicoSecretKey, setIyzicoSecretKey] = useState('');
   const [maintenanceSaving, setMaintenanceSaving] = useState(false);
   const [waTesting, setWaTesting] = useState(false);
   const [waTestPhone, setWaTestPhone] = useState('');
@@ -140,40 +142,49 @@ export default function SettingsPanel() {
   };
 
   const { data: iyzicoConfig, refetch: refetchIyzico } = useQuery<{
-    mode: 'sandbox' | 'live';
+    mode: 'live';
     configured: boolean;
+    apiKeyMasked: string;
+    secretKeyMasked: string;
+    hasApiKey: boolean;
+    hasSecretKey: boolean;
     callbackUrl: string;
     baseUrl: string;
-    envOverride: boolean;
   }>({
     queryKey: ['/api/admin/iyzico/config'],
   });
 
-  const handleIyzicoModeChange = async (mode: 'sandbox' | 'live') => {
-    if (!iyzicoConfig || iyzicoConfig.mode === mode) return;
+  const handleIyzicoSaveCredentials = async () => {
+    if (!iyzicoApiKey.trim() || !iyzicoSecretKey.trim()) {
+      setMessage({ type: 'error', text: 'API anahtarı ve gizli anahtar zorunludur.' });
+      return;
+    }
     setIyzicoSaving(true);
     setMessage(null);
     try {
-      const res = await fetch('/api/admin/iyzico/mode', {
+      const res = await fetch('/api/admin/iyzico/credentials', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode }),
+        body: JSON.stringify({
+          apiKey: iyzicoApiKey.trim(),
+          secretKey: iyzicoSecretKey.trim(),
+        }),
         credentials: 'include',
       });
       if (res.ok) {
         await refetchIyzico();
+        setIyzicoApiKey('');
+        setIyzicoSecretKey('');
         setMessage({
           type: 'success',
-          text: mode === 'live'
-            ? 'iyzico CANLI moda alındı. API anahtarlarınızın canlı (production) anahtarlar olduğundan emin olun.'
-            : 'iyzico TEST (sandbox) moduna alındı.',
+          text: 'iyzico anahtarları kaydedildi. Ödemeler artık canlı (production) modda işlenecek.',
         });
       } else {
         const data = await res.json();
-        setMessage({ type: 'error', text: data.error || 'Mod değiştirilemedi' });
+        setMessage({ type: 'error', text: data.error || 'Anahtarlar kaydedilemedi' });
       }
     } catch {
-      setMessage({ type: 'error', text: 'Mod değiştirilemedi' });
+      setMessage({ type: 'error', text: 'Anahtarlar kaydedilemedi' });
     } finally {
       setIyzicoSaving(false);
     }
@@ -551,7 +562,7 @@ export default function SettingsPanel() {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-neutral-900">iyzico Ödeme Ayarları</h3>
-            <p className="text-sm text-neutral-500">Test (sandbox) ve canlı mod arasında geçiş yapın</p>
+            <p className="text-sm text-neutral-500">API anahtarlarını yönetin (yalnızca canlı/production modu)</p>
           </div>
         </div>
 
@@ -561,65 +572,65 @@ export default function SettingsPanel() {
           </div>
         ) : (
           <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-neutral-500 mb-2">Çalışma Modu</label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleIyzicoModeChange('sandbox')}
-                  disabled={iyzicoSaving || iyzicoConfig.envOverride}
-                  data-testid="button-iyzico-mode-sandbox"
-                  className={`relative px-4 py-3 rounded-lg border text-left transition-colors disabled:opacity-50 ${
-                    iyzicoConfig.mode === 'sandbox'
-                      ? 'border-neutral-900 bg-neutral-900 text-white'
-                      : 'border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 text-sm font-semibold">
-                    {iyzicoConfig.mode === 'sandbox' && <CheckCircle2 className="w-4 h-4" />}
-                    Test (Sandbox)
-                  </div>
-                  <div className={`text-xs mt-1 ${iyzicoConfig.mode === 'sandbox' ? 'text-white/70' : 'text-neutral-500'}`}>
-                    Gerçek tahsilat yapılmaz
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleIyzicoModeChange('live')}
-                  disabled={iyzicoSaving || iyzicoConfig.envOverride}
-                  data-testid="button-iyzico-mode-live"
-                  className={`relative px-4 py-3 rounded-lg border text-left transition-colors disabled:opacity-50 ${
-                    iyzicoConfig.mode === 'live'
-                      ? 'border-emerald-600 bg-emerald-600 text-white'
-                      : 'border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 text-sm font-semibold">
-                    {iyzicoConfig.mode === 'live' && <CheckCircle2 className="w-4 h-4" />}
-                    Canlı (Production)
-                  </div>
-                  <div className={`text-xs mt-1 ${iyzicoConfig.mode === 'live' ? 'text-white/80' : 'text-neutral-500'}`}>
-                    Gerçek kart tahsilatı yapılır
-                  </div>
-                </button>
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
+              <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <span>
+                Ödemeler her zaman <strong>CANLI (Production)</strong> modunda işlenir. Aşağıya iyzico Merchant
+                Panel'den aldığınız <strong>canlı</strong> API ve gizli anahtarları girin.
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">API Anahtarı</label>
+                <input
+                  type="text"
+                  value={iyzicoApiKey}
+                  onChange={(e) => setIyzicoApiKey(e.target.value)}
+                  placeholder={iyzicoConfig.hasApiKey ? iyzicoConfig.apiKeyMasked : 'apikey-...'}
+                  data-testid="input-iyzico-api-key"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 text-sm font-mono focus:outline-none focus:border-neutral-900 transition-colors"
+                  autoComplete="off"
+                />
+                <p className="text-xs text-neutral-500 mt-1.5">
+                  {iyzicoConfig.hasApiKey
+                    ? 'Mevcut anahtarın üzerine yazmak için yeni bir değer girin.'
+                    : 'iyzico Merchant Panel → Ayarlar → Merchant API Anahtarları'}
+                </p>
               </div>
-              {iyzicoConfig.envOverride && (
-                <div className="flex items-start gap-2 mt-3 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
-                  <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>
-                    <strong>IYZICO_MODE</strong> veya <strong>IYZICO_BASE_URL</strong> ortam değişkeni tanımlı,
-                    panel üzerinden mod değiştirme devre dışı. Modu değiştirmek için bu değişkenleri kaldırın.
-                  </span>
-                </div>
-              )}
-              {!iyzicoConfig.configured && (
-                <div className="flex items-start gap-2 mt-3 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs">
-                  <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>
-                    <strong>IYZICO_API_KEY</strong> ve <strong>IYZICO_SECRET_KEY</strong> tanımlı değil. Ödeme alınamaz.
-                  </span>
-                </div>
-              )}
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Gizli Anahtar (Secret)</label>
+                <input
+                  type="password"
+                  value={iyzicoSecretKey}
+                  onChange={(e) => setIyzicoSecretKey(e.target.value)}
+                  placeholder={iyzicoConfig.hasSecretKey ? iyzicoConfig.secretKeyMasked : 'secret-...'}
+                  data-testid="input-iyzico-secret-key"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-neutral-900 text-sm font-mono focus:outline-none focus:border-neutral-900 transition-colors"
+                  autoComplete="new-password"
+                />
+                <p className="text-xs text-neutral-500 mt-1.5">
+                  {iyzicoConfig.hasSecretKey
+                    ? 'Güvenlik için kayıtlı değer gösterilmez; değiştirmek için yeniden girin.'
+                    : 'Anahtar veritabanına kaydedilir; çevre değişkeni kullanılmaz.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div className={`text-xs font-medium ${iyzicoConfig.configured ? 'text-emerald-600' : 'text-red-600'}`} data-testid="text-iyzico-status">
+                {iyzicoConfig.configured ? '✓ Anahtarlar tanımlı — ödeme aktif' : '⚠ Anahtarlar eksik — ödeme alınamaz'}
+              </div>
+              <button
+                type="button"
+                onClick={handleIyzicoSaveCredentials}
+                disabled={iyzicoSaving || !iyzicoApiKey.trim() || !iyzicoSecretKey.trim()}
+                data-testid="button-iyzico-save-credentials"
+                className="flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {iyzicoSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <KeyRound className="w-4 h-4" />}
+                Anahtarları Kaydet
+              </button>
             </div>
 
             <div>
@@ -646,23 +657,7 @@ export default function SettingsPanel() {
               </div>
               <p className="text-xs text-neutral-500 mt-2">
                 iyzico Merchant Panel → Ayarlar → Bildirim Ayarları bölümünden bu URL'i kaydedin.
-                Checkout Form akışı ayrıca her isteğin içinde callback URL gönderir, ancak panelde whitelisting yapılması önerilir.
               </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="px-3 py-2 rounded-lg bg-neutral-50 border border-neutral-200">
-                <div className="text-neutral-500">Aktif Mod</div>
-                <div className="font-semibold text-neutral-900 mt-0.5" data-testid="text-iyzico-active-mode">
-                  {iyzicoConfig.mode === 'live' ? 'CANLI (Production)' : 'TEST (Sandbox)'}
-                </div>
-              </div>
-              <div className="px-3 py-2 rounded-lg bg-neutral-50 border border-neutral-200">
-                <div className="text-neutral-500">API Anahtarları</div>
-                <div className={`font-semibold mt-0.5 ${iyzicoConfig.configured ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {iyzicoConfig.configured ? 'Tanımlı' : 'Eksik'}
-                </div>
-              </div>
             </div>
           </div>
         )}

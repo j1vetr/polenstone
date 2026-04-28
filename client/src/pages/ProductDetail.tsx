@@ -163,18 +163,31 @@ export default function ProductDetail() {
     }
   }, [lightboxOpen, selectedImage, lightboxEmblaApi]);
 
-  // Lightbox keyboard
+  // Lightbox keyboard — uses the rendered `images` array (which always has
+  // at least the placeholder fallback) and no-ops navigation when there is
+  // only a single image.
+  const renderedImages =
+    product?.images && product.images.length > 0
+      ? product.images
+      : product
+        ? ['https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&h=800&fit=crop']
+        : [];
+
   useEffect(() => {
-    if (!lightboxOpen || !product) return;
-    const total = product.images?.length ?? 0;
+    if (!lightboxOpen) return;
+    const total = renderedImages.length;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setLightboxOpen(false);
-      if (e.key === 'ArrowLeft') setSelectedImage((p) => (p === 0 ? total - 1 : p - 1));
-      if (e.key === 'ArrowRight') setSelectedImage((p) => (p === total - 1 ? 0 : p + 1));
+      if (e.key === 'Escape') {
+        setLightboxOpen(false);
+        return;
+      }
+      if (total <= 1) return;
+      if (e.key === 'ArrowLeft') setSelectedImage((p) => (p <= 0 ? total - 1 : p - 1));
+      if (e.key === 'ArrowRight') setSelectedImage((p) => (p >= total - 1 ? 0 : p + 1));
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [lightboxOpen, product]);
+  }, [lightboxOpen, renderedImages.length]);
 
   // Body scroll lock when lightbox open
   useEffect(() => {
@@ -301,10 +314,7 @@ export default function ProductDetail() {
     );
   }
 
-  const images =
-    product.images && product.images.length > 0
-      ? product.images
-      : ['https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&h=800&fit=crop'];
+  const images = renderedImages;
 
   const price = parseFloat(product.basePrice || '0');
   const originalPrice = getOriginalPrice(price, product.discountBadge);

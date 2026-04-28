@@ -48,6 +48,16 @@ export function SEO({
     };
 
     updateMetaTag('meta[name="description"]', description);
+
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      canonical.setAttribute('data-managed', 'seo');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', fullUrl);
+
     updateMetaTag('meta[property="og:title"]', fullTitle);
     updateMetaTag('meta[property="og:description"]', description);
     updateMetaTag('meta[property="og:url"]', fullUrl);
@@ -153,6 +163,8 @@ export function SEO({
     return () => {
       const script = document.querySelector('script[data-schema="seo"]');
       if (script) script.remove();
+      const managedCanonical = document.querySelector('link[rel="canonical"][data-managed="seo"]');
+      if (managedCanonical) managedCanonical.remove();
     };
   }, [fullTitle, description, fullUrl, type, imageUrl, product, breadcrumbs]);
 

@@ -51,7 +51,6 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [mobileCatOpen, setMobileCatOpen] = useState(false);
   const [mobileSubOpen, setMobileSubOpen] = useState<Record<string, boolean>>({});
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
@@ -103,14 +102,9 @@ export function Header() {
     return '#';
   };
 
-  // Static nav links (always visible)
-  const staticLinks = [
-    { href: '/magaza', label: 'Mağaza', testId: 'link-nav-magaza' },
-    { href: '/hakkimizda', label: 'Hakkımızda', testId: 'link-nav-hakkimizda' },
-  ];
-
+  // Üst nav artık sadece menü ağacından besleniyor; "Mağaza" / "Hakkımızda" çıkarıldı.
   const navLinkCls = (active: boolean) =>
-    `relative inline-flex items-center gap-1 text-[11px] font-medium tracking-[0.18em] uppercase transition-colors nav-link-hover ${active ? 'text-black' : 'text-black/70 hover:text-black'}`;
+    `relative inline-flex items-center gap-1 text-[11px] font-medium tracking-[0.14em] uppercase transition-colors nav-link-hover ${active ? 'text-black' : 'text-black/70 hover:text-black'}`;
 
   return (
     <>
@@ -221,137 +215,113 @@ export function Header() {
               </Link>
             </div>
 
-            {/* Center: Desktop nav */}
-            <nav className="hidden lg:flex items-center gap-8">
-              {/* Categories mega-dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className={navLinkCls(location.startsWith('/kategori/'))}
-                    data-testid="button-nav-kategoriler"
-                  >
-                    Kategoriler
-                    <ChevronDown className="w-2.5 h-2.5" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  sideOffset={20}
-                  className="bg-white border-black/8 shadow-xl rounded-none p-5"
-                  style={{ minWidth: useMenuTree ? Math.min(menuRoots.length, 4) * 220 + 40 : (visibleCategories.length > 6 ? 520 : 240) }}
-                >
-                  {useMenuTree ? (
-                    <div>
-                      <div
-                        className="grid gap-x-6 gap-y-4"
-                        style={{ gridTemplateColumns: `repeat(${Math.min(menuRoots.length, 4)}, minmax(180px, 1fr))` }}
-                      >
-                        {menuRoots.map((root) => {
-                          const children = (root.children || []).filter(c => c.isActive);
-                          if (root.type === 'submenu') {
-                            return (
-                              <div key={root.id} className="min-w-0" data-testid={`mega-group-${root.id}`}>
-                                <div className="text-[10px] tracking-[0.22em] uppercase font-semibold text-polen-orange mb-2 pb-1.5 border-b border-black/10">
-                                  {root.title}
-                                </div>
-                                <ul className="flex flex-col">
-                                  {children.length === 0 ? (
-                                    <li className="text-[10px] text-black/40 py-1">Boş</li>
-                                  ) : children.map(child => {
-                                    const href = hrefForMenu(child);
-                                    return (
-                                      <li key={child.id}>
-                                        <DropdownMenuItem
-                                          onClick={() => navigate(href)}
-                                          className="text-[11px] tracking-[0.12em] uppercase text-black hover:bg-[hsl(var(--polen-cream))] hover:text-polen-orange cursor-pointer py-1.5 px-2 rounded-none transition-colors"
-                                          data-testid={`link-mega-${child.id}`}
-                                        >
-                                          {child.title}
-                                        </DropdownMenuItem>
-                                      </li>
-                                    );
-                                  })}
-                                </ul>
-                              </div>
-                            );
-                          }
-                          // root tek başına category/link
-                          const href = hrefForMenu(root);
-                          return (
-                            <div key={root.id} className="min-w-0">
-                              <DropdownMenuItem
-                                onClick={() => navigate(href)}
-                                className="text-[11px] tracking-[0.16em] uppercase font-semibold text-black hover:bg-[hsl(var(--polen-cream))] hover:text-polen-orange cursor-pointer py-2 px-2 rounded-none"
-                                data-testid={`link-mega-root-${root.id}`}
-                              >
-                                {root.title}
-                              </DropdownMenuItem>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div className="border-t border-black/10 mt-4 pt-2">
-                        <DropdownMenuItem
-                          onClick={() => navigate('/magaza')}
-                          className="text-[11px] tracking-[0.16em] uppercase text-polen-orange font-semibold hover:bg-[hsl(var(--polen-cream))] cursor-pointer py-2.5 px-3 rounded-none"
-                          data-testid="link-cat-tum-urunler"
+            {/* Center: Desktop nav — 8 ana grup direkt üst seviyede, alt kategoriler dropdown'da */}
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-7 flex-wrap">
+              {useMenuTree ? (
+                menuRoots.map((root) => {
+                  const children = (root.children || []).filter(c => c.isActive);
+
+                  // submenu → dropdown ile alt kategoriler
+                  if (root.type === 'submenu') {
+                    return (
+                      <DropdownMenu key={root.id}>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            className={navLinkCls(false)}
+                            data-testid={`button-nav-root-${root.id}`}
+                          >
+                            {root.title}
+                            <ChevronDown className="w-2.5 h-2.5" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="start"
+                          sideOffset={18}
+                          className="bg-white border-black/8 shadow-xl rounded-none p-2 min-w-[260px]"
                         >
-                          Tüm Ürünler →
-                        </DropdownMenuItem>
-                      </div>
-                    </div>
-                  ) : visibleCategories.length === 0 ? (
-                    <DropdownMenuItem
-                      onClick={() => navigate('/magaza')}
-                      className="text-[11px] tracking-wider uppercase text-black hover:bg-black/5 cursor-pointer py-2.5"
+                          {children.length === 0 ? (
+                            <DropdownMenuItem disabled className="text-[11px] text-black/40 py-2 px-3">
+                              Henüz alt kategori yok
+                            </DropdownMenuItem>
+                          ) : children.map(child => {
+                            const href = hrefForMenu(child);
+                            return (
+                              <DropdownMenuItem
+                                key={child.id}
+                                onClick={() => navigate(href)}
+                                className="text-[11px] tracking-[0.14em] uppercase text-black hover:bg-[hsl(var(--polen-cream))] hover:text-polen-orange cursor-pointer py-2 px-3 rounded-none transition-colors"
+                                data-testid={`link-mega-${child.id}`}
+                              >
+                                {child.title}
+                              </DropdownMenuItem>
+                            );
+                          })}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    );
+                  }
+
+                  // root tek başına category/link → düz nav linki
+                  const href = hrefForMenu(root);
+                  const isActive =
+                    (root.type === 'category' && root.category && location === `/kategori/${root.category.slug}`) ||
+                    (root.type === 'link' && root.url && location === root.url) || false;
+                  return (
+                    <Link
+                      key={root.id}
+                      href={href}
+                      className={navLinkCls(isActive)}
+                      data-testid={`link-nav-root-${root.id}`}
                     >
-                      Tüm Ürünler
-                    </DropdownMenuItem>
-                  ) : (
-                    <div
-                      className="grid gap-x-2 gap-y-0.5"
-                      style={{ gridTemplateColumns: visibleCategories.length > 6 ? 'repeat(2, minmax(0, 1fr))' : '1fr' }}
+                      {root.title}
+                    </Link>
+                  );
+                })
+              ) : (
+                // Fallback: menü ağacı boşsa basit "Kategoriler" dropdown
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className={navLinkCls(location.startsWith('/kategori/'))}
+                      data-testid="button-nav-kategoriler"
                     >
-                      {visibleCategories.map((c) => {
-                        const href = `/kategori/${c.slug}`;
-                        return (
+                      Kategoriler
+                      <ChevronDown className="w-2.5 h-2.5" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    sideOffset={20}
+                    className="bg-white border-black/8 shadow-xl rounded-none p-5"
+                    style={{ minWidth: visibleCategories.length > 6 ? 520 : 240 }}
+                  >
+                    {visibleCategories.length === 0 ? (
+                      <DropdownMenuItem
+                        onClick={() => navigate('/magaza')}
+                        className="text-[11px] tracking-wider uppercase text-black hover:bg-black/5 cursor-pointer py-2.5"
+                      >
+                        Tüm Ürünler
+                      </DropdownMenuItem>
+                    ) : (
+                      <div
+                        className="grid gap-x-2 gap-y-0.5"
+                        style={{ gridTemplateColumns: visibleCategories.length > 6 ? 'repeat(2, minmax(0, 1fr))' : '1fr' }}
+                      >
+                        {visibleCategories.map((c) => (
                           <DropdownMenuItem
                             key={c.id}
-                            onClick={() => navigate(href)}
+                            onClick={() => navigate(`/kategori/${c.slug}`)}
                             className="text-[11px] tracking-[0.16em] uppercase text-black hover:bg-[hsl(var(--polen-cream))] hover:text-polen-orange cursor-pointer py-2.5 px-3 rounded-none transition-colors"
                             data-testid={`link-cat-${c.slug}`}
                           >
                             {c.name}
                           </DropdownMenuItem>
-                        );
-                      })}
-                      <div
-                        className="border-t border-black/10 mt-2 pt-2"
-                        style={{ gridColumn: visibleCategories.length > 6 ? '1 / -1' : 'auto' }}
-                      >
-                        <DropdownMenuItem
-                          onClick={() => navigate('/magaza')}
-                          className="text-[11px] tracking-[0.16em] uppercase text-polen-orange font-semibold hover:bg-[hsl(var(--polen-cream))] cursor-pointer py-2.5 px-3 rounded-none"
-                          data-testid="link-cat-tum-urunler"
-                        >
-                          Tüm Ürünler →
-                        </DropdownMenuItem>
+                        ))}
                       </div>
-                    </div>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {staticLinks.map(link => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={navLinkCls(location === link.href)}
-                  data-testid={link.testId}
-                >
-                  {link.label}
-                </Link>
-              ))}
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </nav>
 
             {/* Right: Icons */}
@@ -503,229 +473,147 @@ export function Header() {
                   exit="initial"
                   className="flex flex-col px-6"
                 >
-                  {[
-                    { href: '/', label: 'Ana Sayfa', testId: 'link-mobile-home' },
-                    { href: '/magaza', label: 'Mağaza', testId: 'link-mobile-magaza' },
-                  ].map((link, idx) => (
-                    <motion.li key={link.href} variants={stagger.item} className="border-t border-black/[0.08]">
-                      <Link
-                        href={link.href}
-                        onClick={() => setMobileOpen(false)}
-                        className="group relative flex items-baseline justify-between py-4"
-                        data-testid={link.testId}
-                      >
-                        <span className="flex items-baseline gap-5">
-                          <span className="text-[10px] font-mono tracking-[0.18em] text-black/30 group-hover:text-polen-orange transition-colors">
-                            {String(idx + 1).padStart(2, '0')}
-                          </span>
-                          <span className="font-display text-[24px] leading-none tracking-[0.01em] text-black group-hover:text-polen-orange transition-colors">
-                            {link.label}
-                          </span>
-                        </span>
-                        <ArrowUpRight className="w-4 h-4 text-black/25 rotate-45 group-hover:rotate-0 group-hover:text-polen-orange transition-all duration-300" />
-                      </Link>
-                    </motion.li>
-                  ))}
-
-                  {/* Categories — accordion */}
-                  <motion.li variants={stagger.item} className="border-t border-black/[0.08]">
-                    <button
-                      onClick={() => setMobileCatOpen(v => !v)}
-                      className="group relative w-full flex items-baseline justify-between py-4"
-                      data-testid="button-mobile-kategoriler"
-                      aria-expanded={mobileCatOpen}
-                    >
-                      <span className="flex items-baseline gap-5">
-                        <span className={`text-[10px] font-mono tracking-[0.18em] transition-colors ${mobileCatOpen ? 'text-polen-orange' : 'text-black/30 group-hover:text-polen-orange'}`}>
-                          03
-                        </span>
-                        <span className={`font-display text-[24px] leading-none tracking-[0.01em] transition-colors ${mobileCatOpen ? 'text-polen-orange' : 'text-black group-hover:text-polen-orange'}`}>
-                          Kategoriler
-                        </span>
-                      </span>
-                      <motion.span
-                        animate={{ rotate: mobileCatOpen ? 90 : 0 }}
-                        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                        className={`${mobileCatOpen ? 'text-polen-orange' : 'text-black/30'} transition-colors`}
-                      >
-                        <span className="block w-3.5 h-3.5 relative">
-                          <span className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-current" />
-                          <motion.span
-                            animate={{ scaleY: mobileCatOpen ? 0 : 1 }}
-                            transition={{ duration: 0.25 }}
-                            className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-current"
-                          />
-                        </span>
-                      </motion.span>
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {mobileCatOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                          className="overflow-hidden"
-                        >
-                          {useMenuTree ? (
-                            <ul className="pb-4 pl-9 border-l border-polen-orange/30 ml-[3px] mb-2">
-                              {menuRoots.map((root, idx) => {
-                                const isSubmenu = root.type === 'submenu';
-                                const children = (root.children || []).filter(c => c.isActive);
-                                const isOpen = !!mobileSubOpen[root.id];
-                                if (isSubmenu) {
-                                  return (
-                                    <li key={root.id}>
-                                      <button
-                                        onClick={() => setMobileSubOpen(s => ({ ...s, [root.id]: !s[root.id] }))}
-                                        className="w-full flex items-center justify-between py-2.5 group"
-                                        data-testid={`button-mobile-group-${root.id}`}
-                                        aria-expanded={isOpen}
-                                      >
-                                        <span className="flex items-baseline gap-3">
-                                          <span className="text-[8px] font-mono tracking-[0.16em] text-black/30">
-                                            {String(idx + 1).padStart(2, '0')}
-                                          </span>
-                                          <span className={`text-[13px] tracking-[0.14em] uppercase font-semibold transition-colors ${isOpen ? 'text-polen-orange' : 'text-black group-hover:text-polen-orange'}`}>
-                                            {root.title}
-                                          </span>
-                                          <span className="text-[10px] text-black/35">({children.length})</span>
-                                        </span>
-                                        <motion.span
-                                          animate={{ rotate: isOpen ? 90 : 0 }}
-                                          transition={{ duration: 0.25 }}
-                                          className={`${isOpen ? 'text-polen-orange' : 'text-black/35'}`}
-                                        >
-                                          <span className="block w-3 h-3 relative">
-                                            <span className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-current" />
-                                            <motion.span
-                                              animate={{ scaleY: isOpen ? 0 : 1 }}
-                                              transition={{ duration: 0.2 }}
-                                              className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-current"
-                                            />
-                                          </span>
-                                        </motion.span>
-                                      </button>
-                                      <AnimatePresence initial={false}>
-                                        {isOpen && (
-                                          <motion.ul
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{ height: 'auto', opacity: 1 }}
-                                            exit={{ height: 0, opacity: 0 }}
-                                            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                                            className="overflow-hidden pl-5 border-l border-black/10 ml-1 mb-2"
-                                          >
-                                            {children.length === 0 ? (
-                                              <li className="text-[11px] text-black/35 py-1.5">Boş</li>
-                                            ) : children.map(child => {
-                                              const href = hrefForMenu(child);
-                                              return (
-                                                <li key={child.id}>
-                                                  <Link
-                                                    href={href}
-                                                    onClick={() => setMobileOpen(false)}
-                                                    className="group flex items-baseline gap-2 py-2 text-black/70 hover:text-polen-orange transition-colors"
-                                                    data-testid={`link-mobile-mega-${child.id}`}
-                                                  >
-                                                    <span className="text-[12px] tracking-[0.12em] uppercase">
-                                                      {child.title}
-                                                    </span>
-                                                  </Link>
-                                                </li>
-                                              );
-                                            })}
-                                          </motion.ul>
-                                        )}
-                                      </AnimatePresence>
-                                    </li>
-                                  );
-                                }
-                                // root tek başına category/link
-                                const href = hrefForMenu(root);
-                                return (
-                                  <li key={root.id}>
-                                    <Link
-                                      href={href}
-                                      onClick={() => setMobileOpen(false)}
-                                      className="group flex items-baseline gap-3 py-2.5 text-black/70 hover:text-polen-orange transition-colors"
-                                      data-testid={`link-mobile-mega-root-${root.id}`}
-                                    >
-                                      <span className="text-[8px] font-mono tracking-[0.16em] text-black/30">
-                                        {String(idx + 1).padStart(2, '0')}
-                                      </span>
-                                      <span className="text-[13px] tracking-[0.14em] uppercase">
-                                        {root.title}
-                                      </span>
-                                    </Link>
-                                  </li>
-                                );
-                              })}
-                              <li>
-                                <Link
-                                  href="/magaza"
-                                  onClick={() => setMobileOpen(false)}
-                                  className="flex items-baseline gap-3 py-2.5 text-polen-orange font-semibold"
-                                  data-testid="link-mobile-cat-tum-urunler"
-                                >
-                                  <span className="text-[8px] font-mono tracking-[0.16em] text-polen-orange/60">
-                                    {String(menuRoots.length + 1).padStart(2, '0')}
-                                  </span>
-                                  <span className="text-[13px] tracking-[0.14em] uppercase">
-                                    Tüm Ürünler →
-                                  </span>
-                                </Link>
-                              </li>
-                            </ul>
-                          ) : (
-                            <ul className="pb-4 pl-9 border-l border-polen-orange/30 ml-[3px] mb-2">
-                              {(visibleCategories.length === 0
-                                ? [{ id: 'all-fb', slug: '', name: 'Tüm Ürünler →', href: '/magaza', testId: 'link-mobile-cat-tum-urunler' }]
-                                : [
-                                    ...visibleCategories.map(c => ({ id: c.id, slug: c.slug, name: c.name, href: `/kategori/${c.slug}`, testId: `link-mobile-cat-${c.slug}` })),
-                                    { id: 'all', slug: '', name: 'Tüm Ürünler →', href: '/magaza', testId: 'link-mobile-cat-tum-urunler' },
-                                  ]
-                              ).map((c, idx, arr) => (
-                                <li key={c.id}>
-                                  <Link
-                                    href={c.href}
-                                    onClick={() => setMobileOpen(false)}
-                                    className={`group flex items-baseline gap-3 py-2.5 transition-colors ${idx === arr.length - 1 && arr.length > 1 ? 'text-polen-orange font-semibold' : 'text-black/65 hover:text-polen-orange'}`}
-                                    data-testid={c.testId}
-                                  >
-                                    <span className="text-[8px] font-mono tracking-[0.16em] text-black/30 mt-0.5">
-                                      {String(idx + 1).padStart(2, '0')}
-                                    </span>
-                                    <span className="text-[13px] tracking-[0.14em] uppercase">
-                                      {c.name}
-                                    </span>
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.li>
-
+                  {/* Ana Sayfa — sabit ilk satır */}
                   <motion.li variants={stagger.item} className="border-t border-black/[0.08]">
                     <Link
-                      href="/hakkimizda"
+                      href="/"
                       onClick={() => setMobileOpen(false)}
                       className="group relative flex items-baseline justify-between py-4"
-                      data-testid="link-mobile-hakkimizda"
+                      data-testid="link-mobile-home"
                     >
                       <span className="flex items-baseline gap-5">
                         <span className="text-[10px] font-mono tracking-[0.18em] text-black/30 group-hover:text-polen-orange transition-colors">
-                          04
+                          01
                         </span>
                         <span className="font-display text-[24px] leading-none tracking-[0.01em] text-black group-hover:text-polen-orange transition-colors">
-                          Hakkımızda
+                          Ana Sayfa
                         </span>
                       </span>
                       <ArrowUpRight className="w-4 h-4 text-black/25 rotate-45 group-hover:rotate-0 group-hover:text-polen-orange transition-all duration-300" />
                     </Link>
                   </motion.li>
+
+                  {/* 8 ana grup — direkt üst seviye accordion (Kategoriler sarmalayıcısı kaldırıldı) */}
+                  {useMenuTree ? (
+                    menuRoots.map((root, idx) => {
+                      const children = (root.children || []).filter(c => c.isActive);
+                      const isSubmenu = root.type === 'submenu';
+                      const isOpen = !!mobileSubOpen[root.id];
+                      const number = String(idx + 2).padStart(2, '0');
+
+                      if (isSubmenu) {
+                        return (
+                          <motion.li key={root.id} variants={stagger.item} className="border-t border-black/[0.08]">
+                            <button
+                              onClick={() => setMobileSubOpen(s => ({ ...s, [root.id]: !s[root.id] }))}
+                              className="group relative w-full flex items-baseline justify-between py-4"
+                              data-testid={`button-mobile-group-${root.id}`}
+                              aria-expanded={isOpen}
+                            >
+                              <span className="flex items-baseline gap-5">
+                                <span className={`text-[10px] font-mono tracking-[0.18em] transition-colors ${isOpen ? 'text-polen-orange' : 'text-black/30 group-hover:text-polen-orange'}`}>
+                                  {number}
+                                </span>
+                                <span className={`font-display text-[24px] leading-none tracking-[0.01em] transition-colors ${isOpen ? 'text-polen-orange' : 'text-black group-hover:text-polen-orange'}`}>
+                                  {root.title}
+                                </span>
+                                <span className="text-[10px] text-black/35 self-center">({children.length})</span>
+                              </span>
+                              <motion.span
+                                animate={{ rotate: isOpen ? 90 : 0 }}
+                                transition={{ duration: 0.3 }}
+                                className={`${isOpen ? 'text-polen-orange' : 'text-black/30'} transition-colors`}
+                              >
+                                <span className="block w-3.5 h-3.5 relative">
+                                  <span className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-current" />
+                                  <motion.span
+                                    animate={{ scaleY: isOpen ? 0 : 1 }}
+                                    transition={{ duration: 0.22 }}
+                                    className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-current"
+                                  />
+                                </span>
+                              </motion.span>
+                            </button>
+                            <AnimatePresence initial={false}>
+                              {isOpen && (
+                                <motion.ul
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                                  className="overflow-hidden pl-9 border-l border-polen-orange/30 ml-[3px] mb-3"
+                                >
+                                  {children.length === 0 ? (
+                                    <li className="text-[11px] text-black/35 py-2">Henüz alt kategori yok</li>
+                                  ) : children.map(child => {
+                                    const href = hrefForMenu(child);
+                                    return (
+                                      <li key={child.id}>
+                                        <Link
+                                          href={href}
+                                          onClick={() => setMobileOpen(false)}
+                                          className="group flex items-baseline gap-2 py-2 text-black/70 hover:text-polen-orange transition-colors"
+                                          data-testid={`link-mobile-mega-${child.id}`}
+                                        >
+                                          <span className="text-[12px] tracking-[0.12em] uppercase">
+                                            {child.title}
+                                          </span>
+                                        </Link>
+                                      </li>
+                                    );
+                                  })}
+                                </motion.ul>
+                              )}
+                            </AnimatePresence>
+                          </motion.li>
+                        );
+                      }
+                      // root tek başına category/link → düz satır
+                      const href = hrefForMenu(root);
+                      return (
+                        <motion.li key={root.id} variants={stagger.item} className="border-t border-black/[0.08]">
+                          <Link
+                            href={href}
+                            onClick={() => setMobileOpen(false)}
+                            className="group relative flex items-baseline justify-between py-4"
+                            data-testid={`link-mobile-root-${root.id}`}
+                          >
+                            <span className="flex items-baseline gap-5">
+                              <span className="text-[10px] font-mono tracking-[0.18em] text-black/30 group-hover:text-polen-orange transition-colors">
+                                {number}
+                              </span>
+                              <span className="font-display text-[24px] leading-none tracking-[0.01em] text-black group-hover:text-polen-orange transition-colors">
+                                {root.title}
+                              </span>
+                            </span>
+                            <ArrowUpRight className="w-4 h-4 text-black/25 rotate-45 group-hover:rotate-0 group-hover:text-polen-orange transition-all duration-300" />
+                          </Link>
+                        </motion.li>
+                      );
+                    })
+                  ) : (
+                    // Fallback: menü ağacı boşsa eski kategori listesi
+                    visibleCategories.map((c, idx) => (
+                      <motion.li key={c.id} variants={stagger.item} className="border-t border-black/[0.08]">
+                        <Link
+                          href={`/kategori/${c.slug}`}
+                          onClick={() => setMobileOpen(false)}
+                          className="group relative flex items-baseline justify-between py-4"
+                          data-testid={`link-mobile-cat-${c.slug}`}
+                        >
+                          <span className="flex items-baseline gap-5">
+                            <span className="text-[10px] font-mono tracking-[0.18em] text-black/30 group-hover:text-polen-orange transition-colors">
+                              {String(idx + 2).padStart(2, '0')}
+                            </span>
+                            <span className="font-display text-[24px] leading-none tracking-[0.01em] text-black group-hover:text-polen-orange transition-colors">
+                              {c.name}
+                            </span>
+                          </span>
+                          <ArrowUpRight className="w-4 h-4 text-black/25 rotate-45 group-hover:rotate-0 group-hover:text-polen-orange transition-all duration-300" />
+                        </Link>
+                      </motion.li>
+                    ))
+                  )}
 
                   {user ? (
                     <motion.li variants={stagger.item} className="border-t border-b border-black/[0.08]">

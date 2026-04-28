@@ -1408,7 +1408,21 @@ function SyncHistoryDialog({
                           (r.errors?.length ?? 0) > 0 ? 'text-red-700' : 'text-neutral-400'
                         }`}
                       >
-                        {r.errors?.length ?? 0}
+                        <div>{r.errors?.length ?? 0}</div>
+                        {(() => {
+                          const retried = Number(r.stats?.retriedRequests ?? 0);
+                          const recovered = Number(r.stats?.recoveredRequests ?? 0);
+                          if (retried <= 0 && recovered <= 0) return null;
+                          return (
+                            <div
+                              className="text-[10px] text-neutral-500 mt-0.5"
+                              title={`${retried} yeniden deneme · ${recovered} kurtarıldı`}
+                              data-testid={`text-retries-${r.id}`}
+                            >
+                              ↻{retried}{recovered > 0 ? ` ✓${recovered}` : ''}
+                            </div>
+                          );
+                        })()}
                       </td>
                     </tr>
                     {(r.errors?.length ?? 0) > 0 && (

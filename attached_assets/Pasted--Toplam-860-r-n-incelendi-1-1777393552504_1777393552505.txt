@@ -1,0 +1,373 @@
+======================================================================
+Toplam 860 ürün incelendi (18 sayfa)
+Farklı kategori sayısı: 76
+======================================================================
+
+✅ 76 farklı kategori bulundu — Trendyol her ürün için
+   ayrı categoryId döndürüyor. Site tarafında doğru ayırma
+   yapılması mümkün.
+
+Kategori dağılımı (en çok ürünlüden başlayarak):
+
+  [ 297 ürün]  Banyo Seti  (id: undefined)
+            └─ Doğal Taş 3 Parça Traverten Banyo Seti
+            └─ 3’lü Premium El Yapımı Mermer Banyo Takımı (Gri)
+            └─ Oval Model Gri Mermer 2’li Banyo Seti
+            └─ Traverten Kare Sıvı Sabunluk Mat Siyah detaylı
+
+  [  66 ürün]  Lavabo  (id: undefined)
+            └─ Doğal Traverten Çanak Lavabo - 40x40x13 cm - Kare Form - El İşçiliği
+            └─ Silver Traverten Kaya Model Lavabo 40x35x40 cm Doğal Taş El Yapımı Banyo Lavabosu
+            └─ 40x40x10 cm Doğal Traverten Tezgah Üstü Lavabo – Bej
+            └─ Elips Model Traverten Doğal Taş Lavabo – 48x38x11 cm
+
+  [  50 ürün]  Dekoratif Tabak & Kase  (id: undefined)
+            └─ Lüks Pembe Doğal Mermer Kase - 15x5 cm
+            └─ Gri Mermer Top Ayaklı Dekoratif Kase - El İşçiliği Sunum ve Meyvelik (20x16 cm)
+            └─ Premium El İşçiliği Doğal Mermer Ayaklı Kase - Sunumluk & Dekoratif Obje 20 cm
+            └─ Elazığ Vişne Mermer - 20x20 Ayaklı Kase MARKA TESCİLLİ
+
+  [  40 ürün]  Sabunluk  (id: undefined)
+            └─ Doğal Traverten Kavun Dilimli Sıvı Sabunluk - Mat Siyah Detaylı
+            └─ %100 Doğal Traverten Katı Sabunluk – Minimalist & Modern
+            └─ Doğal Traverten Kavun Dilimli Sıvı Sabunluk - Gold Başlıklı
+            └─ 🖤 Siyah Mermer Katı Sabunluk – Elips Model (12 × 10 cm)
+
+  [  34 ürün]  Duvar & Cephe Kaplama  (id: undefined)
+            └─ 2.5x5 Kırmızı Traverten Patlatma Doğal Taş Duvar Cephe Kaplama
+            └─ Traverten Fileli Mini Set Duvar Kaplama Taşı
+            └─ 10 X Sb Siyah Patlatma Taş Duvar Cephe Kaplama
+            └─ Doğal Taş Limra 10x10 Çay Altlığı / Resimlik Taş
+
+  [  32 ürün]  Dekoratif Obje ve Biblo  (id: undefined)
+            └─ Leylak Mermer Küre (5,5 cm) - El Yapımı Doğal Taş Masaj ve Dekorasyon Küresi
+            └─ Kırmızı Traverten Dekoratif Küre - 22 cm
+            └─ Traverten Doğal Taş Dekoratif 2’li Obje
+            └─ Violet Mermer El Çantası Obje – 28x24 cm (Saplar Hariç)
+
+  [  26 ürün]  Tepsi  (id: undefined)
+            └─ Elips Mermer Sunumluk & Dekoratif Tepsi (12x24 cm)
+            └─ Bej Traverten Kendinden Ayaklı söz/nişan/sunum tepsisi
+            └─ Elazığ Vişnesi Mermer Sunum Tepsisi
+            └─ **POLEN STONE DOĞAL TAŞ SILVER TRAVERTEN SUNUM TEPSİSİ**
+
+  [  23 ürün]  Küllük  (id: undefined)
+            └─ BEYAZ MERMER KÜLLÜK Minimal • Doğal • Zamansız
+            └─ Doğal Taş Kapaklı Küllük – 13x8 cm
+            └─ Leylak Mermer Küllük – Doğal Şıklık ve Zarafet
+            └─ Toros Siyahı Mermer Yuvarlak Model Küllük
+
+  [  21 ürün]  Vazo  (id: undefined)
+            └─ LuxHome Doğal Beyaz Mermer Vazo - 23 cm İki Boğumlu Modern Tasarım - El İşçiliği Dekoratif Obje
+            └─ | Doğal Traverten Dekoratif Vazo - 20 x 10
+            └─ El İşçiliği Gri Mermer Vazo Lüks Dekoratif Obje
+            └─ Menekşe Mermer Doğal Taş Vazo Farkı İle
+
+  [  15 ürün]  Kase  (id: undefined)
+            └─ Lüks Doğal Mermer 3’lü Sunum ve Kase Seti - Beyaz Mermer Takım
+            └─ Leylak Mermer Servis Kasesi | 20x10 cm
+            └─ 20x8 Traverten Doğal Taş Kase
+            └─ Laciverti Kütük Mermer Kase / Soğuk Mezelik / Meyve / Sebze Sunumluk
+
+  [  14 ürün]  Şamdan & Mumluk  (id: undefined)
+            └─ – Traverten Doğal Taş Üçlü Mumluk Seti
+            └─ Traverten Şamdan – Doğal Taş Zarafeti
+            └─ Doğal Taş Mumluk Seti - 6 Parça (Tepsili)
+            └─ Menekşe Mermer Dört Parça Mumluk Seti
+
+  [  13 ürün]  Baharatlık  (id: undefined)
+            └─ El Yapımı Beyaz Mermer Baharatlık Takımı – Ginkgo Serisi
+            └─ Koleksiyonluk Doğal Mermer 3'lü Sosluk ve Baharatlık Seti - El Yapımı Özel Seri
+            └─ 🪨 Gri Mermer Sosluk / Baharatlık Dörtlü Set
+            └─ Doğal Taş Bal Mermer Dört Parça Baharatlık Seti
+
+  [  12 ürün]  Kesme Tahtası  (id: undefined)
+            └─ Mermer Et ve Sebze Doğrama Taşı 20x30 cm
+            └─ Kesme Doğrama ve Sunum Tepsisi 30x10cm
+            └─ Siyah Mermer Et/sebze/ekmek Doğrama Taşı Yeni Saplı
+            └─ Beyaz Bulutlu Mermer Et/sebze/ekmek Doğrama Taşı Yeni Saplı
+
+  [  11 ürün]  Saksı  (id: undefined)
+            └─ Doğanın Zarafeti Evinize Geliyor: Traverten Sukulentlik
+            └─ Lüks Bej Mermer Kristal Model Saksı - 40x20 cm
+            └─ 🪨 Doğal Mermer Hamam Kurnası / Dekoratif Saksı
+            └─ Traverten Doğal Taş Saksı – 30x19 cm
+
+  [  11 ürün]  Tabak  (id: undefined)
+            └─ ® Elazığ Vişnesi Mermer Sunumluk / Pasta Servisi
+            └─ Doğal Mermer Sunum Tabağı Kendinden Ayaklı 25 cm
+            └─ Kırmızı traverten doğal taş tepsi 2 parça
+            └─ Bej Traverten Doğal Taş Ayaklı Kase Havluluk Ve Çok Amaçlı Kullanım
+
+  [  10 ürün]  Havan  (id: undefined)
+            └─ Siyah Mermer Havan – 13x10 cm
+            └─ 12x10 Leylak Mermer Havan
+            └─ 15x10 Şeker Mermer Havan
+            └─ Toros Siyahı Mermer Havan
+
+  [   9 ürün]  Duş Teknesi  (id: undefined)
+            └─ Menekşe Mermer Çok Amaçlı Hamam Kurnası & Saksı
+            └─ Menekşe Mermer Hamam Kurnası – 42x25 cm Kavun Dilimli Model
+            └─ Şeker Mermer Hamam Kurnası – 42x25 cm | Kavun Dilimli, El İşçiliği
+            └─ Mermer Hamam Kurnası – 42 cm Çap | 25 cm Yükseklik
+
+  [   9 ürün]  Servis Seti  (id: undefined)
+            └─ Menekşe Mermer Sunum Tepsisi | 25x20 cm
+            └─ Doğal Bej Mermer Kek ve Sunum Standı | El Yapımı | 28x17 cm
+            └─ Silver Tarverten Sunum Tabağı 21x11
+            └─ Mermer sunum ve doğrama taşı 35X18cm
+
+  [   8 ürün]  Peçetelik  (id: undefined)
+            └─ Traverten Doğal Taş Peçetelik 15x15
+            └─ 🟫 Polen Stone Traverten Doğaltaş Peçetelik
+            └─ ’un doğal taş kullanılarak üretilen kağıt havluluk
+            └─ Emparador Mermer Rulo Peçetelik Kuş Motifli Aksesuarlı
+
+  [   7 ürün]  Bardak Altlığı  (id: undefined)
+            └─ - %100 Doğal Traverten Bardak Altlığı (10x10 cm)
+            └─ Gri Mermer Bardak Altlığı 4,lü Takım
+            └─ Beyaz, Gri, Traverten Mermer Bardak Altlığı3’lü Takım
+            └─ Gri Mermer Bardak Altlığı
+
+  [   7 ürün]  Tuvalet Fırçası  (id: undefined)
+            └─ 🖤 Toros Siyahı Mermer Gümüş Detaylı Tuvalet Fırçalığı
+            └─ Eskitme Rose Gold Vernikli Pompa & Tuvalet Fırçası – Yeni Model
+            └─ Eskitme Gümüş Vernikli Pompa & Tuvalet Fırçası – Yeni Model
+            └─ Menekşe Mermer Wc Fırçalığı ve Gümüş Rengi Fırça
+
+  [   7 ürün]  Puro Küllüğü  (id: undefined)
+            └─ Şeker mermerden özel olarak üretilmiş çift taraflı puro küllüğü (18x11x2 cm),
+            └─ Siyah Mermer Puro Küllüğü – 21x14x2 cm
+            └─ Vişne Mermer Puro Küllüğü
+            └─ Bej Mermer Puro Küllüğü
+
+  [   7 ürün]  Puro Aksesuarı  (id: undefined)
+            └─ Emperador Mermer Puro Küllüğü ve Çerezlik 2’li Set
+            └─ Silwer Traverten Doğal Taş Küllük
+            └─ Traverten Doğal Taş Küllük
+            └─ Beyaz Mermer Puro Küllük
+
+  [   7 ürün]  Duvar Dekorasyon Ürünü  (id: undefined)
+            └─ Traverten Doğal Taş Sıfır ve U Model Obje Aksesuar 2,li Takım
+            └─ Traverten Doğal Taş Sıfır Model Obje Aksesuar
+            └─ Traverten Doğal Taş Çember Obje Aksesuar
+            └─ Siyah Doğal Patlatma Taş, Duvar Kaplama Taşı Fileli 5x10
+
+  [   6 ürün]  Dekoratif Kutu  (id: undefined)
+            └─ Doğal Traverten Kapaklı Takı ve Aksesuar Kutusu - 7x6 cm -
+            └─ %100 Doğal Beyaz Mermer Kapaklı Takı ve Aksesuar Kutusu - 7x6 cm
+            └─ Traverten Doğaltaş Kutu 20x15x8
+            └─ Traverten dekoratif Kutu ve Ayaklı Kase 2’li Takım
+
+  [   6 ürün]  Şekerlik  (id: undefined)
+            └─ El İşçiliği Beyaz Mermer Kapaklı Saklama Kutusu & Dekoratif Obje
+            └─ Gri Mermer Şekerlik & Saklama Kutusu – Doğal Şıklık!
+            └─ Beyaz Mermer Şekerlik & Saklama Kutusu – Doğal Şıklık!
+            └─ , doğal taş malzemeden üretilmiş, şık ve zarif bir şekerlik ile sunum tepsisi
+
+  [   6 ürün]  Çöp Kovası  (id: undefined)
+            └─ Beyazı Doğal Mermer Oval Kova – 25x20 cm
+            └─ Bal Mermer Çöp Kovası – 20 cm x 16 cm
+            └─ Traverten Doğal Taş Dekoratif Çok Amaçlı Kutu 16X19CM
+            └─ Traverten Doğal Taş Çöp Kovası Ve Wc Fırçalığı (MAT GOLD FIRÇA)
+
+  [   6 ürün]  Banyo Düzenleyici  (id: undefined)
+            └─ Beyazı Mermer 2’li Havluluk takımı
+            └─ Beyaz Mermer Gümüş Mercan Aksesuarlı 3'lü Banyo Takımı
+            └─ Silver (gümüş)Traverten Doğal Taş Ayaklı 2'li Kase Takım Havluluk ve Çok Amaçlı Kullanım
+            └─ Silver (gümüş)Traverten Doğal Taş Ayaklı Kase Havluluk ve Çok Amaçlı Kullanım
+
+  [   6 ürün]  Bahçe Yer Döşemesi  (id: undefined)
+            └─ Traverten Küp Taş 10x10x8cm
+            └─ Elazığ Vişnesi Mermer  2.5x5 Fileli Patlatma Duvar Kaplama Taşı
+            └─ Kenar Kırma Traverten Set Döşeme / Kaplama
+            └─ 10 Kg. Doğal Dere Podima Taşı, Dekorluk Özel Taşlar, Akvaryum, Havuz kenarı dekorasyon şömine bahçe
+
+  [   5 ürün]  Kaktüs  (id: undefined)
+            └─ Traverten Çiçeklik, Kaktüslük
+            └─ Gri Mermer Kaktüslük / Sukulent / Çiçeklik
+            └─ Beyazı Mermer Kaktüslük / Sukulent / Çiçeklik
+            └─ Leylak Mermer Kaktüslük / Sukulent / Çiçeklik
+
+  [   4 ürün]  Kahve Fincanı  (id: undefined)
+            └─ 🌿 Doğal Mermer Fincan ve Sunum Tepsisi
+            └─ Bal Mermer Fincan Tabağı - Sunumluk 14cm çapında 1.5cm yüksekliğinde
+            └─ Mermer Fincan Ve Tabağı
+            └─ Mermer Fincan Ve Tabağı
+
+  [   4 ürün]  Yan Sehpa  (id: undefined)
+            └─ | Doğal Taş Yan Sehpa
+            └─ Kırmızı Traverten Doğal Taş Sehpa
+            └─ Bardak Model Traverten Sehpa 30x30x48
+            └─ Traverten bardak model orta ve yan sehpa
+
+  [   4 ürün]  Orta Sehpa  (id: undefined)
+            └─ Traverten Doğal Taş Sehpa – 50 cm Çapında, 40 cm Yüksekliğinde
+            └─ Dikdörtgen traverten orta sehpa
+            └─ Traverten Doğal Taş Sehpa Papatya Model ayaklı 50x40
+            └─ Traverten Sehpa - Masa Bambu Model Ayaklı
+
+  [   4 ürün]  Kaşıklık  (id: undefined)
+            └─ menekşe mermer Kaşıklık – Şıklık ve Düzen Bir Arada
+            └─ Silver Traverten Kaşıklık 1.sınıf beyaz mermer ve işçilik.
+            └─ Leylak Mermer Kaşıklık
+            └─ Gri Mermer Kaşıklık
+
+  [   4 ürün]  Şömine  (id: undefined)
+            └─ Ateş, Barbekü Şömine Fırın Tuğlası 10x20x5 ( 1 Adet)
+            └─ Ateş, Barbekü, Şömine, Fırın Tuğlası 10x20x3 (1 Adet)
+            └─ Barbekü Şömine Fırın Tuğlası 10x20x3
+            └─ Ateş, Barbekü, Şömine, Fırın Tuğlası 10x20x2 (1 Adet)
+
+  [   4 ürün]  Mangal  (id: undefined)
+            └─ Satışdan Çekilmiştir
+            └─ Mangal Lav Taşı - 30cmx40cm
+            └─ Ocak Üstü Doğal Mangal Taşı
+            └─ Mangal Lav Taşı - 30cmx40cm
+
+  [   3 ürün]  Masaüstü Organizer  (id: undefined)
+            └─ | %100 Doğal Taş Tasarım Kalemlik ve Çok Amaçlı Düzenleyici
+            └─ Traverten Doğal Taş Kase Yeni Model 24x5
+            └─ Silinmiş Ve Cilalı Mermer Küp Taş 8x8x8
+
+  [   3 ürün]  Söz Tepsisi  (id: undefined)
+            └─ Bej Mermer Tepsi – 24 cm
+            └─ Beyaz Mermer Sunum Tepsisi – 26 cm
+            └─ Light Bej Traverten Kare Tepsi 22x22 Sunumluk/Nişan Söz Tepsisi
+
+  [   3 ürün]  Kedi ve Köpek Mama Su Kabı  (id: undefined)
+            └─ Siyah Mermer Kedi Mama Kabı – 13x15x7 cm
+            └─ KIRMIZI TRAVERTEN DOĞAL TAŞ KEDİ MAMA KABI
+            └─ Mermer Kedi Mama Kabı
+
+  [   3 ürün]  Makyaj & Takı Organizeri  (id: undefined)
+            └─ Traverten Doğal Taş Takı Düzenleyici Seti
+            └─ Siyahı Mat Mermer Kase Özel Üretim
+            └─ Beyaz Doğal Mermer Diş Fırçalık/pamukluk
+
+  [   3 ürün]  Magnet  (id: undefined)
+            └─ Doğal Taş Üzeri UV Baskılı Galata Kulesi ve Şehir Manzaralı
+            └─ Doğal Taş Üzeri UV Baskılı Kız Kulesi 15x15x1cm
+            └─ Doğal Taş Üzeri UV Baskılı Ayasofya
+
+  [   3 ürün]  Akvaryum Dekor Ve Aksesuarı  (id: undefined)
+            └─ Doğal Çantaşı Piramit Model 4'lü Akvaryum Taşı
+            └─ Doğal Çantaşı Piramit Modeli Akvaryum Taşı
+            └─ Doğal Çan Dekorasyon Ve Akvaryum Taşı
+
+  [   3 ürün]  Bluetooth Hoparlör  (id: undefined)
+            └─ Siyah-gri Mermer Dekoratif Hoparlör
+            └─ Mermer Dekoratif Hoparlör
+            └─ Beyaz Mermer Dekoratif Hoparlör
+
+  [   2 ürün]  Sıvı Sabun  (id: undefined)
+            └─ Lüks Doğal Emperador Mermer Sıvı Sabunluk
+            └─ Doğal Traverten Taş Portakal Model Sıvı Sabunluk
+
+  [   2 ürün]  Katı Sabun  (id: undefined)
+            └─ | %100 Doğal Leylak Mermer Elips Katı Sabunluk
+            └─ | %100 Doğal Gri Mermer Oval Katı Sabunluk
+
+  [   2 ürün]  Kitap Tutucu  (id: undefined)
+            └─ Mermer Kitap Tutucu
+            └─ Menekşe Doğal Mermer 2'li Kitap Tutucu
+
+  [   2 ürün]  Saklama Kutusu  (id: undefined)
+            └─ Gri Mermer Saklama Kabı 2’li Takım – 26x20 cm & 20x16 cm
+            └─ Beyaz Mermer ve Mercan Aksesuarlı Şık Baharatlık Seti
+
+  [   2 ürün]  Yılbaşı Seti  (id: undefined)
+            └─ Traverten Doğal Taş Diş Fırçalık-Mumluk-kaşıklık
+            └─ Mermer Içecek Koyma Kabı, Içecek Soğutucu Mermer Küp Taşı, Ve Kasesi
+
+  [   2 ürün]  Küvet  (id: undefined)
+            └─ Antrasit Mermer Doğal Taş Kabak Model hamam kurnası
+            └─ Traverten Doğal Taş Armut Model hamam kurnası
+
+  [   2 ürün]  Dresuar  (id: undefined)
+            └─ Kırmızı Traverten Doğal Taş Dresuar
+            └─ Traverten Doğal Taş Dekoratif Patlatma Kenarlı Dresuar 127x30x80
+
+  [   2 ürün]  Saklama Kabı  (id: undefined)
+            └─ 1.sınıf Beyaz Mermer Kutu / Şekerlik / Lokumluk Gümüş Rengi Zeytin Dalı Aksesuarlı
+            └─ Mermer Mutfak Seti 4,lü Seti 1. Sınıf Malzeme Ve Işçilik
+
+  [   2 ürün]  Sebzelik  (id: undefined)
+            └─ Mermer Kase 26x6 Meyve / Sebze / El Havluluğu / Katı Sabunluk / Düzenleyici
+            └─ Siyah Mermer Sebze Meyve Sunum Tabağı
+
+  [   2 ürün]  Kupa  (id: undefined)
+            └─ Viski Içecek Soğutucu Yeşil Mermer Küp Taş
+            └─ Beyaz Mermer Fincan Takımı
+
+  [   2 ürün]  Runner & Amerikan Servisi  (id: undefined)
+            └─ Doğal Taş Banyo Ve Mutfak Seti 7,li
+            └─ Beyaz Mermer 2'li Sunum Tepsisi
+
+  [   1 ürün]  Kavanoz  (id: undefined)
+            └─ Elazığ Vişne Mermeri Kapaklı Saklama Kavanozu - Coğrafi İşaretli Doğal Taş - 16x19 cm
+
+  [   1 ürün]  Kalemlik & Ataşlık  (id: undefined)
+            └─ 🟫 Traverten Doğal Taş Kalemlik – Masaüstü Düzenleyici
+
+  [   1 ürün]  Kaşe ve Istanpa  (id: undefined)
+            └─ 20x10 Traverten Doğal Taş Kase
+
+  [   1 ürün]  Aksesuar Set  (id: undefined)
+            └─ Traverten Doğal Taş Aksesuar Seti – Mumluk & Takı Standı
+
+  [   1 ürün]  Dekoratif Şerit  (id: undefined)
+            └─ 🪨 7,5x30x2 Bej Mermer Süpürgelik/Tezgah Arası/döşeme
+
+  [   1 ürün]  Küre  (id: undefined)
+            └─ Menekşe Mermer Küre Ayak – 30 cm
+
+  [   1 ürün]  Tütsü ve Buhurdanlık  (id: undefined)
+            └─ Traverten Doğal Taş Tütsülük 24x4x3cm
+
+  [   1 ürün]  Konsept Hediyelik  (id: undefined)
+            └─ Şeker Mermer Küllük 13cm çapında 3cm yüksekliğinde
+
+  [   1 ürün]  Saksılık  (id: undefined)
+            └─ Traverten Kabak Model Kurna-Saksı 42X25
+
+  [   1 ürün]  Laptop Sehpası  (id: undefined)
+            └─ Menekşe mermer sehpa yan sehpa
+
+  [   1 ürün]  Oda Kokusu  (id: undefined)
+            └─ Traverten Yuvarlak Tütsülük, Buhurdanlık, Kokuluk 10cm Çapında
+
+  [   1 ürün]  Figür  (id: undefined)
+            └─ Traverten Doğal Taş Traverten Stantlı Küre Obje
+
+  [   1 ürün]  Bungalov Ev  (id: undefined)
+            └─ Light Traverten 2.5x5 Fileli Patlatma Duvar Kaplama Taşı
+
+  [   1 ürün]  Diğer Aksesuarlar  (id: undefined)
+            └─ Yeşil Mermer Kare Model Küllük
+
+  [   1 ürün]  Çamaşır Sepeti  (id: undefined)
+            └─ Doğal Taş Havan, Baharat Dövücü
+
+  [   1 ürün]  Havuz Dekorasyonu  (id: undefined)
+            └─ Bej Traverten Doğal Patlatma Duvar Kaplama Taşı Fileli
+
+  [   1 ürün]  Diğer Parti Malzemeleri  (id: undefined)
+            └─ Beyaz Mermer  Bardak Çerezlik Küllük Tepslili 4lü Set
+
+  [   1 ürün]  Mum & Kandil  (id: undefined)
+            └─ Mor Leylak Mermer 3'lü Dökme Mumluk
+
+  [   1 ürün]  Hamur Şekillendirici  (id: undefined)
+            └─ Gri Mermer Kek Standı Krom Ayaklı
+
+  [   1 ürün]  Akvaryum  (id: undefined)
+            └─ Doğal Akvaryum Taşı
+
+  [   1 ürün]  Pamuk  (id: undefined)
+            └─ Beyaz Mermer Kapaklı Pamukluk
+
+  [   1 ürün]  Oklava  (id: undefined)
+            └─ Menekşe Mermer Merdane
+
+root@162-55-4-35:/var/www/polenstone#

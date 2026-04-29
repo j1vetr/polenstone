@@ -87,7 +87,9 @@ function HeroSceneStatic() {
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/40" />
+      <div className="absolute inset-0 bg-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+      <HeroOverlayContent />
     </section>
   );
 }
@@ -159,9 +161,107 @@ function HeroSceneInner() {
           className="absolute inset-0 w-full h-full object-cover"
         />
         <HeroVideoLazy />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/40" />
+        {/* %30 sabit siyah örtü — başlığın okunabilirliği için */}
+        <div className="absolute inset-0 bg-black/30" />
+        {/* CTA bölgesinde ekstra kontrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+      </motion.div>
+
+      <motion.div
+        className="absolute inset-0 z-10"
+        style={{ y: titleY, opacity: titleOpacity }}
+      >
+        <HeroOverlayContent animated />
       </motion.div>
     </section>
+  );
+}
+
+// HERO ÜZERİNDE BAŞLIK & CTA — masaüstü ve mobil için ayrı içerikler
+function HeroOverlayContent({ animated = false }: { animated?: boolean }) {
+  const Wrap: any = animated ? motion.div : 'div';
+  const wrapProps = animated
+    ? {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { delay: 0.4, duration: 1.0, ease: [0.16, 1, 0.3, 1] },
+      }
+    : {};
+
+  return (
+    <div className="relative h-full w-full">
+      {/* ── MOBİL — kısa ve vurucu ── */}
+      <div className="lg:hidden h-full w-full flex flex-col items-center justify-center text-center px-6">
+        <Wrap {...wrapProps}>
+          <span className="block text-[10px] tracking-[0.32em] uppercase text-polen-orange font-mono mb-4" data-testid="text-hero-kicker-mobile">
+            Polen Stone
+          </span>
+          <h1
+            className="font-display text-white uppercase leading-[0.92]"
+            style={{ fontSize: 'clamp(40px, 11vw, 64px)', letterSpacing: '-0.02em', fontWeight: 700 }}
+            data-testid="text-hero-title-mobile"
+          >
+            Doğal Taşın
+            <span className="block text-polen-orange">Zarafeti</span>
+          </h1>
+          <p className="mt-5 text-[11px] tracking-[0.22em] uppercase text-white/75 font-mono">
+            Mermer · Granit · Traverten · Oniks
+          </p>
+          <Link
+            href="/magaza"
+            data-testid="link-hero-cta-mobile"
+            className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-polen-orange text-white text-[11px] tracking-[0.22em] uppercase font-semibold hover:bg-polen-orange/90 transition-colors"
+          >
+            Koleksiyonu Keşfet
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </Link>
+        </Wrap>
+      </div>
+
+      {/* ── MASAÜSTÜ — geniş ve sinematik ── */}
+      <div className="hidden lg:flex h-full w-full items-end">
+        <div className="w-full max-w-[1400px] mx-auto px-10 pb-16 xl:pb-20">
+          <Wrap {...wrapProps} className="max-w-[760px]">
+            <span className="block text-[11px] tracking-[0.36em] uppercase text-polen-orange font-mono mb-6" data-testid="text-hero-kicker">
+              — Polen Stone / Koleksiyon
+            </span>
+            <h1
+              className="font-display text-white uppercase"
+              style={{
+                fontSize: 'clamp(56px, 7vw, 108px)',
+                lineHeight: 0.92,
+                letterSpacing: '-0.035em',
+                fontWeight: 700,
+              }}
+              data-testid="text-hero-title"
+            >
+              Doğal Taşın
+              <span className="block text-polen-orange">Zamansız Zarafeti</span>
+            </h1>
+            <p className="mt-7 max-w-[520px] text-[14px] xl:text-[15px] leading-relaxed text-white/80">
+              Mermer, granit, traverten ve oniks — özenle seçilmiş doğal taş koleksiyonumuzu keşfedin.
+            </p>
+            <div className="mt-10 flex items-center gap-5">
+              <Link
+                href="/magaza"
+                data-testid="link-hero-cta"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-polen-orange text-white text-[12px] tracking-[0.24em] uppercase font-semibold hover:bg-polen-orange/90 transition-colors"
+              >
+                Koleksiyonu Keşfet
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/hakkimizda"
+                data-testid="link-hero-secondary"
+                className="text-[11px] tracking-[0.28em] uppercase text-white/70 hover:text-white transition-colors border-b border-white/30 hover:border-white pb-1"
+              >
+                Hakkımızda
+              </Link>
+            </div>
+          </Wrap>
+        </div>
+      </div>
+    </div>
   );
 }
 

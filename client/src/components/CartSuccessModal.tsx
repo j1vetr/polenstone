@@ -50,7 +50,7 @@ export function CartSuccessModal({ isOpen, onClose, product, cartTotal, cartItem
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/55 z-[100]"
+            className="fixed inset-0 bg-black/65 z-[100]"
           />
 
           <motion.div
@@ -68,23 +68,23 @@ export function CartSuccessModal({ isOpen, onClose, product, cartTotal, cartItem
             <div
               className={
                 isMobile
-                  ? 'relative bg-white border-t border-black/10 shadow-2xl shadow-black/20 rounded-t-2xl overflow-hidden'
-                  : 'relative bg-white border border-black/8 shadow-2xl shadow-black/15 overflow-hidden'
+                  ? 'relative bg-zinc-950/95 backdrop-blur-xl border-t border-white/10 shadow-2xl shadow-black/40 rounded-t-2xl overflow-hidden'
+                  : 'relative bg-zinc-950/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/40 overflow-hidden'
               }
             >
               {isMobile && (
                 <div className="pt-2 pb-1 flex justify-center">
-                  <div className="w-10 h-1 rounded-full bg-black/15" />
+                  <div className="w-10 h-1 rounded-full bg-white/20" />
                 </div>
               )}
 
               <button
                 onClick={onClose}
-                className="absolute top-3 right-3 w-8 h-8 bg-black/[0.04] hover:bg-black/[0.08] flex items-center justify-center transition-colors z-10 rounded-full"
+                className="absolute top-3 right-3 w-8 h-8 bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center transition-colors z-10 rounded-full"
                 data-testid="button-close-modal"
                 aria-label="Kapat"
               >
-                <X className="w-4 h-4 text-black/55" strokeWidth={2} />
+                <X className="w-4 h-4 text-white/60" strokeWidth={2} />
               </button>
 
               <div className="px-5 sm:px-6 pt-4 pb-5">
@@ -93,15 +93,15 @@ export function CartSuccessModal({ isOpen, onClose, product, cartTotal, cartItem
                     <Check className="w-4 h-4 text-black" strokeWidth={3} />
                   </span>
                   <div className="leading-tight">
-                    <h3 className="font-display text-[15px] tracking-[0.14em] uppercase text-black">
+                    <h3 className="font-display text-[15px] tracking-[0.14em] uppercase text-white">
                       Sepete Eklendi
                     </h3>
-                    <p className="text-[11px] text-black/45 mt-0.5">Harika seçim</p>
+                    <p className="text-[11px] text-white/45 mt-0.5">Harika seçim</p>
                   </div>
                 </div>
 
-                <div className="flex gap-3.5 bg-[#faf7f1] border border-black/[0.06] p-3.5">
-                  <div className="relative w-20 h-24 sm:w-24 sm:h-28 overflow-hidden shrink-0 bg-stone-100">
+                <div className="flex gap-3.5 bg-white/[0.04] border border-white/10 p-3.5">
+                  <div className="relative w-20 h-24 sm:w-24 sm:h-28 overflow-hidden shrink-0 bg-white/[0.04]">
                     <img
                       src={product.image}
                       alt={product.name}
@@ -111,23 +111,23 @@ export function CartSuccessModal({ isOpen, onClose, product, cartTotal, cartItem
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col">
                     <h4
-                      className="font-medium text-[13px] sm:text-sm leading-snug line-clamp-2 mb-2 text-black"
+                      className="font-medium text-[13px] sm:text-sm leading-snug line-clamp-2 mb-2 text-white"
                       data-testid="text-modal-product-name"
                     >
                       {product.name}
                     </h4>
-                    <div className="flex flex-wrap items-center gap-1.5 text-[10.5px] text-black/55 mb-auto">
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10.5px] text-white/55 mb-auto">
                       {product.size && (
-                        <span className="px-1.5 py-0.5 bg-white border border-black/8 text-black/65">
+                        <span className="px-1.5 py-0.5 bg-white/[0.06] border border-white/10 text-white/70">
                           {product.size}
                         </span>
                       )}
-                      <span className="px-1.5 py-0.5 bg-white border border-black/8 text-black/65">
+                      <span className="px-1.5 py-0.5 bg-white/[0.06] border border-white/10 text-white/70">
                         Adet: {product.quantity}
                       </span>
                     </div>
                     <p
-                      className="font-bold text-[17px] text-black mt-1.5"
+                      className="font-bold text-[17px] text-white mt-1.5"
                       data-testid="text-modal-price"
                     >
                       {product.price.toLocaleString('tr-TR')} ₺
@@ -137,25 +137,25 @@ export function CartSuccessModal({ isOpen, onClose, product, cartTotal, cartItem
 
                 <div className="mt-3.5">
                   {freeShipReached ? (
-                    <div className="bg-polen-orange/10 border border-polen-orange/30 px-3 py-2.5 flex items-center gap-2">
+                    <div className="bg-polen-orange/15 border border-polen-orange/40 px-3 py-2.5 flex items-center gap-2">
                       <Truck className="w-4 h-4 text-polen-orange shrink-0" strokeWidth={2} />
-                      <span className="text-[12px] text-black/80 font-medium">
+                      <span className="text-[12px] text-white/90 font-medium">
                         Ücretsiz kargo kazandınız.
                       </span>
                     </div>
                   ) : (
-                    <div className="bg-[#faf7f1] border border-black/[0.06] px-3 py-2.5">
+                    <div className="bg-white/[0.04] border border-white/10 px-3 py-2.5">
                       <div className="flex items-center gap-2 mb-1.5">
                         <Truck className="w-4 h-4 text-polen-orange shrink-0" strokeWidth={2} />
-                        <span className="text-[11.5px] text-black/65 leading-tight">
+                        <span className="text-[11.5px] text-white/65 leading-tight">
                           Ücretsiz kargo için{' '}
-                          <span className="font-semibold text-black">
+                          <span className="font-semibold text-white">
                             {remainingForFreeShipping.toLocaleString('tr-TR')} ₺
                           </span>{' '}
                           daha ekleyin
                         </span>
                       </div>
-                      <div className="h-1 bg-black/[0.07] overflow-hidden rounded-full">
+                      <div className="h-1 bg-white/[0.08] overflow-hidden rounded-full">
                         <div
                           className="h-full bg-polen-orange rounded-full transition-all"
                           style={{ width: `${shippingProgress}%`, transitionDuration: '300ms' }}
@@ -165,12 +165,12 @@ export function CartSuccessModal({ isOpen, onClose, product, cartTotal, cartItem
                   )}
                 </div>
 
-                <div className="flex items-center justify-between mt-3.5 py-2.5 border-t border-black/8">
-                  <div className="flex items-center gap-2 text-[12px] text-black/55">
+                <div className="flex items-center justify-between mt-3.5 py-2.5 border-t border-white/10">
+                  <div className="flex items-center gap-2 text-[12px] text-white/55">
                     <ShoppingBag className="w-3.5 h-3.5" strokeWidth={2} />
                     <span>Sepetinizde {cartItemCount} ürün</span>
                   </div>
-                  <span className="font-bold text-[14px] text-black">
+                  <span className="font-bold text-[14px] text-white">
                     {cartTotal.toLocaleString('tr-TR')} ₺
                   </span>
                 </div>
@@ -179,7 +179,7 @@ export function CartSuccessModal({ isOpen, onClose, product, cartTotal, cartItem
                   <Button
                     variant="outline"
                     onClick={onClose}
-                    className="h-11 border-black/15 text-black hover:bg-black/[0.04] rounded-none text-[11.5px] font-semibold tracking-[0.08em] uppercase"
+                    className="h-11 bg-transparent border-white/20 text-white hover:bg-white/[0.06] hover:text-white rounded-none text-[11.5px] font-semibold tracking-[0.08em] uppercase"
                     data-testid="button-continue-shopping"
                   >
                     Alışverişe Devam

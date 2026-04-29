@@ -125,19 +125,31 @@ function sectionTitle(text: string): string {
   return `<p style="margin:28px 0 10px 0;font-family:Helvetica,Arial,sans-serif;color:${BRAND.muted};font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">${text}</p>`;
 }
 
+const LOGO_URL = `${CONTACT.siteUrl}/logo.png`;
+
 function brandHeader(): string {
+  // Görsel destekleyen istemcilerde logo, blok eden istemcilerde alt-text + kalın
+  // wordmark fallback gösterilir. Logo image yüklenmezse altındaki text wordmark
+  // her zaman görünür kalır (defansif: text wordmark logo ile birlikte yer alır).
   return `
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#ffffff;">
   <tr>
-    <td align="center" style="padding:36px 30px 24px 30px;border-bottom:1px solid ${BRAND.borderSoft};">
+    <td align="center" style="padding:32px 30px 22px 30px;border-bottom:1px solid ${BRAND.borderSoft};">
       <table role="presentation" cellspacing="0" cellpadding="0" border="0">
         <tr>
-          <td align="center" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:${BRAND.ink};font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">
-            POLEN<span style="color:${BRAND.primary};">·</span>STONE
+          <td align="center" style="line-height:0;font-size:0;">
+            <a href="${CONTACT.siteUrl}" style="text-decoration:none;color:${BRAND.ink};">
+              <img src="${LOGO_URL}" alt="POLEN STONE" width="120" height="48" style="display:block;width:120px;height:auto;max-width:120px;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;" />
+            </a>
           </td>
         </tr>
         <tr>
-          <td align="center" style="padding-top:8px;font-family:Helvetica,Arial,sans-serif;color:${BRAND.muted};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;">
+          <td align="center" style="padding-top:14px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:${BRAND.ink};font-size:20px;font-weight:800;letter-spacing:5px;line-height:1;">
+            <a href="${CONTACT.siteUrl}" style="color:${BRAND.ink};text-decoration:none;">POLEN<span style="color:${BRAND.primary};">·</span>STONE</a>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding-top:6px;font-family:Helvetica,Arial,sans-serif;color:${BRAND.muted};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;">
             Doğal Taş &amp; Mermer
           </td>
         </tr>
@@ -150,7 +162,15 @@ function brandHeader(): string {
 </table>`;
 }
 
-function brandFooter(): string {
+function brandFooter(opts?: { unsubscribeEmail?: string }): string {
+  const unsubEmail = opts?.unsubscribeEmail;
+  const unsubBlock = unsubEmail ? `
+        <tr>
+          <td align="center" style="padding-top:14px;font-size:11px;line-height:1.7;color:rgba(255,255,255,0.55);">
+            Bu e-postayı pazarlama izniniz nedeniyle <strong style="color:rgba(255,255,255,0.75);">${escapeHtml(unsubEmail)}</strong> adresine gönderdik.<br>
+            <a href="mailto:${CONTACT.email}?subject=${encodeURIComponent('Abonelik İptali')}&body=${encodeURIComponent(`Lütfen ${unsubEmail} adresini pazarlama e-posta listesinden çıkarın.`)}" style="color:${BRAND.primary};text-decoration:underline;font-weight:600;">Abonelikten çık</a>
+          </td>
+        </tr>` : '';
   return `
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:${BRAND.ink};">
   <tr>
@@ -185,16 +205,17 @@ function brandFooter(): string {
               Bu e-postayı, hesabınızla ilgili bir işlem nedeniyle aldınız.
             </p>
           </td>
-        </tr>
+        </tr>${unsubBlock}
       </table>
     </td>
   </tr>
 </table>`;
 }
 
-function wrapTemplate(content: string, opts?: { preheader?: string; title?: string }): string {
+function wrapTemplate(content: string, opts?: { preheader?: string; title?: string; unsubscribeEmail?: string }): string {
   const preheader = opts?.preheader ?? '';
   const title = opts?.title ?? 'Polen Stone';
+  const unsubscribeEmail = opts?.unsubscribeEmail;
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="tr">
 <head>
@@ -238,7 +259,7 @@ function wrapTemplate(content: string, opts?: { preheader?: string; title?: stri
             ${content}
           </td>
         </tr>
-        <tr><td>${brandFooter()}</td></tr>
+        <tr><td>${brandFooter({ unsubscribeEmail })}</td></tr>
       </table>
     </td>
   </tr>
@@ -300,16 +321,24 @@ function welcomeEmailTemplate(userName: string): string {
 }
 
 function orderConfirmationTemplate(order: Order, items: OrderItem[], siteUrl: string = CONTACT.siteUrl): string {
-  const itemRows = items.map(item => `
+  const itemRows = items.map(item => {
+    const img = (item as any).productImage as string | null | undefined;
+    const thumbCell = img
+      ? `<td width="64" style="padding:14px 12px 14px 0;border-bottom:1px solid ${BRAND.borderSoft};vertical-align:top;">
+          <img src="${escapeHtml(img)}" alt="${escapeHtml(item.productName)}" width="64" height="64" style="display:block;width:64px;height:64px;border:1px solid ${BRAND.borderSoft};object-fit:cover;-ms-interpolation-mode:bicubic;" />
+        </td>`
+      : '';
+    return `
     <tr>
+      ${thumbCell}
       <td style="padding:14px 0;border-bottom:1px solid ${BRAND.borderSoft};vertical-align:top;">
         <div style="font-family:Helvetica,Arial,sans-serif;color:${BRAND.ink};font-size:14px;font-weight:600;line-height:1.4;">${escapeHtml(item.productName)}</div>
         ${item.variantDetails ? `<div style="font-family:Helvetica,Arial,sans-serif;color:${BRAND.muted};font-size:12px;line-height:1.5;margin-top:3px;">${escapeHtml(item.variantDetails)}</div>` : ''}
         <div style="font-family:Helvetica,Arial,sans-serif;color:${BRAND.muted};font-size:12px;line-height:1.5;margin-top:3px;">Adet: ${escapeHtml(item.quantity)}</div>
       </td>
       <td align="right" style="padding:14px 0;border-bottom:1px solid ${BRAND.borderSoft};vertical-align:top;font-family:Helvetica,Arial,sans-serif;color:${BRAND.ink};font-size:14px;font-weight:700;white-space:nowrap;">${escapeHtml(item.subtotal)}&nbsp;₺</td>
-    </tr>
-  `).join('');
+    </tr>`;
+  }).join('');
 
   const shippingAddress = order.shippingAddress as { address: string; city: string; district: string; postalCode: string; country?: string };
   const trackingUrl = `${siteUrl}/siparis-takip?no=${encodeURIComponent(order.orderNumber)}`;
@@ -535,7 +564,7 @@ function passwordResetTemplate(userName: string, resetLink: string): string {
   `, { preheader: 'Şifrenizi sıfırlamak için bağlantı içeride.', title: 'Şifre Sıfırlama' });
 }
 
-function reviewRequestTemplate(userName: string, orderNumber: string, products: string[]): string {
+function reviewRequestTemplate(userName: string, orderNumber: string, products: string[], userEmail?: string): string {
   const productsList = products.map(p => `
     <tr>
       <td style="padding:8px 0;font-family:Helvetica,Arial,sans-serif;color:${BRAND.body};font-size:13px;line-height:1.6;">
@@ -558,7 +587,7 @@ function reviewRequestTemplate(userName: string, orderNumber: string, products: 
     ${emailButton(`${CONTACT.siteUrl}/profilim`, 'Değerlendirme Yap')}
 
     ${Small('Geri bildiriminiz bizim için çok değerli — teşekkürler.')}
-  `, { preheader: `#${orderNumber} teslim edildi — deneyiminizi paylaşır mısınız?`, title: 'Değerlendirme' });
+  `, { preheader: `#${orderNumber} teslim edildi — deneyiminizi paylaşır mısınız?`, title: 'Değerlendirme', unsubscribeEmail: userEmail });
 }
 
 interface CartItem {
@@ -569,7 +598,7 @@ interface CartItem {
   imageUrl?: string;
 }
 
-function abandonedCartTemplate(userName: string, cartItems: CartItem[], cartTotal: number, siteUrl: string = CONTACT.siteUrl): string {
+function abandonedCartTemplate(userName: string, cartItems: CartItem[], cartTotal: number, siteUrl: string = CONTACT.siteUrl, userEmail?: string): string {
   const itemRows = cartItems.map(item => `
     <tr>
       <td style="padding:12px 0;border-bottom:1px solid ${BRAND.borderSoft};vertical-align:top;">
@@ -617,7 +646,7 @@ function abandonedCartTemplate(userName: string, cartItems: CartItem[], cartTota
     </table>`}
 
     ${Small('Sorularınız için bize yazın, yardımcı olalım.')}
-  `, { preheader: `Sepetinizde ${cartItems.length} ürün bekliyor — toplam ${cartTotal.toLocaleString('tr-TR')} ₺`, title: 'Sepetiniz' });
+  `, { preheader: `Sepetinizde ${cartItems.length} ürün bekliyor — toplam ${cartTotal.toLocaleString('tr-TR')} ₺`, title: 'Sepetiniz', unsubscribeEmail: userEmail });
 }
 
 // Email sending functions
@@ -802,7 +831,7 @@ export async function sendReviewRequestEmail(
       from: `"Polen Stone" <${fromEmail}>`,
       to: userEmail,
       subject: 'Deneyiminizi Paylaşın',
-      html: reviewRequestTemplate(userName, orderNumber, products),
+      html: reviewRequestTemplate(userName, orderNumber, products, userEmail),
     });
     
     console.log(`[Email] Review request sent to ${userEmail}`);
@@ -867,7 +896,7 @@ export async function sendAbandonedCartEmail(
       from: `"Polen Stone" <${fromEmail}>`,
       to: userEmail,
       subject: 'Sepetiniz Sizi Bekliyor! 🛒',
-      html: abandonedCartTemplate(userName, cartItems, cartTotal, siteUrl),
+      html: abandonedCartTemplate(userName, cartItems, cartTotal, siteUrl, userEmail),
     });
     
     console.log(`[Email] Abandoned cart reminder sent to ${userEmail}`);

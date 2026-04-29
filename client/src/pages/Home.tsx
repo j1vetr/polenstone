@@ -194,12 +194,12 @@ function HeroOverlayContent({ animated = false }: { animated?: boolean }) {
       <div className="lg:hidden h-full w-full flex flex-col items-center justify-center text-center px-6">
         <Wrap {...wrapProps}>
           <h1
-            className="font-display text-white uppercase leading-[0.92]"
+            className="font-display text-white uppercase leading-[1.05]"
             style={{ fontSize: 'clamp(40px, 11vw, 64px)', letterSpacing: '-0.02em', fontWeight: 700 }}
             data-testid="text-hero-title-mobile"
           >
             Doğal Taşın
-            <span className="block text-polen-orange">Zarafeti</span>
+            <span className="block text-polen-orange mt-2">Zarafeti</span>
           </h1>
           <p className="mt-5 text-[11px] tracking-[0.22em] uppercase text-white/75 font-mono">
             Banyo · Lavabo · Dekor · Mutfak

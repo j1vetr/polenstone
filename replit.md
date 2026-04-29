@@ -39,6 +39,7 @@ Preferred communication style: Simple, everyday language.
 - **Coupon System**: Percentage/fixed discounts, usage limits, validity periods.
 - **Shipping**: Domestic and international shipping with server-side validation. Sample request flow surfaced on the homepage.
 - **Email Notifications**: Database-configurable SMTP using Polen Stone-branded templates.
+- **WhatsApp Notifications (wpileti)**: Auto-sent on order received / processing / shipped / delivered / cancelled. Per-event admin on/off toggles in `SettingsTab.tsx`. Customer KVKK opt-out in profile (`/hesabim` → Profil Bilgileri → İletişim Tercihleri) backed by `users.whatsapp_opt_in` (default true); `whatsappService.sendEventToCustomer` looks up the user by `order.customerEmail` and skips if opted out. Guest checkouts have no row and stay opted in.
 - **B2B Dealer & Quote System**: Dealer companies and quote workflow with stock deduction on acceptance.
 - **Meta Pixel + CAPI Integration**: Server- and client-side e-commerce event tracking for Facebook advertising.
 - **Google Merchant Center Feed**: Automated XML product feed.

@@ -154,6 +154,31 @@ export default function Profile() {
     },
   });
 
+  const updateWhatsappOptInMutation = useMutation({
+    mutationFn: async (whatsappOptIn: boolean) => {
+      const res = await fetch('/api/auth/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ whatsappOptIn }),
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error('Failed to update WhatsApp preference');
+      return res.json();
+    },
+    onSuccess: (_data, whatsappOptIn) => {
+      queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
+      toast({
+        title: 'Tercih güncellendi',
+        description: whatsappOptIn
+          ? 'WhatsApp bildirimleri açıldı.'
+          : 'WhatsApp bildirimleri kapatıldı.',
+      });
+    },
+    onError: () => {
+      toast({ title: 'Hata', description: 'Tercih güncellenemedi.', variant: 'destructive' });
+    },
+  });
+
   // Address management state
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -663,6 +688,46 @@ export default function Profile() {
                                   }
                                 </p>
                               </div>
+                            </div>
+                          </div>
+
+                          <div className="pt-6 mt-2 border-t border-black/8">
+                            <h3 className="text-sm font-semibold text-black mb-3 tracking-[0.04em] uppercase">
+                              İletişim Tercihleri
+                            </h3>
+                            <div className="flex items-start justify-between gap-4 p-4 bg-stone-50 rounded-xl">
+                              <div className="flex items-start gap-3 min-w-0">
+                                <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center shrink-0">
+                                  <Phone className="w-5 h-5 text-black/55" />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-black font-medium" data-testid="text-whatsapp-pref-title">WhatsApp bildirimleri</p>
+                                  <p className="text-xs text-black/55 mt-1">
+                                    Sipariş alındı, hazırlanıyor, kargoya verildi ve teslim edildi
+                                    bildirimlerini WhatsApp ile gönderelim mi? KVKK kapsamında
+                                    istediğiniz zaman kapatabilirsiniz.
+                                  </p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                role="switch"
+                                aria-checked={user?.whatsappOptIn !== false}
+                                disabled={updateWhatsappOptInMutation.isPending}
+                                onClick={() =>
+                                  updateWhatsappOptInMutation.mutate(user?.whatsappOptIn === false)
+                                }
+                                className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${
+                                  user?.whatsappOptIn !== false ? 'bg-polen-orange' : 'bg-black/15'
+                                }`}
+                                data-testid="toggle-whatsapp-opt-in"
+                              >
+                                <span
+                                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                                    user?.whatsappOptIn !== false ? 'translate-x-6' : 'translate-x-1'
+                                  }`}
+                                />
+                              </button>
                             </div>
                           </div>
                         </div>

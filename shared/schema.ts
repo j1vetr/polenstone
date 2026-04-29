@@ -30,6 +30,7 @@ export const users = pgTable("users", {
   district: text("district"),
   postalCode: text("postal_code"),
   country: text("country").default("Türkiye"),
+  whatsappOptIn: boolean("whatsapp_opt_in").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

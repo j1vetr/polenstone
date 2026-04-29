@@ -877,7 +877,7 @@ export async function registerRoutes(
       return res.status(404).json({ error: "Kullanıcı bulunamadı" });
     }
 
-    res.json({ id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, phone: user.phone, address: user.address, city: user.city, district: user.district, postalCode: user.postalCode, country: user.country, createdAt: user.createdAt });
+    res.json({ id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, phone: user.phone, address: user.address, city: user.city, district: user.district, postalCode: user.postalCode, country: user.country, whatsappOptIn: user.whatsappOptIn, createdAt: user.createdAt });
   });
 
   app.patch("/api/auth/profile", async (req: Request, res) => {
@@ -887,12 +887,18 @@ export async function registerRoutes(
     }
 
     try {
-      const { firstName, lastName, phone } = req.body;
-      const updated = await storage.updateUser(payload.userId, { firstName, lastName, phone });
+      const { firstName, lastName, phone, whatsappOptIn } = req.body;
+      const updates: { firstName?: string; lastName?: string; phone?: string; whatsappOptIn?: boolean } = {};
+      if (firstName !== undefined) updates.firstName = firstName;
+      if (lastName !== undefined) updates.lastName = lastName;
+      if (phone !== undefined) updates.phone = phone;
+      if (typeof whatsappOptIn === 'boolean') updates.whatsappOptIn = whatsappOptIn;
+
+      const updated = await storage.updateUser(payload.userId, updates);
       if (!updated) {
         return res.status(404).json({ error: "Kullanıcı bulunamadı" });
       }
-      res.json({ id: updated.id, email: updated.email, firstName: updated.firstName, lastName: updated.lastName, phone: updated.phone });
+      res.json({ id: updated.id, email: updated.email, firstName: updated.firstName, lastName: updated.lastName, phone: updated.phone, whatsappOptIn: updated.whatsappOptIn });
     } catch (error) {
       res.status(500).json({ error: "Profil güncellenemedi" });
     }

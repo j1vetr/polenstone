@@ -12,6 +12,7 @@ interface User {
   district: string | null;
   postalCode: string | null;
   country: string | null;
+  whatsappOptIn?: boolean;
 }
 
 interface AuthContextType {

@@ -164,6 +164,22 @@ async function sendEventToCustomer(order: Order, event: WhatsAppEvent): Promise<
     console.log(`[WhatsApp] event ${event} disabled, skipping`);
     return { success: false, skipped: true, error: 'Bu olay için bildirim kapalı' };
   }
+
+  // KVKK / customer opt-out: if the order's email is linked to a registered
+  // user who turned off WhatsApp notifications, skip the message. Anonymous
+  // (guest) checkouts have no preference row and stay opted in by default.
+  if (order.customerEmail) {
+    try {
+      const user = await storage.getUserByEmail(order.customerEmail);
+      if (user && user.whatsappOptIn === false) {
+        console.log(`[WhatsApp] customer opted out, skipping event=${event} email=${order.customerEmail}`);
+        return { success: false, skipped: true, error: 'Müşteri WhatsApp bildirimlerini kapatmış' };
+      }
+    } catch (err) {
+      console.error('[WhatsApp] opt-in lookup failed, sending anyway:', err);
+    }
+  }
+
   const message = renderTemplate(config.templates[event], orderVars(order, config));
   return sendRaw(config, order.customerPhone, message, event);
 }

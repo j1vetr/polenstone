@@ -228,7 +228,7 @@ export function Header() {
           </div>
 
           {/* ── Desktop layout: sadece nav + ikonlar (logo üst brand bar'da) ── */}
-          <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center gap-6">
+          <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center gap-10 xl:gap-16">
 
             {/* Sol: scroll edildiğinde küçük logo görünür */}
             <div className="justify-self-start flex items-center min-w-0 h-[44px]">
@@ -363,7 +363,7 @@ export function Header() {
             </nav>
 
             {/* Right: Icons */}
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="justify-self-end flex items-center gap-2 xl:gap-3 shrink-0">
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setSearchOpen(true)}
@@ -393,11 +393,11 @@ export function Header() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <div className="flex items-center gap-1 ml-1 pl-3 border-l border-black/10">
+                <div className="flex items-center gap-2 xl:gap-3 ml-2 pl-4 xl:pl-5 border-l border-black/10">
                   <Link href="/giris" data-testid="link-header-giris" aria-label="Giriş Yap">
                     <motion.span
                       whileTap={{ scale: 0.97 }}
-                      className="inline-flex items-center px-3 py-2 text-[11px] tracking-[0.18em] uppercase font-medium text-black/70 hover:text-polen-orange transition-colors cursor-pointer"
+                      className="inline-flex items-center whitespace-nowrap px-3 xl:px-4 py-2 text-[10.5px] xl:text-[11px] tracking-[0.14em] xl:tracking-[0.18em] uppercase font-medium text-black/70 hover:text-polen-orange transition-colors cursor-pointer"
                     >
                       Giriş Yap
                     </motion.span>
@@ -405,7 +405,7 @@ export function Header() {
                   <Link href="/kayit" data-testid="link-header-kayit">
                     <motion.span
                       whileTap={{ scale: 0.97 }}
-                      className="inline-flex items-center px-3 py-2 text-[11px] tracking-[0.18em] uppercase font-bold text-white bg-polen-orange hover:bg-[hsl(var(--polen-orange-deep))] transition-colors cursor-pointer"
+                      className="inline-flex items-center whitespace-nowrap px-3.5 xl:px-5 py-2 text-[10.5px] xl:text-[11px] tracking-[0.14em] xl:tracking-[0.18em] uppercase font-bold text-white bg-polen-orange hover:bg-[hsl(var(--polen-orange-deep))] transition-colors cursor-pointer"
                     >
                       Kayıt Ol
                     </motion.span>

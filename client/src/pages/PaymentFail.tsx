@@ -97,26 +97,30 @@ export default function PaymentFail() {
             </motion.div>
           )}
 
-          {/* Olası nedenler */}
+          {/* Olası nedenler — 2x2 kart grid */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.26 }}
-            className="bg-white border border-black/[0.08] p-5 sm:p-6 mb-5"
+            className="mb-5"
           >
-            <h3 className="text-[11px] tracking-[0.2em] uppercase text-black/55 font-semibold mb-4">
+            <h3 className="text-[11px] tracking-[0.2em] uppercase text-black/55 font-semibold mb-3">
               Olası Nedenler
             </h3>
-            <ul className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {reasons.map(({ icon: Icon, text }) => (
-                <li key={text} className="flex items-start gap-3">
-                  <span className="w-8 h-8 rounded-full bg-[#faf7f1] border border-black/[0.06] flex items-center justify-center shrink-0">
+                <div
+                  key={text}
+                  className="bg-white border border-black/[0.08] p-4 sm:p-5 flex items-start gap-3 hover:border-polen-orange/40 transition-colors"
+                  data-testid={`card-reason-${text.slice(0, 20)}`}
+                >
+                  <span className="w-9 h-9 rounded-full bg-polen-orange/10 border border-polen-orange/20 flex items-center justify-center shrink-0">
                     <Icon className="w-4 h-4 text-polen-orange" strokeWidth={2} />
                   </span>
-                  <span className="text-[13.5px] text-black/75 leading-relaxed pt-1.5">{text}</span>
-                </li>
+                  <span className="text-[13px] text-black/75 leading-snug pt-1">{text}</span>
+                </div>
               ))}
-            </ul>
+            </div>
           </motion.div>
 
           {/* Yardım kutusu */}

@@ -320,9 +320,11 @@ function welcomeEmailTemplate(userName: string): string {
   `, { preheader: `Hoş geldiniz ${safeName} — Polen Stone ailesindesiniz.`, title: 'Hoş geldiniz' });
 }
 
-function orderConfirmationTemplate(order: Order, items: OrderItem[], siteUrl: string = CONTACT.siteUrl): string {
+type OrderItemForEmail = OrderItem & { productImage?: string | null };
+
+function orderConfirmationTemplate(order: Order, items: OrderItemForEmail[], siteUrl: string = CONTACT.siteUrl): string {
   const itemRows = items.map(item => {
-    const img = (item as any).productImage as string | null | undefined;
+    const img = item.productImage;
     const thumbCell = img
       ? `<td width="64" style="padding:14px 12px 14px 0;border-bottom:1px solid ${BRAND.borderSoft};vertical-align:top;">
           <img src="${escapeHtml(img)}" alt="${escapeHtml(item.productName)}" width="64" height="64" style="display:block;width:64px;height:64px;border:1px solid ${BRAND.borderSoft};object-fit:cover;-ms-interpolation-mode:bicubic;" />
@@ -686,12 +688,26 @@ export async function sendOrderConfirmationEmail(order: Order, items: OrderItem[
     
     const settings = await storage.getSiteSettings();
     const fromEmail = settings.smtp_user || 'no-reply@polenstone.com.tr';
-    
+
+    // Ürün görsellerini products tablosundan zenginleştir (thumbnail için)
+    const enrichedItems: OrderItemForEmail[] = await Promise.all(
+      items.map(async (item) => {
+        if (!item.productId) return item;
+        try {
+          const product = await storage.getProduct(item.productId);
+          const firstImage = product?.images && product.images.length > 0 ? product.images[0] : null;
+          return { ...item, productImage: firstImage };
+        } catch {
+          return item;
+        }
+      })
+    );
+
     await transporter.sendMail({
       from: `"Polen Stone" <${fromEmail}>`,
       to: order.customerEmail,
       subject: `Siparişiniz Alındı - #${order.orderNumber}`,
-      html: orderConfirmationTemplate(order, items),
+      html: orderConfirmationTemplate(order, enrichedItems),
     });
     
     console.log(`[Email] Order confirmation sent to ${order.customerEmail}`);

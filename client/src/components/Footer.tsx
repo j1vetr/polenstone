@@ -62,11 +62,11 @@ export function Footer() {
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-polen-orange shrink-0" strokeWidth={1.75} />
                 <a
-                  href="mailto:info@polenstone.com.tr"
+                  href="mailto:info@polenstone.com"
                   className="hover:text-polen-orange transition-colors"
                   data-testid="link-footer-email"
                 >
-                  info@polenstone.com.tr
+                  info@polenstone.com
                 </a>
               </li>
             </ul>

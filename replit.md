@@ -8,7 +8,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Brand & Theme
 - **Brand**: Polen Stone Doğal Taş & Mermer
-- **Domain**: polenstone.com.tr · **Email**: info@polenstone.com.tr · **Instagram**: @polenstone
+- **Domain**: polenstone.com.tr · **Email**: info@polenstone.com · **Instagram**: @polenstone
 - **Logo**: Text wordmark "POLEN STONE" (orange "STONE"). User will upload a custom logo asset later.
 - **Color tokens** (in `client/src/index.css`):
   - `--polen-orange` — terracotta accent

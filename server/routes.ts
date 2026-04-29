@@ -303,7 +303,7 @@ async function generateQuotePdfBuffer(quote: any, dealer: any, items: any[]): Pr
       
       // Footer
       doc.fontSize(8).font(fontRegular).fillColor('#999999');
-      doc.text('Polen Stone Doğal Taş & Mermer | www.polenstone.com.tr | info@polenstone.com.tr', 50, 780, { align: 'center', width: 495 });
+      doc.text('Polen Stone Doğal Taş & Mermer | www.polenstone.com.tr | info@polenstone.com', 50, 780, { align: 'center', width: 495 });
       
       doc.end();
     } catch (error) {
@@ -4912,7 +4912,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       
       // Footer
       doc.fontSize(8).font(fontRegular).fillColor('#999999');
-      doc.text('Polen Stone Doğal Taş & Mermer | www.polenstone.com.tr | info@polenstone.com.tr', 50, 780, { align: 'center', width: 495 });
+      doc.text('Polen Stone Doğal Taş & Mermer | www.polenstone.com.tr | info@polenstone.com', 50, 780, { align: 'center', width: 495 });
       
       doc.end();
     } catch (error) {

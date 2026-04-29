@@ -85,7 +85,7 @@ export function SEO({
       ],
       contactPoint: {
         '@type': 'ContactPoint',
-        email: 'info@polenstone.com.tr',
+        email: 'info@polenstone.com',
         contactType: 'customer service'
       }
     });

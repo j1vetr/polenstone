@@ -77,7 +77,7 @@ export default function KVKK() {
                 </p>
                 <p><strong>Polen Stone Doğal Taş & Mermer</strong></p>
                 <p><strong>Web Sitesi:</strong> <a href="https://www.polenstone.com.tr">www.polenstone.com.tr</a></p>
-                <p><strong>E-posta:</strong> <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a></p>
+                <p><strong>E-posta:</strong> <a href="mailto:info@polenstone.com">info@polenstone.com</a></p>
                 <p><strong>Telefon:</strong> <a href="tel:+905326956183">0532 695 61 83</a></p>
                 <p><strong>Adres:</strong> Yunus Emre, Barbaros Blv. 42 d, 34791 Sancaktepe / İstanbul</p>
 
@@ -146,7 +146,7 @@ export default function KVKK() {
                   KVKK kapsamındaki haklarınızı kullanmak için, kimliğinizi doğrulayacak belgelerle birlikte aşağıdaki yöntemlerle başvuru yapabilirsiniz:
                 </p>
                 <ul>
-                  <li><strong>E-posta:</strong> <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a></li>
+                  <li><strong>E-posta:</strong> <a href="mailto:info@polenstone.com">info@polenstone.com</a></li>
                   <li><strong>Adres:</strong> Yunus Emre, Barbaros Blv. 42 d, 34791 Sancaktepe / İstanbul</li>
                 </ul>
                 <p>

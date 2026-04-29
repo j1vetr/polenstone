@@ -106,31 +106,27 @@ export function Header() {
 
   // Üst nav artık sadece menü ağacından besleniyor; "Mağaza" / "Hakkımızda" çıkarıldı.
   const navLinkCls = (active: boolean) =>
-    `relative inline-flex items-center gap-1 whitespace-nowrap text-[10.5px] xl:text-[11px] font-medium tracking-[0.08em] xl:tracking-[0.14em] uppercase transition-colors nav-link-hover ${active ? 'text-black' : 'text-black/70 hover:text-black'}`;
+    `relative inline-flex items-center gap-1 whitespace-nowrap text-[9.5px] xl:text-[10px] font-medium tracking-[0.06em] xl:tracking-[0.10em] uppercase transition-colors nav-link-hover ${active ? 'text-black' : 'text-black/70 hover:text-black'}`;
 
   return (
     <>
-      {/* ── Brand bar (desktop): WhatsApp · Logo · Telefon + E-posta
+      {/* ── Brand bar (desktop): E-Posta · Logo · Telefon
           Normal akışta durur; scroll edilince doğal olarak yukarı kayar. ── */}
       <div className="hidden lg:block bg-white border-b border-black/[0.06]">
         <div className="max-w-[1400px] mx-auto px-8 py-4 grid grid-cols-3 items-center gap-6">
-          {/* Sol: WhatsApp */}
+          {/* Sol: E-Posta */}
           <a
-            href="https://wa.me/905326956183"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-testid="link-header-whatsapp"
-            aria-label="WhatsApp ile yazın"
-            className="justify-self-start group inline-flex items-center gap-3"
+            href="mailto:info@polenstone.com"
+            data-testid="link-header-email"
+            aria-label="E-posta gönder"
+            className="justify-self-start group flex items-center gap-3"
           >
-            <span className="w-11 h-11 rounded-full bg-[#25D366] flex items-center justify-center shrink-0 shadow-[0_4px_14px_-4px_rgba(37,211,102,0.55)] group-hover:shadow-[0_6px_20px_-4px_rgba(37,211,102,0.75)] transition-shadow">
-              <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="white" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
+            <span className="w-11 h-11 rounded-full border border-black/10 group-hover:border-polen-orange flex items-center justify-center shrink-0 transition-colors">
+              <Mail className="w-[17px] h-[17px] text-black/70 group-hover:text-polen-orange transition-colors" strokeWidth={1.75} />
             </span>
-            <span className="flex flex-col leading-tight">
-              <span className="text-[9px] tracking-[0.22em] uppercase text-black/45 font-mono">WhatsApp</span>
-              <span className="text-[13px] font-semibold text-black tracking-wide group-hover:text-[#25D366] transition-colors" data-testid="text-header-whatsapp">0532 695 61 83</span>
+            <span className="flex flex-col leading-tight whitespace-nowrap">
+              <span className="text-[9px] tracking-[0.22em] uppercase text-black/45 font-mono">E-Posta</span>
+              <span className="text-[13px] font-semibold text-black tracking-wide group-hover:text-polen-orange transition-colors" data-testid="text-header-email">info@polenstone.com</span>
             </span>
           </a>
 
@@ -139,42 +135,26 @@ export function Header() {
             <img
               src={polenLogo}
               alt="Polen Stone — Doğal Taş & Mermer"
-              className="h-[78px] w-auto object-contain"
+              className="h-[96px] w-auto object-contain"
               data-testid="img-logo"
             />
           </Link>
 
-          {/* Sağ: Telefon + E-Posta */}
-          <div className="justify-self-end flex items-center gap-7">
-            <a
-              href="tel:+905326956183"
-              data-testid="link-header-phone"
-              aria-label="Telefonla ara"
-              className="group flex items-center gap-3"
-            >
-              <span className="w-10 h-10 rounded-full border border-black/10 group-hover:border-polen-orange flex items-center justify-center shrink-0 transition-colors">
-                <Phone className="w-[15px] h-[15px] text-black/70 group-hover:text-polen-orange transition-colors" strokeWidth={1.75} />
-              </span>
-              <span className="flex flex-col leading-tight whitespace-nowrap">
-                <span className="text-[9px] tracking-[0.22em] uppercase text-black/45 font-mono">Bize Ulaşın</span>
-                <span className="text-[13px] font-semibold text-black tracking-wide group-hover:text-polen-orange transition-colors" data-testid="text-header-phone">0532 695 61 83</span>
-              </span>
-            </a>
-            <a
-              href="mailto:info@polenstone.com.tr"
-              data-testid="link-header-email"
-              aria-label="E-posta gönder"
-              className="group flex items-center gap-3"
-            >
-              <span className="w-10 h-10 rounded-full border border-black/10 group-hover:border-polen-orange flex items-center justify-center shrink-0 transition-colors">
-                <Mail className="w-[15px] h-[15px] text-black/70 group-hover:text-polen-orange transition-colors" strokeWidth={1.75} />
-              </span>
-              <span className="flex flex-col leading-tight whitespace-nowrap">
-                <span className="text-[9px] tracking-[0.22em] uppercase text-black/45 font-mono">E-Posta</span>
-                <span className="text-[13px] font-semibold text-black tracking-wide group-hover:text-polen-orange transition-colors" data-testid="text-header-email">info@polenstone.com.tr</span>
-              </span>
-            </a>
-          </div>
+          {/* Sağ: Telefon */}
+          <a
+            href="tel:+905326956183"
+            data-testid="link-header-phone"
+            aria-label="Telefonla ara"
+            className="justify-self-end group flex items-center gap-3"
+          >
+            <span className="w-11 h-11 rounded-full border border-black/10 group-hover:border-polen-orange flex items-center justify-center shrink-0 transition-colors">
+              <Phone className="w-[17px] h-[17px] text-black/70 group-hover:text-polen-orange transition-colors" strokeWidth={1.75} />
+            </span>
+            <span className="flex flex-col leading-tight whitespace-nowrap">
+              <span className="text-[9px] tracking-[0.22em] uppercase text-black/45 font-mono">Bize Ulaşın</span>
+              <span className="text-[13px] font-semibold text-black tracking-wide group-hover:text-polen-orange transition-colors" data-testid="text-header-phone">0532 695 61 83</span>
+            </span>
+          </a>
         </div>
       </div>
 

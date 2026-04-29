@@ -75,7 +75,7 @@ export default function DistanceSalesAgreement() {
                 <p><strong>Satıcı:</strong> Polen Stone Doğal Taş & Mermer</p>
                 <p><strong>Adres:</strong> Yunus Emre, Barbaros Blv. 42 d, 34791 Sancaktepe / İstanbul</p>
                 <p><strong>Telefon:</strong> <a href="tel:+905326956183">0532 695 61 83</a></p>
-                <p><strong>E-posta:</strong> <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a></p>
+                <p><strong>E-posta:</strong> <a href="mailto:info@polenstone.com">info@polenstone.com</a></p>
                 <p><strong>Web Sitesi:</strong> <a href="https://www.polenstone.com.tr">www.polenstone.com.tr</a></p>
                 <p><strong>Alıcı:</strong> Polenstone.com.tr üzerinden sipariş veren müşteridir. Alıcının adı, soyadı, adresi ve iletişim bilgileri sipariş formunda yer alır.</p>
 
@@ -104,7 +104,7 @@ export default function DistanceSalesAgreement() {
                   <strong>Alıcı, ürünü teslim aldığı tarihten itibaren 14 gün içinde</strong> herhangi bir gerekçe göstermeksizin cayma hakkını kullanabilir. Bu hakkın kullanılabilmesi için ürünün kullanılmamış, orijinal ambalajında ve yeniden satılabilir durumda olması gerekir.
                 </p>
                 <p>
-                  Cayma hakkını kullanmak isteyen alıcılar bu süre içinde <a href="mailto:info@polenstone.com.tr">info@polenstone.com.tr</a> adresine yazılı olarak bildirmelidir.
+                  Cayma hakkını kullanmak isteyen alıcılar bu süre içinde <a href="mailto:info@polenstone.com">info@polenstone.com</a> adresine yazılı olarak bildirmelidir.
                 </p>
 
                 <h2>7) Cayma Hakkının Kullanılamayacağı Durumlar</h2>

@@ -199,7 +199,7 @@ function HeroOverlayContent({ animated = false }: { animated?: boolean }) {
             data-testid="text-hero-title-mobile"
           >
             Doğal Taşın
-            <span className="block text-polen-orange mt-2">Zarafeti</span>
+            <span className="block text-polen-orange mt-5">Zarafeti</span>
           </h1>
           <p className="mt-5 text-[11px] tracking-[0.22em] uppercase text-white/75 font-mono">
             Banyo · Lavabo · Dekor · Mutfak
@@ -243,13 +243,6 @@ function HeroOverlayContent({ animated = false }: { animated?: boolean }) {
               >
                 Koleksiyonu Keşfet
                 <ArrowUpRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/hakkimizda"
-                data-testid="link-hero-secondary"
-                className="text-[11px] tracking-[0.28em] uppercase text-white/70 hover:text-white transition-colors border-b border-white/30 hover:border-white pb-1"
-              >
-                Hakkımızda
               </Link>
             </div>
           </Wrap>

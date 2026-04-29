@@ -23,8 +23,6 @@ const sortOptions = [
   { value: 'popular', label: 'En Popüler' },
 ];
 
-const sizeFilters = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-
 export default function Category() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug || '';
@@ -34,7 +32,8 @@ export default function Category() {
 
   const [sortBy, setSortBy] = useState<ProductFilters['sort']>('newest');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [showOnlyNew, setShowOnlyNew] = useState(false);
+  const [showOnlyDiscounted, setShowOnlyDiscounted] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
 
   const filters: ProductFilters = {
@@ -48,30 +47,29 @@ export default function Category() {
   const isLoading = categoriesLoading || (category && productsLoading);
 
   const filteredProducts = useMemo(() => {
-    if (selectedSizes.length === 0) return products;
-    return products.filter(p => p.availableSizes?.some(size => selectedSizes.includes(size)));
-  }, [products, selectedSizes]);
-
-  const toggleSize = (size: string) => {
-    setSelectedSizes(prev =>
-      prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
-    );
-  };
+    let result = products;
+    if (showOnlyNew) result = result.filter((p) => (p as any).isNew);
+    if (showOnlyDiscounted) result = result.filter((p) => (p as any).discountBadge);
+    return result;
+  }, [products, showOnlyNew, showOnlyDiscounted]);
 
   const clearFilters = () => {
-    setSelectedSizes([]);
+    setShowOnlyNew(false);
+    setShowOnlyDiscounted(false);
     setSortBy('newest');
     setPriceRange([0, 10000]);
   };
 
-  const hasActiveFilters = selectedSizes.length > 0 || priceRange[0] > 0 || priceRange[1] < 10000;
-  const activeFilterCount = selectedSizes.length + (priceRange[0] > 0 || priceRange[1] < 10000 ? 1 : 0);
+  const priceActive = priceRange[0] > 0 || priceRange[1] < 10000;
+  const hasActiveFilters = showOnlyNew || showOnlyDiscounted || priceActive;
+  const activeFilterCount =
+    (showOnlyNew ? 1 : 0) + (showOnlyDiscounted ? 1 : 0) + (priceActive ? 1 : 0);
 
   if (!category && !isLoading) {
     return (
       <div className="min-h-screen bg-white">
         <Header />
-        <main className="pt-32 pb-20 px-6">
+        <main className="pt-20 lg:pt-8 pb-12 px-6">
           <div className="max-w-[1400px] mx-auto text-center">
             <h1 className="font-display text-5xl mb-4 text-black">Kategori Bulunamadı</h1>
             <Link href="/">
@@ -98,57 +96,59 @@ export default function Category() {
       />
       <Header />
 
-      {/* ─── CATEGORY HERO ─── */}
-      <section className="relative overflow-hidden bg-black" style={{ height: '42vh', minHeight: 320 }}>
+      {/* ─── CATEGORY HERO (compact) ─── */}
+      <section className="relative overflow-hidden bg-black" style={{ height: '18vh', minHeight: 140, maxHeight: 200 }}>
         <motion.div
-          initial={{ scale: 1.08 }}
+          initial={{ scale: 1.06 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-0"
         >
           {category?.image && (
             <img
               src={category.image}
               alt={category.name || 'Kategori'}
-              className="w-full h-full object-cover opacity-50"
+              className="w-full h-full object-cover opacity-45"
               data-testid="img-category-hero"
             />
           )}
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
 
         <div className="absolute inset-0 flex flex-col justify-end">
-          <div className="max-w-[1400px] mx-auto px-5 lg:px-8 pb-10 w-full">
+          <div className="max-w-[1400px] mx-auto px-5 lg:px-8 pb-4 lg:pb-5 w-full">
             <motion.nav
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center gap-2 text-[11px] text-white/40 tracking-wider uppercase mb-4"
+              transition={{ delay: 0.15 }}
+              className="flex items-center gap-2 text-[10px] text-white/45 tracking-wider uppercase mb-1.5"
               data-testid="breadcrumb"
             >
               <Link href="/"><span className="hover:text-white transition-colors">Ana Sayfa</span></Link>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-white/70">{category?.name}</span>
+              <span className="text-white/75">{category?.name}</span>
             </motion.nav>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-              className="font-display text-5xl sm:text-6xl lg:text-7xl text-white tracking-wide leading-[1.1]"
-              data-testid="text-category-title"
-            >
-              {category?.name?.toUpperCase()}
-            </motion.h1>
+            <div className="flex items-baseline justify-between gap-4 flex-wrap">
+              <motion.h1
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="font-display text-2xl sm:text-3xl lg:text-4xl text-white tracking-wide leading-[1.1]"
+                data-testid="text-category-title"
+              >
+                {category?.name?.toUpperCase()}
+              </motion.h1>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-white/40 mt-3 text-xs tracking-wider uppercase"
-            >
-              {filteredProducts.length} ürün
-            </motion.p>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-white/45 text-[10px] tracking-[0.2em] uppercase"
+              >
+                {filteredProducts.length} ürün
+              </motion.p>
+            </div>
           </div>
         </div>
       </section>
@@ -174,18 +174,27 @@ export default function Category() {
                 )}
               </button>
 
-              {/* Active size tags */}
-              {selectedSizes.map(size => (
+              {/* Active toggles */}
+              {showOnlyNew && (
                 <button
-                  key={size}
-                  onClick={() => toggleSize(size)}
+                  onClick={() => setShowOnlyNew(false)}
                   className="flex items-center gap-1 text-[10px] tracking-[0.1em] uppercase border border-black text-black px-2.5 py-1 shrink-0 hover:bg-black hover:text-white transition-colors"
-                  data-testid={`button-remove-filter-${size}`}
+                  data-testid="button-remove-filter-new"
                 >
-                  {size}
+                  Yeni
                   <X className="w-2.5 h-2.5" />
                 </button>
-              ))}
+              )}
+              {showOnlyDiscounted && (
+                <button
+                  onClick={() => setShowOnlyDiscounted(false)}
+                  className="flex items-center gap-1 text-[10px] tracking-[0.1em] uppercase border border-polen-orange text-polen-orange px-2.5 py-1 shrink-0 hover:bg-polen-orange hover:text-white transition-colors"
+                  data-testid="button-remove-filter-discount"
+                >
+                  İndirimli
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              )}
 
               {hasActiveFilters && (
                 <button
@@ -255,23 +264,32 @@ export default function Category() {
                   </div>
                 </div>
 
-                {/* Sizes */}
+                {/* Quick filters */}
                 <div>
-                  <h4 className="text-[10px] font-semibold tracking-[0.25em] uppercase text-black/40 mb-5">Beden</h4>
+                  <h4 className="text-[10px] font-semibold tracking-[0.25em] uppercase text-black/40 mb-5">Hızlı Filtre</h4>
                   <div className="flex flex-wrap gap-2">
-                    {sizeFilters.map(size => (
-                      <button
-                        key={size}
-                        onClick={() => toggleSize(size)}
-                        className={`w-11 h-11 border text-xs font-medium tracking-wider transition-all ${selectedSizes.includes(size)
+                    <button
+                      onClick={() => setShowOnlyNew((v) => !v)}
+                      className={`px-4 h-11 border text-[11px] tracking-[0.12em] uppercase font-medium transition-all ${
+                        showOnlyNew
                           ? 'bg-black text-white border-black'
                           : 'border-black/20 text-black hover:border-black'
-                          }`}
-                        data-testid={`button-filter-size-${size}`}
-                      >
-                        {size}
-                      </button>
-                    ))}
+                      }`}
+                      data-testid="button-filter-new"
+                    >
+                      Yeni Gelenler
+                    </button>
+                    <button
+                      onClick={() => setShowOnlyDiscounted((v) => !v)}
+                      className={`px-4 h-11 border text-[11px] tracking-[0.12em] uppercase font-medium transition-all ${
+                        showOnlyDiscounted
+                          ? 'bg-polen-orange text-white border-polen-orange'
+                          : 'border-black/20 text-black hover:border-polen-orange hover:text-polen-orange'
+                      }`}
+                      data-testid="button-filter-discounted"
+                    >
+                      İndirimli
+                    </button>
                   </div>
                 </div>
               </div>

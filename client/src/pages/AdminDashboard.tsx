@@ -14,6 +14,7 @@ import InventoryTab from './admin/InventoryTab';
 import SettingsTab from './admin/SettingsTab';
 import DatabaseTab from './admin/DatabaseTab';
 import MenuTab from './admin/MenuTab';
+import CouponsTab from './admin/CouponsTab';
 
 import ProductModal from './admin/modals/ProductModal';
 import CategoryModal from './admin/modals/CategoryModal';
@@ -191,6 +192,7 @@ export default function AdminDashboard() {
             siteCategories={categories.map((c) => ({ id: c.id, name: c.name, slug: c.slug }))}
           />
         )}
+        {activeTab === 'coupons' && <CouponsTab />}
       </AdminLayout>
 
       {showProductModal && (

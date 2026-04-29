@@ -10,6 +10,7 @@ import {
   Menu as MenuIcon,
   Settings,
   Database,
+  Ticket,
 } from 'lucide-react';
 import type { SidebarCategory } from '../_layout/AdminLayout';
 import type { TabType } from './types';
@@ -26,6 +27,7 @@ export const VALID_TABS: TabType[] = [
   'database',
   'menu',
   'marketplaces',
+  'coupons',
 ];
 
 export const SIDEBAR_CATEGORIES: SidebarCategory[] = [
@@ -47,6 +49,10 @@ export const SIDEBAR_CATEGORIES: SidebarCategory[] = [
   {
     title: 'Satış & Siparişler',
     items: [{ id: 'orders', icon: ShoppingCart, label: 'Siparişler' }],
+  },
+  {
+    title: 'Pazarlama',
+    items: [{ id: 'coupons', icon: Ticket, label: 'Kuponlar' }],
   },
   {
     title: 'Müşteriler',

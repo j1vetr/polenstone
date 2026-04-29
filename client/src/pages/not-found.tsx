@@ -8,7 +8,7 @@ export default function NotFound() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-32 pb-20 px-4 sm:px-6">
+      <main className="pt-20 lg:pt-6 pb-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

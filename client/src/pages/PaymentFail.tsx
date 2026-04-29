@@ -24,7 +24,7 @@ export default function PaymentFail() {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Header />
-      <main className="pt-36 pb-20 px-4 sm:px-6">
+      <main className="pt-20 lg:pt-8 pb-12 px-4 sm:px-6">
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}

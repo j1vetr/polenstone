@@ -485,7 +485,7 @@ export default function Checkout() {
     return (
       <div className="min-h-screen bg-background overflow-x-hidden">
         <Header />
-        <main className="pt-36 pb-20 px-4 sm:px-6">
+        <main className="pt-20 lg:pt-8 pb-12 px-4 sm:px-6">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -561,7 +561,7 @@ export default function Checkout() {
     return (
       <div className="min-h-screen bg-background overflow-x-hidden w-full">
         <Header />
-        <main className="pt-36 pb-20 px-4 sm:px-6 w-full box-border">
+        <main className="pt-20 lg:pt-8 pb-12 px-4 sm:px-6 w-full box-border">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -592,26 +592,14 @@ export default function Checkout() {
     <div className="min-h-screen bg-background overflow-x-hidden w-full">
       <Header />
       
-      <main className="pt-36 pb-20 px-4 sm:px-6 w-full box-border overflow-hidden">
+      <main className="pt-20 lg:pt-8 pb-12 px-4 sm:px-6 w-full box-border overflow-hidden">
         <div className="max-w-5xl mx-auto w-full overflow-hidden">
-          <motion.nav 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-xs text-muted-foreground mb-6"
-          >
-            <Link href="/">Ana Sayfa</Link>
-            <ChevronRight className="w-3 h-3" />
-            <Link href="/sepet">Sepet</Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-foreground">Ödeme</span>
-          </motion.nav>
-
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-10"
+            className="text-center mb-6"
           >
-            <h1 className="font-display text-4xl sm:text-5xl tracking-wider mb-6" data-testid="text-page-title">
+            <h1 className="font-display text-3xl sm:text-4xl tracking-wider mb-5" data-testid="text-page-title">
               ÖDEME
             </h1>
             

@@ -138,7 +138,7 @@ export default function Store() {
       <Header />
 
       {/* Editorial hero */}
-      <section className="relative bg-polen-cream border-b border-black/8 pt-28 lg:pt-36 pb-12 lg:pb-16">
+      <section className="relative bg-polen-cream border-b border-black/8 pt-20 lg:pt-10 pb-12 lg:pb-16">
         <div className="max-w-[1400px] mx-auto px-6">
           <motion.nav
             initial={{ opacity: 0, y: 12 }}

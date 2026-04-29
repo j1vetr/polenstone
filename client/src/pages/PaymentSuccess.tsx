@@ -55,7 +55,7 @@ export default function PaymentSuccess() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="pt-36 pb-20 px-4 sm:px-6">
+        <main className="pt-20 lg:pt-8 pb-12 px-4 sm:px-6">
           <div className="max-w-lg mx-auto text-center">
             <Loader2 className="w-12 h-12 animate-spin text-white/50 mx-auto mb-4" />
             <p className="text-muted-foreground">Ödeme onaylanıyor...</p>
@@ -69,7 +69,7 @@ export default function PaymentSuccess() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="pt-36 pb-20 px-4 sm:px-6">
+        <main className="pt-20 lg:pt-8 pb-12 px-4 sm:px-6">
           <div className="max-w-lg mx-auto text-center">
             <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
               <span className="text-4xl">!</span>
@@ -90,7 +90,7 @@ export default function PaymentSuccess() {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Header />
-      <main className="pt-36 pb-20 px-4 sm:px-6">
+      <main className="pt-20 lg:pt-8 pb-12 px-4 sm:px-6">
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}

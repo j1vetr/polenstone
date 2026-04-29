@@ -41,7 +41,7 @@ export default function Cart() {
     return (
       <div className="min-h-screen bg-white">
         <Header />
-        <main className="pt-36 pb-20 px-6">
+        <main className="pt-20 lg:pt-8 pb-12 px-6">
           <div className="max-w-5xl mx-auto text-center">
             <motion.div
               animate={{ opacity: [0.4, 1, 0.4] }}
@@ -60,17 +60,17 @@ export default function Cart() {
     <div className="min-h-screen bg-white overflow-x-hidden w-full">
       <Header />
 
-      <main className="pt-36 pb-20 px-4 sm:px-6 w-full box-border">
+      <main className="pt-20 lg:pt-8 pb-12 px-4 sm:px-6 w-full box-border">
         <div className="max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-10"
+            className="text-center mb-6"
           >
-            <h1 className="font-display text-4xl sm:text-5xl tracking-wider mb-3 text-black" data-testid="text-page-title">
+            <h1 className="font-display text-3xl sm:text-4xl tracking-wider mb-1.5 text-black" data-testid="text-page-title">
               SEPETİM
             </h1>
-            <p className="text-black/40">
+            <p className="text-black/40 text-sm">
               {totalItems > 0 ? `${totalItems} ürün sepetinizde` : 'Sepetiniz boş'}
             </p>
           </motion.div>

@@ -96,6 +96,20 @@ import {
 } from "@shared/schema";
 import { eq, and, desc, asc, sql, ilike, gte, lte, gt, between, inArray, sum } from "drizzle-orm";
 
+export interface PublicProductReview {
+  id: string;
+  productId: string;
+  rating: number;
+  title: string | null;
+  content: string | null;
+  createdAt: Date;
+  isGuest: boolean;
+  user: {
+    firstName: string | null;
+    lastName: string | null;
+  };
+}
+
 export interface ReviewAdminRow {
   id: string;
   productId: string;
@@ -187,7 +201,7 @@ export interface IStorage {
   getUserFavoriteProductIds(userId: string): Promise<string[]>;
 
   // Reviews
-  getProductReviews(productId: string): Promise<(ProductReview & { user: { firstName: string | null; lastName: string | null } })[]>;
+  getProductReviews(productId: string): Promise<PublicProductReview[]>;
   getProductAverageRating(productId: string): Promise<{ average: number; count: number }>;
   createReview(review: InsertProductReview): Promise<ProductReview>;
   deleteReview(id: string): Promise<void>;
@@ -929,21 +943,16 @@ export class DbStorage implements IStorage {
   }
 
   // Reviews methods
-  async getProductReviews(productId: string): Promise<(ProductReview & { user: { firstName: string | null; lastName: string | null } })[]> {
+  async getProductReviews(productId: string): Promise<PublicProductReview[]> {
     const reviews = await db
       .select({
         id: productReviews.id,
         productId: productReviews.productId,
         userId: productReviews.userId,
         guestName: productReviews.guestName,
-        guestEmail: productReviews.guestEmail,
         rating: productReviews.rating,
         title: productReviews.title,
         content: productReviews.content,
-        isApproved: productReviews.isApproved,
-        rejectionReason: productReviews.rejectionReason,
-        approvedAt: productReviews.approvedAt,
-        approvedBy: productReviews.approvedBy,
         createdAt: productReviews.createdAt,
         userFirstName: users.firstName,
         userLastName: users.lastName,
@@ -953,29 +962,24 @@ export class DbStorage implements IStorage {
       .where(and(eq(productReviews.productId, productId), eq(productReviews.isApproved, true)))
       .orderBy(desc(productReviews.createdAt));
 
+    // Misafir e-postaları PII olduğu için public yanıtta yer almaz.
+    // Misafir adından ilk ad/soyad türetilir, üyelerde users tablosundan alınır.
     return reviews.map(r => {
-      // Misafir yorumu: guestName'den firstName türet, e-posta gizli kalır
       const guestFirst = r.guestName?.split(' ')[0] || null;
       const guestLastParts = (r.guestName || '').split(' ').slice(1);
       const guestLast = guestLastParts.length ? guestLastParts.join(' ') : null;
       return {
         id: r.id,
         productId: r.productId,
-        userId: r.userId,
-        guestName: r.guestName,
-        guestEmail: r.guestEmail,
         rating: r.rating,
         title: r.title,
         content: r.content,
-        isApproved: r.isApproved,
-        rejectionReason: r.rejectionReason,
-        approvedAt: r.approvedAt,
-        approvedBy: r.approvedBy,
         createdAt: r.createdAt,
+        isGuest: !r.userId,
         user: {
           firstName: r.userId ? r.userFirstName : guestFirst,
           lastName: r.userId ? r.userLastName : guestLast,
-        }
+        },
       };
     });
   }

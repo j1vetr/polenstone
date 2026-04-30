@@ -107,6 +107,8 @@ export default function AdminDashboard() {
     window.history.replaceState({}, '', url.toString());
   };
 
+  const { data: pendingReviewsData } = usePendingReviewsCount(!!adminUser);
+
   if (userLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -119,7 +121,6 @@ export default function AdminDashboard() {
   const pendingOrdersCount = orders.filter(
     (o) => o.status === 'pending' || o.status === 'confirmed',
   ).length;
-  const { data: pendingReviewsData } = usePendingReviewsCount();
   const pendingReviewsCount = pendingReviewsData?.count ?? 0;
   const pageTitle = ALL_SIDEBAR_ITEMS.find((i) => i.id === activeTab)?.label ?? '';
 

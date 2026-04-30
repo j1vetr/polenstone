@@ -4,12 +4,11 @@ import { useAuth } from '@/hooks/useAuth';
 export interface Review {
   id: string;
   productId: string;
-  userId: string | null;
   rating: number;
   title: string | null;
   content: string | null;
-  isApproved: boolean;
   createdAt: string;
+  isGuest: boolean;
   user: {
     firstName: string | null;
     lastName: string | null;
@@ -139,7 +138,7 @@ export function useAdminReviews(status: AdminReviewStatusFilter = 'pending') {
   });
 }
 
-export function usePendingReviewsCount() {
+export function usePendingReviewsCount(enabled: boolean = true) {
   return useQuery({
     queryKey: ['admin', 'reviews', 'pending-count'],
     queryFn: async () => {
@@ -150,6 +149,7 @@ export function usePendingReviewsCount() {
       return response.json() as Promise<{ count: number }>;
     },
     refetchInterval: 60_000,
+    enabled,
   });
 }
 

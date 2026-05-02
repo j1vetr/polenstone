@@ -644,7 +644,7 @@ export default function OrderTracking() {
                 </div>
               )}
 
-              {/* DHL takip kartı */}
+              {/* Aras Kargo takip kartı */}
               {order.trackingNumber && (
                 <div
                   className="relative bg-white border border-polen-orange/40 p-5 sm:p-6"
@@ -698,7 +698,7 @@ export default function OrderTracking() {
                   <a
                     href={
                       order.trackingUrl ||
-                      `https://www.dhl.com/tr-tr/home/tracking.html?tracking-id=${order.trackingNumber}&submit=1`
+                      `https://kargotakip.araskargo.com.tr/mainpage.aspx?code=${order.trackingNumber}`
                     }
                     target="_blank"
                     rel="noopener noreferrer"

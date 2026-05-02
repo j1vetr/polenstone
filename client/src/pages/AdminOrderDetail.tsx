@@ -238,7 +238,7 @@ export default function AdminOrderDetail() {
     try {
       const finalTrackingUrl =
         trackingUrl ||
-        `https://www.dhl.com/tr-tr/home/takip.html?tracking-id=${trackingNumber}`;
+        `https://kargotakip.araskargo.com.tr/mainpage.aspx?code=${trackingNumber}`;
 
       await fetch(`/api/admin/orders/${order.id}/tracking`, {
         method: 'PUT',
@@ -246,7 +246,7 @@ export default function AdminOrderDetail() {
         body: JSON.stringify({
           trackingNumber,
           trackingUrl: finalTrackingUrl,
-          shippingCarrier: 'DHL E-Commerce',
+          shippingCarrier: 'Aras Kargo',
         }),
         credentials: 'include',
       });
@@ -550,9 +550,19 @@ export default function AdminOrderDetail() {
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-medium text-neutral-900 leading-tight">
-                        {item.productName}
-                      </p>
+                      {item.productSlug ? (
+                        <Link
+                          href={`/urun/${item.productSlug}`}
+                          className="text-[13px] font-medium text-neutral-900 leading-tight hover:text-polen-orange hover:underline transition-colors"
+                          data-testid={`link-product-${item.productId}`}
+                        >
+                          {item.productName}
+                        </Link>
+                      ) : (
+                        <p className="text-[13px] font-medium text-neutral-900 leading-tight">
+                          {item.productName}
+                        </p>
+                      )}
                       {item.variantDetails && (
                         <p className="text-[11px] text-neutral-500 mt-1">
                           {item.variantDetails}
@@ -769,11 +779,11 @@ export default function AdminOrderDetail() {
               </div>
             </Card>
 
-            {/* Shipping (DHL) */}
+            {/* Shipping (Aras Kargo) */}
             <div id="shipping-section">
             <Card className="p-5">
               <SectionHeading
-                title="DHL E-Commerce Kargo"
+                title="Aras Kargo"
                 description="Takip bilgisi girildiğinde sipariş otomatik kargoya alınır."
               />
               <div className="space-y-2.5">
@@ -785,7 +795,7 @@ export default function AdminOrderDetail() {
                     data-testid="input-tracking-number"
                   />
                 </FormField>
-                <FormField label="Takip URL" hint="Boş bırakılırsa DHL bağlantısı oluşturulur.">
+                <FormField label="Takip URL" hint="Boş bırakılırsa Aras Kargo bağlantısı oluşturulur.">
                   <TextInput
                     placeholder="https://…"
                     value={trackingUrl}

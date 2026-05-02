@@ -76,8 +76,11 @@ export type BulkPriceAction = 'increase' | 'decrease' | 'set' | 'percent_increas
 
 export interface OrderItem {
   id?: string;
+  productId?: string;
+  productSlug?: string;
   productName?: string;
   productImage?: string;
+  sku?: string;
   size?: string;
   color?: string;
   quantity: number;

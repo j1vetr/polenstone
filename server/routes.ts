@@ -3196,12 +3196,12 @@ export async function registerRoutes(
       // If shipped status, update tracking info as well
       let updateData: any = { status };
       if (status === 'shipped' && trackingNumber) {
-        const dhlTrackingUrl = `https://www.dhl.com/tr-tr/home/tracking.html?tracking-id=${trackingNumber}&submit=1`;
+        const arasTrackingUrl = `https://kargotakip.araskargo.com.tr/mainpage.aspx?code=${trackingNumber}`;
         updateData = {
           ...updateData,
           trackingNumber,
-          shippingCarrier: 'DHL Express',
-          trackingUrl: dhlTrackingUrl,
+          shippingCarrier: 'Aras Kargo',
+          trackingUrl: arasTrackingUrl,
         };
       }
 

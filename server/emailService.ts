@@ -303,7 +303,7 @@ function welcomeEmailTemplate(userName: string): string {
         <tr>
           <td style="padding-bottom:10px;">
             <span style="display:inline-block;width:6px;height:6px;background:${BRAND.primary};border-radius:50%;margin-right:10px;vertical-align:middle;"></span>
-            <strong style="color:${BRAND.ink};">Güvenli kargo</strong> <span style="color:${BRAND.body};">— DHL ile hızlı, kırılmaz paketleme</span>
+            <strong style="color:${BRAND.ink};">Güvenli kargo</strong> <span style="color:${BRAND.body};">— Aras Kargo ile hızlı, kırılmaz paketleme</span>
           </td>
         </tr>
         <tr>
@@ -439,11 +439,11 @@ function preparingNotificationTemplate(order: Order): string {
 }
 
 function shippingNotificationTemplate(order: Order): string {
-  const dhlTrackingUrl = order.trackingNumber
-    ? `https://www.dhl.com/tr-tr/home/tracking.html?tracking-id=${encodeURIComponent(order.trackingNumber)}&submit=1`
+  const arasTrackingUrl = order.trackingNumber
+    ? `https://kargotakip.araskargo.com.tr/mainpage.aspx?code=${encodeURIComponent(order.trackingNumber)}`
     : null;
-  const trackingUrl = order.trackingUrl || dhlTrackingUrl;
-  const carrier = order.shippingCarrier || 'DHL Express';
+  const trackingUrl = order.trackingUrl || arasTrackingUrl;
+  const carrier = order.shippingCarrier || 'Aras Kargo';
 
   return wrapTemplate(`
     ${H1('Kargoya verildi.')}

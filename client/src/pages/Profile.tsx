@@ -1054,13 +1054,9 @@ export default function Profile() {
 
                 {selectedOrder.status === 'shipped' && (
                   <div className="bg-stone-50 border border-black/10 rounded-none p-5">
-                    <div className="flex items-center justify-center gap-3 mb-3">
-                      <img 
-                        src="https://www.dhl.com/content/dam/dhl/global/core/images/logos/dhl-logo.svg" 
-                        alt="DHL" 
-                        className="h-6"
-                      />
-                      <span className="text-black/55 font-semibold text-xs tracking-[0.2em] uppercase">Express</span>
+                    <div className="flex items-center justify-center gap-2 mb-3">
+                      <Truck className="w-5 h-5 text-black/70" strokeWidth={2} />
+                      <span className="text-black font-bold text-sm tracking-[0.2em] uppercase">Aras Kargo</span>
                     </div>
                     
                     <div className="text-center mb-3">
@@ -1072,13 +1068,13 @@ export default function Profile() {
                     
                     {selectedOrder.trackingNumber && (
                       <a
-                        href={selectedOrder.trackingUrl || `https://www.dhl.com/tr-tr/home/tracking.html?tracking-id=${selectedOrder.trackingNumber}&submit=1`}
+                        href={selectedOrder.trackingUrl || `https://kargotakip.araskargo.com.tr/mainpage.aspx?code=${selectedOrder.trackingNumber}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 w-full py-2.5 bg-black hover:bg-polen-orange text-white rounded-none font-bold text-[11px] tracking-[0.18em] uppercase transition-colors"
                       >
                         <Truck className="w-4 h-4" />
-                        DHL'DE TAKİP ET
+                        ARAS KARGO'DA TAKİP ET
                       </a>
                     )}
                   </div>

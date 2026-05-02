@@ -346,7 +346,7 @@ function orderConfirmationTemplate(order: Order, items: OrderItemForEmail[], sit
 
   const shippingAddress = order.shippingAddress as { address: string; city: string; district: string; postalCode: string; country?: string };
   const trackingUrl = `${siteUrl}/siparis-takip?no=${encodeURIComponent(order.orderNumber)}`;
-  const orderDate = formatTRDate(order.createdAt);
+  const orderDate = formatTRDateTime(order.createdAt);
 
   return wrapTemplate(`
     ${H1('Siparişiniz alındı.')}
@@ -502,7 +502,7 @@ function bankTransferPendingTemplate(order: Order, items: OrderItemForEmail[], s
   }).join('');
 
   const trackingUrl = `${siteUrl}/siparis-takip?no=${encodeURIComponent(order.orderNumber)}`;
-  const orderDate = formatTRDate(order.createdAt);
+  const orderDate = formatTRDateTime(order.createdAt);
 
   return wrapTemplate(`
     ${H1('Havalenizi bekliyoruz.')}

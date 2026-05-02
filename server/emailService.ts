@@ -445,6 +445,7 @@ function shippingNotificationTemplate(order: Order): string {
     : null;
   const trackingUrl = order.trackingUrl || arasTrackingUrl;
   const carrier = order.shippingCarrier || 'Aras Kargo';
+  const orderDate = formatTRDateTime(order.createdAt);
 
   return wrapTemplate(`
     ${H1('Kargoya verildi.')}
@@ -472,6 +473,12 @@ function shippingNotificationTemplate(order: Order): string {
           <td class="stack-col" align="right" style="vertical-align:top;width:50%;">
             <div style="font-size:11px;color:${BRAND.muted};letter-spacing:1.5px;text-transform:uppercase;font-weight:600;">Toplam</div>
             <div style="font-size:16px;color:${BRAND.ink};font-weight:700;margin-top:4px;">${escapeHtml(order.total)}&nbsp;₺</div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="padding-top:14px;vertical-align:top;">
+            <div style="font-size:11px;color:${BRAND.muted};letter-spacing:1.5px;text-transform:uppercase;font-weight:600;">Sipariş Tarihi &amp; Saati</div>
+            <div style="font-size:14px;color:${BRAND.ink};font-weight:600;margin-top:4px;">${orderDate}</div>
           </td>
         </tr>
       </table>

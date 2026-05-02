@@ -208,16 +208,28 @@ function paymentMethodLabel(method: string | null | undefined): string {
   return PAYMENT_METHOD_LABELS[method] || method;
 }
 
+async function resolveSiteUrl(): Promise<string> {
+  try {
+    const settings = await storage.getSiteSettings();
+    const raw = (settings.site_url || '').trim();
+    if (raw) return raw.replace(/\/+$/, '');
+  } catch (err) {
+    console.error('[WhatsApp] site_url lookup failed:', err);
+  }
+  return (process.env.SITE_URL || 'https://polenstone.com').replace(/\/+$/, '');
+}
+
 async function orderVars(order: Order, config: WhatsAppConfig): Promise<Record<string, string>> {
+  // urunSayisi = sipariş kalem sayısı (line item count, NOT toplam adet).
   let urunSayisi = 0;
   try {
     const items = await storage.getOrderItems(order.id);
-    urunSayisi = items.reduce((sum, it) => sum + Number(it.quantity || 0), 0);
+    urunSayisi = items.length;
   } catch (err) {
     console.error('[WhatsApp] orderVars items lookup failed:', err);
   }
 
-  const siteUrl = process.env.SITE_URL || 'https://polenstone.com';
+  const siteUrl = await resolveSiteUrl();
   const siparisTakipLink = `${siteUrl}/siparis-takip?no=${encodeURIComponent(order.orderNumber)}`;
   const adminPanelUrl = `${siteUrl}/toov-admin/orders/${order.id}`;
 
@@ -340,7 +352,7 @@ export async function sendReviewPendingToAdmin(payload: ReviewPendingPayload): P
   const baslikSatiri = payload.title ? `Başlık: _${truncate(payload.title, 80)}_\n` : '';
   const icerikSatiri = payload.content ? `Yorum: "${truncate(payload.content, 200)}"\n\n` : '\n';
 
-  const siteUrl = process.env.SITE_URL || 'https://polenstone.com';
+  const siteUrl = await resolveSiteUrl();
   const vars: Record<string, string> = {
     urunAdi: payload.productName,
     yorumYazari: payload.authorName,

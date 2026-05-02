@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import { storage } from './storage';
 import type { Order, OrderItem, User } from '@shared/schema';
 import { BANK_TRANSFER_INFO } from '@shared/bankInfo';
+import { formatTRDate, formatTRDateTime } from '@shared/dateFormat';
 
 interface SmtpConfig {
   host: string;
@@ -345,7 +346,7 @@ function orderConfirmationTemplate(order: Order, items: OrderItemForEmail[], sit
 
   const shippingAddress = order.shippingAddress as { address: string; city: string; district: string; postalCode: string; country?: string };
   const trackingUrl = `${siteUrl}/siparis-takip?no=${encodeURIComponent(order.orderNumber)}`;
-  const orderDate = new Date(order.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const orderDate = formatTRDate(order.createdAt);
 
   return wrapTemplate(`
     ${H1('Siparişiniz alındı.')}
@@ -501,7 +502,7 @@ function bankTransferPendingTemplate(order: Order, items: OrderItemForEmail[], s
   }).join('');
 
   const trackingUrl = `${siteUrl}/siparis-takip?no=${encodeURIComponent(order.orderNumber)}`;
-  const orderDate = new Date(order.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const orderDate = formatTRDate(order.createdAt);
 
   return wrapTemplate(`
     ${H1('Havalenizi bekliyoruz.')}
@@ -597,7 +598,7 @@ function adminOrderNotificationTemplate(order: Order, items: OrderItem[]): strin
   `).join('');
 
   const shippingAddress = order.shippingAddress as { address: string; city: string; district: string; postalCode: string; country?: string };
-  const dateStr = new Date(order.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const dateStr = formatTRDateTime(order.createdAt);
 
   return wrapTemplate(`
     ${H1('Yeni sipariş alındı.')}

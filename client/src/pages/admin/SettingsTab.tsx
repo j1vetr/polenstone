@@ -11,48 +11,50 @@ type WhatsAppEvent =
   | 'order_cancelled_customer'
   | 'order_cancelled_admin';
 
+const DIVIDER = '━━━━━━━━━━━━━━━';
+
 const WHATSAPP_EVENTS: { key: WhatsAppEvent; label: string; defaultTpl: string }[] = [
   {
     key: 'order_received_customer',
     label: 'Sipariş alındı (müşteriye)',
     defaultTpl:
-      'Merhaba {{musteriAdi}},\n\n{{siteAdi}}\'dan {{siparisNo}} numaralı siparişiniz alındı. Toplam tutar: {{toplam}} TL.\n\nSiparişiniz hazırlanmaya başladığında size tekrar haber vereceğiz.\n\nTeşekkürler!',
+      `🎉 *SİPARİŞİNİZ ALINDI*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\nBizi tercih ettiğiniz için teşekkürler! Siparişiniz başarıyla oluşturuldu ve hazırlık sırasına alındı.\n\n📦 *Sipariş No:* {{siparisNo}}\n🛒 *Ürün Sayısı:* {{urunSayisi}}\n💰 *Toplam:* {{toplam}} ₺\n💳 *Ödeme:* {{odemeYontemi}}\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n🔍 Siparişinizi takip edin:\n{{siparisTakipLink}}\n\nHazırlığa başladığımızda yine haberdar edeceğiz. ✨\n\n— {{siteAdi}}`,
   },
   {
     key: 'order_received_admin',
     label: 'Yeni sipariş bildirimi (yöneticiye)',
     defaultTpl:
-      'Yeni sipariş geldi!\n\nSipariş No: {{siparisNo}}\nMüşteri: {{musteriAdi}}\nTelefon: {{musteriTelefon}}\nTutar: {{toplam}} TL',
+      `🛍️ *YENİ SİPARİŞ*\n${DIVIDER}\n\n📦 *Sipariş No:* {{siparisNo}}\n👤 *Müşteri:* {{musteriAdi}}\n📞 *Telefon:* {{musteriTelefon}}\n📧 *E-posta:* {{musteriEposta}}\n🛒 *Ürün:* {{urunSayisi}} kalem\n💰 *Tutar:* {{toplam}} ₺\n💳 *Ödeme:* {{odemeYontemi}}\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n🔧 Yönetim paneli:\n{{adminPanelUrl}}`,
   },
   {
     key: 'order_preparing_customer',
     label: 'Sipariş hazırlanıyor (müşteriye)',
     defaultTpl:
-      'Merhaba {{musteriAdi}},\n\n{{siparisNo}} numaralı siparişiniz hazırlanmaya başladı. En kısa sürede kargoya teslim edilecek.\n\n{{siteAdi}}',
+      `📦 *SİPARİŞİNİZ HAZIRLANIYOR*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz atölyemizde özenle hazırlanıyor. 🛠️\n\nKargoya verildiğinde takip numarası ile birlikte size tekrar yazacağız. 🚚\n\n🔍 Sipariş takibi:\n{{siparisTakipLink}}\n\n— {{siteAdi}}`,
   },
   {
     key: 'order_shipped_customer',
     label: 'Kargoya verildi (müşteriye)',
     defaultTpl:
-      'Merhaba {{musteriAdi}},\n\n{{siparisNo}} numaralı siparişiniz kargoya verildi.\n\nKargo Firması: {{kargoFirma}}\nTakip No: {{kargoTakipNo}}\nTakip Linki: {{kargoTakipLink}}\n\n{{siteAdi}}',
+      `🚚 *KARGOYA VERİLDİ*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz kargoya teslim edildi! 📮\n\n🚛 *Kargo Firması:* {{kargoFirma}}\n🏷️ *Takip No:* {{kargoTakipNo}}\n\n🔗 Kargo takibi:\n{{kargoTakipLink}}\n\n📋 Sipariş detayı:\n{{siparisTakipLink}}\n\nGüzel günlerde kullanın! 🌟\n\n— {{siteAdi}}`,
   },
   {
     key: 'order_delivered_customer',
     label: 'Teslim edildi (müşteriye)',
     defaultTpl:
-      'Merhaba {{musteriAdi}},\n\n{{siparisNo}} numaralı siparişiniz teslim edildi. Bizi tercih ettiğiniz için teşekkür ederiz.\n\n{{siteAdi}}',
+      `🎉 *TESLİMAT TAMAMLANDI*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz başarıyla teslim edildi. ✅\n\nBizi tercih ettiğiniz için çok teşekkür ederiz. 🙏\n\n⭐ Memnun kaldıysanız ürün sayfasından kısa bir değerlendirme bırakırsanız çok mutlu oluruz.\n\n— {{siteAdi}}`,
   },
   {
     key: 'order_cancelled_customer',
     label: 'Sipariş iptal edildi (müşteriye)',
     defaultTpl:
-      'Merhaba {{musteriAdi}},\n\n{{siparisNo}} numaralı siparişiniz iptal edilmiştir. Detaylı bilgi için bizimle iletişime geçebilirsiniz.\n\n{{siteAdi}}',
+      `ℹ️ *SİPARİŞ İPTALİ*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz iptal edilmiştir.\n\n💳 *Tutar:* {{toplam}} ₺\n🕐 *Tarih:* {{siparisTarihSaat}}\n\nÖdemeniz alındıysa iade süreci en kısa sürede başlatılacaktır. Sorularınız için bize yazabilirsiniz. 💬\n\n— {{siteAdi}}`,
   },
   {
     key: 'order_cancelled_admin',
     label: 'Sipariş iptal edildi (yöneticiye)',
     defaultTpl:
-      'Sipariş iptal edildi!\n\nSipariş No: {{siparisNo}}\nMüşteri: {{musteriAdi}}\nTutar: {{toplam}} TL',
+      `❌ *SİPARİŞ İPTAL EDİLDİ*\n${DIVIDER}\n\n📦 *Sipariş No:* {{siparisNo}}\n👤 *Müşteri:* {{musteriAdi}}\n📞 *Telefon:* {{musteriTelefon}}\n💰 *Tutar:* {{toplam}} ₺\n💳 *Ödeme:* {{odemeYontemi}}\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n🔧 Yönetim paneli:\n{{adminPanelUrl}}`,
   },
 ];
 
@@ -61,12 +63,19 @@ const WHATSAPP_VARIABLES = [
   '{{musteriTelefon}}',
   '{{musteriEposta}}',
   '{{siparisNo}}',
+  '{{siparisTarihi}}',
+  '{{siparisSaati}}',
+  '{{siparisTarihSaat}}',
+  '{{urunSayisi}}',
+  '{{odemeYontemi}}',
   '{{toplam}}',
   '{{araToplam}}',
   '{{kargoUcreti}}',
   '{{kargoTakipNo}}',
   '{{kargoTakipLink}}',
   '{{kargoFirma}}',
+  '{{siparisTakipLink}}',
+  '{{adminPanelUrl}}',
   '{{siteAdi}}',
 ];
 

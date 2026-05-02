@@ -1,6 +1,7 @@
 import { storage } from './storage';
 import type { Order } from '@shared/schema';
 import { BANK_TRANSFER_INFO } from '@shared/bankInfo';
+import { formatTRDate, formatTRTime, formatTRDateTime } from '@shared/dateFormat';
 
 export interface WhatsAppResult {
   success: boolean;
@@ -33,27 +34,29 @@ export const WHATSAPP_EVENT_LABELS: Record<WhatsAppEvent, string> = {
   review_pending_admin: 'Yeni yorum onay bekliyor (yöneticiye)',
 };
 
+const DIVIDER = '━━━━━━━━━━━━━━━';
+
 export const DEFAULT_TEMPLATES: Record<WhatsAppEvent, string> = {
   order_received_customer:
-    '✅ *Siparişiniz alındı*\n\nMerhaba {{musteriAdi}}, {{siteAdi}}\'dan *{{siparisNo}}* numaralı siparişiniz başarıyla alındı.\n\nToplam: *{{toplam}} TL*\n\nHazırlanmaya başladığında size tekrar haber vereceğiz. Bizi tercih ettiğiniz için teşekkürler.',
+    `🎉 *SİPARİŞİNİZ ALINDI*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\nBizi tercih ettiğiniz için teşekkürler! Siparişiniz başarıyla oluşturuldu ve hazırlık sırasına alındı.\n\n📦 *Sipariş No:* {{siparisNo}}\n🛒 *Ürün Sayısı:* {{urunSayisi}}\n💰 *Toplam:* {{toplam}} ₺\n💳 *Ödeme:* {{odemeYontemi}}\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n🔍 Siparişinizi takip edin:\n{{siparisTakipLink}}\n\nHazırlığa başladığımızda yine haberdar edeceğiz. ✨\n\n— {{siteAdi}}`,
   order_received_admin:
-    'Yeni sipariş geldi!\n\nSipariş No: {{siparisNo}}\nMüşteri: {{musteriAdi}}\nTelefon: {{musteriTelefon}}\nTutar: {{toplam}} TL',
+    `🛍️ *YENİ SİPARİŞ*\n${DIVIDER}\n\n📦 *Sipariş No:* {{siparisNo}}\n👤 *Müşteri:* {{musteriAdi}}\n📞 *Telefon:* {{musteriTelefon}}\n📧 *E-posta:* {{musteriEposta}}\n🛒 *Ürün:* {{urunSayisi}} kalem\n💰 *Tutar:* {{toplam}} ₺\n💳 *Ödeme:* {{odemeYontemi}}\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n🔧 Yönetim paneli:\n{{adminPanelUrl}}`,
   order_preparing_customer:
-    '📦 *Siparişiniz hazırlanıyor*\n\nMerhaba {{musteriAdi}}, *{{siparisNo}}* numaralı siparişiniz atölyemizde özenle hazırlanıyor. En kısa sürede kargoya teslim edilecek.\n\n— {{siteAdi}}',
+    `📦 *SİPARİŞİNİZ HAZIRLANIYOR*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz atölyemizde özenle hazırlanıyor. 🛠️\n\nKargoya verildiğinde takip numarası ile birlikte size tekrar yazacağız. 🚚\n\n🔍 Sipariş takibi:\n{{siparisTakipLink}}\n\n— {{siteAdi}}`,
   order_shipped_customer:
-    '🚚 *Kargoya verildi*\n\nMerhaba {{musteriAdi}}, *{{siparisNo}}* numaralı siparişiniz kargoya verildi.\n\nKargo: {{kargoFirma}}\nTakip No: *{{kargoTakipNo}}*\nTakip: {{kargoTakipLink}}\n\n— {{siteAdi}}',
+    `🚚 *KARGOYA VERİLDİ*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz kargoya teslim edildi! 📮\n\n🚛 *Kargo Firması:* {{kargoFirma}}\n🏷️ *Takip No:* {{kargoTakipNo}}\n\n🔗 Kargo takibi:\n{{kargoTakipLink}}\n\n📋 Sipariş detayı:\n{{siparisTakipLink}}\n\nGüzel günlerde kullanın! 🌟\n\n— {{siteAdi}}`,
   order_delivered_customer:
-    '🎉 *Siparişiniz teslim edildi*\n\nMerhaba {{musteriAdi}}, *{{siparisNo}}* numaralı siparişiniz teslim edildi. Bizi tercih ettiğiniz için teşekkür ederiz. Memnun kaldıysanız bir değerlendirme bırakırsanız çok seviniriz.\n\n— {{siteAdi}}',
+    `🎉 *TESLİMAT TAMAMLANDI*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz başarıyla teslim edildi. ✅\n\nBizi tercih ettiğiniz için çok teşekkür ederiz. 🙏\n\n⭐ Memnun kaldıysanız ürün sayfasından kısa bir değerlendirme bırakırsanız çok mutlu oluruz.\n\n— {{siteAdi}}`,
   order_cancelled_customer:
-    'ℹ️ *Sipariş iptal bildirimi*\n\nMerhaba {{musteriAdi}}, *{{siparisNo}}* numaralı siparişiniz iptal edilmiştir. Detaylı bilgi veya yardım için bizimle iletişime geçebilirsiniz.\n\n— {{siteAdi}}',
+    `ℹ️ *SİPARİŞ İPTALİ*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz iptal edilmiştir.\n\n💳 *Tutar:* {{toplam}} ₺\n🕐 *Tarih:* {{siparisTarihSaat}}\n\nÖdemeniz alındıysa iade süreci en kısa sürede başlatılacaktır. Sorularınız için bize yazabilirsiniz. 💬\n\n— {{siteAdi}}`,
   order_cancelled_admin:
-    'Sipariş iptal edildi!\n\nSipariş No: {{siparisNo}}\nMüşteri: {{musteriAdi}}\nTutar: {{toplam}} TL',
+    `❌ *SİPARİŞ İPTAL EDİLDİ*\n${DIVIDER}\n\n📦 *Sipariş No:* {{siparisNo}}\n👤 *Müşteri:* {{musteriAdi}}\n📞 *Telefon:* {{musteriTelefon}}\n💰 *Tutar:* {{toplam}} ₺\n💳 *Ödeme:* {{odemeYontemi}}\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n🔧 Yönetim paneli:\n{{adminPanelUrl}}`,
   order_bank_transfer_pending_customer:
-    `🏦 *Siparişiniz alındı – Havale onayı bekleniyor*\n\nMerhaba {{musteriAdi}}, *{{siparisNo}}* numaralı siparişiniz başarıyla oluşturuldu.\n\nÖdemenizi aşağıdaki hesaba *{{toplam}} TL* olarak gönderebilirsiniz:\n\nBanka: ${BANK_TRANSFER_INFO.bankName}\nIBAN: ${BANK_TRANSFER_INFO.iban}\nAd Soyad: ${BANK_TRANSFER_INFO.accountHolder}\n\nHavaleniz hesabımıza ulaştığında siparişiniz hazırlanmaya başlanacak ve size tekrar bilgi vereceğiz.\n\n— {{siteAdi}}`,
+    `🏦 *HAVALE ONAYI BEKLENİYOR*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz oluşturuldu. Aşağıdaki hesaba ödemenizi gönderdiğinizde siparişiniz hazırlığa alınacak. ✅\n\n💰 *Tutar:* {{toplam}} ₺\n🛒 *Ürün Sayısı:* {{urunSayisi}}\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n📋 *Banka Bilgileri*\n🏦 Banka: ${BANK_TRANSFER_INFO.bankName}\n🔢 IBAN: \`${BANK_TRANSFER_INFO.iban}\`\n👤 Ad Soyad: ${BANK_TRANSFER_INFO.accountHolder}\n📝 Açıklama: {{siparisNo}}\n\n💡 Açıklamaya sipariş numaranızı yazmayı unutmayın.\n\n🔍 Sipariş takibi:\n{{siparisTakipLink}}\n\n— {{siteAdi}}`,
   order_bank_transfer_admin:
-    '⚠️ *HAVALE İLE ÖDEME — KONTROL ET*\n\nMüşteri havale yöntemiyle yeni bir sipariş oluşturdu.\n\nSipariş No: {{siparisNo}}\nMüşteri: {{musteriAdi}}\nTelefon: {{musteriTelefon}}\nTutar: {{toplam}} TL\n\nHesap hareketlerini kontrol edip admin panelinden onaylayabilirsin.',
+    `⚠️ *HAVALE ÖDEME — KONTROL ET*\n${DIVIDER}\n\nMüşteri havale yöntemiyle yeni bir sipariş oluşturdu. Hesap hareketlerini kontrol edip onaylayın. 🔍\n\n📦 *Sipariş No:* {{siparisNo}}\n👤 *Müşteri:* {{musteriAdi}}\n📞 *Telefon:* {{musteriTelefon}}\n📧 *E-posta:* {{musteriEposta}}\n💰 *Tutar:* {{toplam}} ₺\n🛒 *Ürün:* {{urunSayisi}} kalem\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n🔧 Yönetim paneli:\n{{adminPanelUrl}}`,
   review_pending_admin:
-    '💬 *YENİ YORUM ONAY BEKLİYOR*\n\nÜrün: *{{urunAdi}}*\nYazan: {{yorumYazari}} {{misafirEtiketi}}\nPuan: {{yildizlar}} ({{puan}}/5)\n{{baslikSatiri}}{{icerikSatiri}}\nAdmin panelinden onaylamak için: {{adminPanelUrl}}',
+    `💬 *YENİ YORUM — ONAY BEKLİYOR*\n${DIVIDER}\n\n🪨 *Ürün:* {{urunAdi}}\n👤 *Yazan:* {{yorumYazari}} {{misafirEtiketi}}\n⭐ *Puan:* {{yildizlar}} ({{puan}}/5)\n{{baslikSatiri}}{{icerikSatiri}}\n🔧 Onaylamak için:\n{{adminPanelUrl}}`,
 };
 
 const DEFAULT_ENDPOINT = 'http://127.0.0.1:3225/api/send-message';
@@ -154,7 +157,32 @@ async function sendRaw(
   }
 }
 
-function orderVars(order: Order, config: WhatsAppConfig): Record<string, string> {
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  iyzico: 'Kredi Kartı',
+  credit_card: 'Kredi Kartı',
+  card: 'Kredi Kartı',
+  bank_transfer: 'Havale / EFT',
+  cash_on_delivery: 'Kapıda Ödeme',
+};
+
+function paymentMethodLabel(method: string | null | undefined): string {
+  if (!method) return 'Belirtilmedi';
+  return PAYMENT_METHOD_LABELS[method] || method;
+}
+
+async function orderVars(order: Order, config: WhatsAppConfig): Promise<Record<string, string>> {
+  let urunSayisi = 0;
+  try {
+    const items = await storage.getOrderItems(order.id);
+    urunSayisi = items.reduce((sum, it) => sum + Number(it.quantity || 0), 0);
+  } catch (err) {
+    console.error('[WhatsApp] orderVars items lookup failed:', err);
+  }
+
+  const siteUrl = process.env.SITE_URL || 'https://polenstone.com';
+  const siparisTakipLink = `${siteUrl}/siparis-takip?no=${encodeURIComponent(order.orderNumber)}`;
+  const adminPanelUrl = `${siteUrl}/toov-admin/orders/${order.id}`;
+
   return {
     musteriAdi: order.customerName || 'Değerli müşterimiz',
     musteriTelefon: order.customerPhone || '',
@@ -163,9 +191,16 @@ function orderVars(order: Order, config: WhatsAppConfig): Record<string, string>
     toplam: String(order.total),
     araToplam: String(order.subtotal),
     kargoUcreti: String(order.shippingCost),
-    kargoTakipNo: order.trackingNumber || '',
-    kargoTakipLink: order.trackingUrl || '',
-    kargoFirma: order.shippingCarrier || '',
+    kargoTakipNo: order.trackingNumber || '-',
+    kargoTakipLink: order.trackingUrl || siparisTakipLink,
+    kargoFirma: order.shippingCarrier || 'Aras Kargo',
+    siparisTarihi: formatTRDate(order.createdAt),
+    siparisSaati: formatTRTime(order.createdAt),
+    siparisTarihSaat: formatTRDateTime(order.createdAt),
+    urunSayisi: String(urunSayisi || 1),
+    odemeYontemi: paymentMethodLabel(order.paymentMethod),
+    siparisTakipLink,
+    adminPanelUrl,
     siteAdi: config.siteName,
   };
 }
@@ -193,7 +228,7 @@ async function sendEventToCustomer(order: Order, event: WhatsAppEvent): Promise<
     }
   }
 
-  const message = renderTemplate(config.templates[event], orderVars(order, config));
+  const message = renderTemplate(config.templates[event], await orderVars(order, config));
   return sendRaw(config, order.customerPhone, message, event);
 }
 
@@ -208,7 +243,7 @@ async function sendEventToAdmin(order: Order, event: WhatsAppEvent): Promise<Wha
     console.log(`[WhatsApp] admin phone not configured, skipping event=${event}`);
     return { success: false, skipped: true, error: 'Yönetici telefonu yapılandırılmamış' };
   }
-  const message = renderTemplate(config.templates[event], orderVars(order, config));
+  const message = renderTemplate(config.templates[event], await orderVars(order, config));
   return sendRaw(config, config.adminPhone, message, event);
 }
 
@@ -306,11 +341,18 @@ export const WHATSAPP_TEMPLATE_VARIABLES = [
   'musteriTelefon',
   'musteriEposta',
   'siparisNo',
+  'siparisTarihi',
+  'siparisSaati',
+  'siparisTarihSaat',
+  'urunSayisi',
+  'odemeYontemi',
   'toplam',
   'araToplam',
   'kargoUcreti',
   'kargoTakipNo',
   'kargoTakipLink',
   'kargoFirma',
+  'siparisTakipLink',
+  'adminPanelUrl',
   'siteAdi',
 ];

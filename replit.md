@@ -6,6 +6,9 @@ Polen Stone (Polen Stone Doğal Taş & Mermer) is a full-stack e-commerce platfo
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Date & Time Formatting
+All user-visible date/time rendering for orders (admin panel, customer profile, order tracking, emails, WhatsApp messages) uses helpers in `shared/dateFormat.ts` (`formatTRDate`, `formatTRDateTime`, `formatTRDateNumeric`, `formatTRDateShort`, `formatTRTime`, `formatTRDateTimeNumeric`). Helpers always render in `Europe/Istanbul` timezone with `tr-TR` locale via `Intl.DateTimeFormat`, so the production server's UTC clock does not bleed into the UI. Do not call `toLocaleString('tr-TR')` or `date-fns/format` directly on order timestamps — use the helpers.
+
 ## Brand & Theme
 - **Brand**: Polen Stone Doğal Taş & Mermer
 - **Domain**: polenstone.com · **Email**: info@polenstone.com · **Instagram**: @polenstone

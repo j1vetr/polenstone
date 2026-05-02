@@ -35,6 +35,7 @@ import {
 } from './admin/_ui/AdminUI';
 import AdminModal from './admin/_ui/AdminModal';
 import { BANK_TRANSFER_INFO } from '@shared/bankInfo';
+import { formatTRDateTime } from '@shared/dateFormat';
 
 interface OrderItem {
   id: string;
@@ -446,7 +447,7 @@ export default function AdminOrderDetail() {
                 </span>
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
-                  {new Date(order.createdAt).toLocaleString('tr-TR')}
+                  {formatTRDateTime(order.createdAt)}
                 </span>
                 <span className="inline-flex items-center gap-1 font-semibold text-neutral-700">
                   ₺{formatCurrency(order.total)}
@@ -682,7 +683,7 @@ export default function AdminOrderDetail() {
                         {note.content}
                       </p>
                       <p className="text-[10.5px] text-neutral-400 mt-1.5">
-                        {new Date(note.createdAt).toLocaleString('tr-TR')}
+                        {formatTRDateTime(note.createdAt)}
                       </p>
                     </div>
                   ))}

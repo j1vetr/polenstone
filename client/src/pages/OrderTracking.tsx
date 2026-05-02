@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { SEO } from '@/components/SEO';
 import { BANK_TRANSFER_INFO } from '@shared/bankInfo';
+import { formatTRDate, formatTRDateTime } from '@shared/dateFormat';
 import {
   Search,
   Package,
@@ -78,19 +79,9 @@ function formatStepDate(iso: string | null | undefined): {
   else if (diffHour < 24) relative = `${diffHour} saat önce`;
   else if (diffDay === 1) relative = 'Dün';
   else if (diffDay < 7) relative = `${diffDay} gün önce`;
-  else
-    relative = date.toLocaleDateString('tr-TR', {
-      day: 'numeric',
-      month: 'long',
-    });
+  else relative = formatTRDate(date);
 
-  const absolute = date.toLocaleDateString('tr-TR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const absolute = formatTRDateTime(date);
 
   return { relative, absolute };
 }
@@ -444,13 +435,7 @@ export default function OrderTracking() {
                       #{order.orderNumber}
                     </p>
                     <p className="text-xs text-black/50 mt-2">
-                      {new Date(order.createdAt).toLocaleDateString('tr-TR', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      {formatTRDateTime(order.createdAt)}
                     </p>
                   </div>
                   {currentStatus && (

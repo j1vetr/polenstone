@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation } from 'wouter';
+import { formatTRDateShort, formatTRDateNumeric } from '@shared/dateFormat';
 import {
   ShoppingBag,
   Clock,
@@ -96,10 +97,7 @@ function timeAgo(dateStr: string): string {
   if (diff < 3600) return `${Math.floor(diff / 60)} dk önce`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} sa önce`;
   if (diff < 604800) return `${Math.floor(diff / 86400)} gün önce`;
-  return new Date(dateStr).toLocaleDateString('tr-TR', {
-    day: 'numeric',
-    month: 'short',
-  });
+  return formatTRDateShort(dateStr);
 }
 
 function formatCurrency(amount: string | number): string {
@@ -832,7 +830,7 @@ export default function OrdersPanel() {
                             {timeAgo(order.createdAt)}
                           </p>
                           <p className="text-[11px] text-neutral-400">
-                            {new Date(order.createdAt).toLocaleDateString('tr-TR')}
+                            {formatTRDateNumeric(order.createdAt)}
                           </p>
                         </div>
                       </td>

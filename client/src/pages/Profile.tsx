@@ -32,8 +32,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SEO } from '@/components/SEO';
-import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { formatTRDate, formatTRDateTime } from '@shared/dateFormat';
 import { useFavorites } from '@/hooks/useFavorites';
 import { ProductCard } from '@/components/ProductCard';
 import { COUNTRIES } from '@/lib/countries';
@@ -508,7 +507,7 @@ export default function Profile() {
                                   <div className="flex flex-wrap items-center gap-4 text-sm text-black/45">
                                     <span className="flex items-center gap-1.5">
                                       <Calendar className="w-4 h-4" />
-                                      {format(new Date(order.createdAt), 'd MMMM yyyy', { locale: tr })}
+                                      {formatTRDate(order.createdAt)}
                                     </span>
                                     <span className="flex items-center gap-1.5">
                                       <CreditCard className="w-4 h-4" />
@@ -691,7 +690,7 @@ export default function Profile() {
                                 <p className="text-xs text-black/45 uppercase tracking-wider">Üyelik Tarihi</p>
                                 <p className="text-black font-medium">
                                   {(user as any)?.createdAt 
-                                    ? format(new Date((user as any).createdAt), 'd MMMM yyyy', { locale: tr })
+                                    ? formatTRDate((user as any).createdAt)
                                     : '-'
                                   }
                                 </p>
@@ -1026,7 +1025,7 @@ export default function Profile() {
                     Sipariş #{selectedOrder.orderNumber}
                   </h3>
                   <p className="text-sm text-black/45 mt-1">
-                    {format(new Date(selectedOrder.createdAt), 'd MMMM yyyy, HH:mm', { locale: tr })}
+                    {formatTRDateTime(selectedOrder.createdAt)}
                   </p>
                 </div>
                 <button

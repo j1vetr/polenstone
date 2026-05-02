@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { Settings, Mail, Loader2, CheckCircle2, XCircle, Send, Server, CreditCard, Copy, AlertTriangle, Wrench, MessageCircle, KeyRound, ShieldCheck } from 'lucide-react';
+import { BANK_TRANSFER_INFO } from '@shared/bankInfo';
 
 type WhatsAppEvent =
   | 'order_received_customer'
@@ -13,10 +14,6 @@ type WhatsAppEvent =
   | 'order_bank_transfer_pending_customer'
   | 'order_bank_transfer_admin'
   | 'review_pending_admin';
-
-const BANK_NAME_PLACEHOLDER = 'ENPARA (QNB Finansbank)';
-const BANK_IBAN_PLACEHOLDER = 'TR28 0015 7000 0000 0149 6995 20';
-const BANK_HOLDER_PLACEHOLDER = 'Salih Kapıcıoğlu';
 
 const DIVIDER = '━━━━━━━━━━━━━━━';
 
@@ -67,7 +64,7 @@ const WHATSAPP_EVENTS: { key: WhatsAppEvent; label: string; defaultTpl: string }
     key: 'order_bank_transfer_pending_customer',
     label: 'Havale ödeme bekleniyor (müşteriye)',
     defaultTpl:
-      `🏦 *HAVALE ONAYI BEKLENİYOR*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz oluşturuldu. Aşağıdaki hesaba ödemenizi gönderdiğinizde siparişiniz hazırlığa alınacak. ✅\n\n💰 *Tutar:* {{toplam}} ₺\n🛒 *Ürün Sayısı:* {{urunSayisi}}\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n📋 *Banka Bilgileri*\n🏦 Banka: ${BANK_NAME_PLACEHOLDER}\n🔢 IBAN: \`${BANK_IBAN_PLACEHOLDER}\`\n👤 Ad Soyad: ${BANK_HOLDER_PLACEHOLDER}\n📝 Açıklama: {{siparisNo}}\n\n💡 Açıklamaya sipariş numaranızı yazmayı unutmayın.\n\n🔍 Sipariş takibi:\n{{siparisTakipLink}}\n\n— {{siteAdi}}`,
+      `🏦 *HAVALE ONAYI BEKLENİYOR*\n${DIVIDER}\n\nMerhaba {{musteriAdi}} 👋\n\n*{{siparisNo}}* numaralı siparişiniz oluşturuldu. Aşağıdaki hesaba ödemenizi gönderdiğinizde siparişiniz hazırlığa alınacak. ✅\n\n💰 *Tutar:* {{toplam}} ₺\n🛒 *Ürün Sayısı:* {{urunSayisi}}\n🕐 *Tarih:* {{siparisTarihSaat}}\n\n📋 *Banka Bilgileri*\n🏦 Banka: ${BANK_TRANSFER_INFO.bankName}\n🔢 IBAN: \`${BANK_TRANSFER_INFO.iban}\`\n👤 Ad Soyad: ${BANK_TRANSFER_INFO.accountHolder}\n📝 Açıklama: {{siparisNo}}\n\n💡 Açıklamaya sipariş numaranızı yazmayı unutmayın.\n\n🔍 Sipariş takibi:\n{{siparisTakipLink}}\n\n— {{siteAdi}}`,
   },
   {
     key: 'order_bank_transfer_admin',

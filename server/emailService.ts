@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import { storage } from './storage';
 import type { Order, OrderItem, User } from '@shared/schema';
 import { BANK_TRANSFER_INFO } from '@shared/bankInfo';
-import { formatTRDate, formatTRDateTime } from '@shared/dateFormat';
+import { formatTRDateTime } from '@shared/dateFormat';
 
 interface SmtpConfig {
   host: string;

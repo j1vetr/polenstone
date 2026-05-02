@@ -2990,27 +2990,31 @@ export async function registerRoutes(
       }
       const items = await storage.getOrderItems(order.id);
       
-      // Enrich items with SKU and product image
+      // Enrich items with SKU, product image and active product slug
+      // (productSlug, ürün adına tıklanabilir link için kullanılır)
       const itemsWithDetails = await Promise.all(
         items.map(async (item) => {
           let sku = null;
           let productImage = null;
-          
+          let productSlug: string | null = null;
+
           if (item.variantId) {
             const variant = await storage.getProductVariant(item.variantId);
             sku = variant?.sku || null;
             if (variant?.productId) {
               const product = await storage.getProduct(variant.productId);
               productImage = product?.images?.[0] || null;
+              productSlug = product?.slug || null;
               if (!sku) sku = product?.sku || null;
             }
           }
-          if (!productImage && item.productId) {
+          if (item.productId && (!productImage || !productSlug)) {
             const product = await storage.getProduct(item.productId);
-            productImage = product?.images?.[0] || null;
+            if (!productImage) productImage = product?.images?.[0] || null;
+            if (!productSlug) productSlug = product?.slug || null;
             if (!sku) sku = product?.sku || null;
           }
-          return { ...item, sku, productImage };
+          return { ...item, sku, productImage, productSlug };
         })
       );
       

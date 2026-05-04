@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Download, Percent, ImageIcon, Loader2, Search } from 'lucide-react';
 import type { Product, Category } from './_shared/types';
 import {
@@ -32,6 +33,11 @@ export default function WholesaleTab({
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [downloading, setDownloading] = useState(false);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
+  }, [queryClient]);
 
   const activeProducts = useMemo(() => {
     return products.filter((p) => p.isActive);

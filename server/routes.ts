@@ -6409,6 +6409,14 @@ ${items.join("\n")}
       const allCategories = await storage.getCategories();
       const catMap = new Map(allCategories.map((c) => [c.id, c.name]));
 
+      const allProductCats = await db.select().from(productCategories);
+      const productCategoryMap = new Map<string, string[]>();
+      for (const pc of allProductCats) {
+        const arr = productCategoryMap.get(pc.productId) || [];
+        arr.push(pc.categoryId);
+        productCategoryMap.set(pc.productId, arr);
+      }
+
       const doc = new PDFDocument({ size: 'A4', margin: 40, bufferPages: true });
 
       const fontPath = path.join(process.cwd(), 'public', 'fonts');
@@ -6584,8 +6592,9 @@ ${items.join("\n")}
           doc.text(`SKU: ${p.sku}`, colName, currentY + 32, { width: colNameW });
         }
 
-        const catIds = p.categoryId ? [p.categoryId] : [];
-        const catNames = catIds.map((id) => catMap.get(id)).filter(Boolean).join(', ');
+        const productCatIds = productCategoryMap.get(p.id) || [];
+        const allCatIds = p.categoryId ? [p.categoryId, ...productCatIds.filter(id => id !== p.categoryId)] : productCatIds;
+        const catNames = allCatIds.map((id) => catMap.get(id)).filter(Boolean).join(', ');
         doc.fontSize(7).font(fontR).fillColor('#666666');
         doc.text(catNames || '—', colCat, currentY + 15, { width: colCatW, lineBreak: true, height: 20 });
 

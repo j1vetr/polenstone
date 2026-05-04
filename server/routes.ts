@@ -6521,8 +6521,13 @@ ${items.join("\n")}
             if (imageUrl.startsWith('/uploads/')) {
               imageUrl = `https://polenstone.com${imageUrl}`;
             }
-            if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-              const imgRes = await fetch(imageUrl);
+            const allowedHosts = ['polenstone.com', 'cdn.polenstone.com', 'img.trendyol.com', 'cdn.dsmcdn.com'];
+            const imgUrlObj = new URL(imageUrl);
+            if (['http:', 'https:'].includes(imgUrlObj.protocol) && allowedHosts.some(h => imgUrlObj.hostname === h || imgUrlObj.hostname.endsWith('.' + h))) {
+              const controller = new AbortController();
+              const timeout = setTimeout(() => controller.abort(), 5000);
+              const imgRes = await fetch(imageUrl, { signal: controller.signal });
+              clearTimeout(timeout);
               if (imgRes.ok) {
                 const imgBuf = Buffer.from(await imgRes.arrayBuffer());
                 const optimized = await sharp(imgBuf).resize(80, 80, { fit: 'cover' }).jpeg({ quality: 70 }).toBuffer();
@@ -6582,13 +6587,16 @@ ${items.join("\n")}
       const range = doc.bufferedPageRange();
       for (let pi = range.start; pi < range.start + range.count; pi++) {
         doc.switchToPage(pi);
+        doc.rect(marginL, pageBottom - 2, usableW, 0.5).fill('#e5e5e5');
         doc.fontSize(7).font(fontR).fillColor('#999999');
+        doc.text('polenstone.com', marginL, pageBottom + 4);
         doc.text(
           `Sayfa ${pi + 1} / ${range.count}`,
           marginL,
-          pageBottom + 5,
+          pageBottom + 4,
           { width: usableW, align: 'center' },
         );
+        doc.text(dateStr, marginL, pageBottom + 4, { width: usableW, align: 'right' });
       }
 
       doc.end();

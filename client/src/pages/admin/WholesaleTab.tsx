@@ -113,13 +113,6 @@ export default function WholesaleTab({
     return { rate: 0, source: 'none' };
   }, [productRates, categoryRates, generalRate, getProductCategoryIds]);
 
-  const calcDiscounted = useCallback((basePrice: string, product: Product) => {
-    const base = parseFloat(basePrice);
-    const { rate } = getEffectiveDiscount(product);
-    if (Number.isNaN(base) || rate <= 0) return base;
-    return base * (1 - rate / 100);
-  }, [getEffectiveDiscount]);
-
   const hasAnyDiscount = useMemo(() => {
     return generalRate > 0 ||
       Object.values(categoryRates).some(r => r > 0) ||
@@ -494,7 +487,7 @@ export default function WholesaleTab({
                             : 'font-medium text-neutral-900'
                         }
                       >
-                        {formatPrice(base)} TL
+                        {formatPrice(base)} ₺
                       </span>
                     </td>
                     <td className="px-4 py-2 text-center">
@@ -512,7 +505,7 @@ export default function WholesaleTab({
                     {hasAnyDiscount && (
                       <>
                         <td className="px-4 py-3 text-right whitespace-nowrap font-semibold text-emerald-700">
-                          {effectiveRate > 0 ? `${formatPrice(discounted)} TL` : '—'}
+                          {effectiveRate > 0 ? `${formatPrice(discounted)} ₺` : '—'}
                         </td>
                         <td className="px-4 py-3 text-center whitespace-nowrap">
                           {source !== 'none' && (

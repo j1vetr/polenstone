@@ -29,7 +29,6 @@ import {
   sendGuestReviewRejectedEmail,
   type AdminReviewNotificationPayload,
 } from "./emailService";
-import { verifyTurnstile, getClientIp } from "./captcha";
 import {
   sendOrderReceivedToCustomer,
   sendOrderReceivedToAdmin,
@@ -1820,17 +1819,6 @@ export async function registerRoutes(
   });
 
   // Reviews API
-  app.get("/api/config/captcha", async (_req, res) => {
-    try {
-      const fromDb = (await storage.getSiteSetting('turnstile_site_key')) || '';
-      const siteKey = fromDb.trim() || process.env.TURNSTILE_SITE_KEY || '';
-      res.json({ provider: 'turnstile', siteKey });
-    } catch (err) {
-      console.error('[Captcha] config lookup failed:', err);
-      res.json({ provider: 'turnstile', siteKey: process.env.TURNSTILE_SITE_KEY || '' });
-    }
-  });
-
   app.get("/api/products/:productId/reviews", async (req, res) => {
     try {
       const reviews = await storage.getProductReviews(req.params.productId);
@@ -1854,7 +1842,7 @@ export async function registerRoutes(
       const payload = await getAuthPayload(req, res);
       const userId = payload?.type === 'user' ? payload.userId : null;
 
-      const { rating, title, content, guestName, guestEmail, captchaToken } = req.body || {};
+      const { rating, title, content, guestName, guestEmail } = req.body || {};
 
       if (typeof rating !== 'number' || !Number.isInteger(rating) || rating < 1 || rating > 5) {
         return res.status(400).json({ error: "Lütfen 1 ile 5 arasında bir puan seçin." });
@@ -1870,7 +1858,7 @@ export async function registerRoutes(
       }
 
       if (userId) {
-        // Üye yorumu — captcha bypass, çift yorum kontrolü
+        // Üye yorumu — çift yorum kontrolü
         const existingReview = await storage.getUserReview(userId, req.params.productId);
         if (existingReview) {
           return res.status(400).json({ error: "Bu ürün için zaten bir değerlendirme yazdınız." });
@@ -1908,7 +1896,7 @@ export async function registerRoutes(
         });
       }
 
-      // Misafir yorumu — captcha + form alan zorunluluğu
+      // Misafir yorumu — form alanları zorunlu
       const trimmedName = typeof guestName === 'string' ? guestName.trim().slice(0, 100) : '';
       const trimmedEmail = typeof guestEmail === 'string' ? guestEmail.trim().toLowerCase().slice(0, 200) : '';
 
@@ -1917,13 +1905,6 @@ export async function registerRoutes(
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
         return res.status(400).json({ error: "Lütfen geçerli bir e-posta adresi girin." });
-      }
-
-      const captcha = await verifyTurnstile(captchaToken, getClientIp(req));
-      if (!captcha.success) {
-        return res.status(400).json({
-          error: captcha.error || "Captcha doğrulaması başarısız. Lütfen tekrar deneyin.",
-        });
       }
 
       // 24 saat içinde aynı e-postadan aynı ürüne tekrar
@@ -5261,9 +5242,6 @@ window.addEventListener('load', function() {
       if (settings.wpileti_api_key) {
         settings.wpileti_api_key = '••••••••';
       }
-      if (settings.turnstile_secret_key) {
-        settings.turnstile_secret_key = '••••••••';
-      }
       if (settings.aras_kargo_password) {
         settings.aras_kargo_password = '••••••••';
       }
@@ -5282,9 +5260,6 @@ window.addEventListener('load', function() {
       }
       if (settings.wpileti_api_key === '••••••••') {
         delete settings.wpileti_api_key;
-      }
-      if (settings.turnstile_secret_key === '••••••••') {
-        delete settings.turnstile_secret_key;
       }
       if (settings.aras_kargo_password === '••••••••') {
         delete settings.aras_kargo_password;

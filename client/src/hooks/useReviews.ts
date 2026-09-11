@@ -53,7 +53,6 @@ export interface CreateReviewPayload {
   content?: string;
   guestName?: string;
   guestEmail?: string;
-  captchaToken?: string;
 }
 
 export function useProductReviews(productId: string) {
@@ -108,7 +107,6 @@ export function useCreateReview() {
           content: data.content,
           guestName: data.guestName,
           guestEmail: data.guestEmail,
-          captchaToken: data.captchaToken,
         }),
       });
       const body = await response.json().catch(() => ({}));

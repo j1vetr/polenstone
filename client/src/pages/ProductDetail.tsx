@@ -1,26 +1,4 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
-
-interface TurnstileApi {
-  render: (
-    el: HTMLElement,
-    opts: {
-      sitekey: string;
-      callback?: (token: string) => void;
-      'expired-callback'?: () => void;
-      'error-callback'?: () => void;
-      theme?: 'light' | 'dark' | 'auto';
-    },
-  ) => string;
-  remove: (id: string) => void;
-  reset: (id: string) => void;
-}
-
-declare global {
-  interface Window {
-    turnstile?: TurnstileApi;
-  }
-}
 import { Link, useParams } from 'wouter';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -139,20 +117,7 @@ export default function ProductDetail() {
   const [reviewContent, setReviewContent] = useState('');
   const [reviewGuestName, setReviewGuestName] = useState('');
   const [reviewGuestEmail, setReviewGuestEmail] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
-  const turnstileWidgetIdRef = useRef<string | null>(null);
-  const { data: captchaConfig } = useQuery({
-    queryKey: ['/api/config/captcha'],
-    queryFn: async () => {
-      const res = await fetch('/api/config/captcha');
-      if (!res.ok) return { provider: 'turnstile', siteKey: '' };
-      return res.json() as Promise<{ provider: string; siteKey: string }>;
-    },
-    staleTime: 5 * 60 * 1000,
-  });
-  const turnstileSiteKey = captchaConfig?.siteKey || '';
 
   // Refs
   const ctaSentinelRef = useRef<HTMLDivElement | null>(null);
@@ -291,18 +256,6 @@ export default function ProductDetail() {
     }
   };
 
-  const resetTurnstile = useCallback(() => {
-    setCaptchaToken(null);
-    const ts = window.turnstile;
-    if (ts && turnstileWidgetIdRef.current) {
-      try {
-        ts.reset(turnstileWidgetIdRef.current);
-      } catch (err) {
-        console.warn('[Turnstile] reset failed:', err);
-      }
-    }
-  }, []);
-
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!product) return;
@@ -318,10 +271,6 @@ export default function ProductDetail() {
         toast({ title: 'Eksik bilgi', description: 'Lütfen geçerli bir e-posta girin.', variant: 'destructive' });
         return;
       }
-      if (turnstileSiteKey && !captchaToken) {
-        toast({ title: 'Doğrulama gerekli', description: 'Lütfen güvenlik doğrulamasını tamamlayın.', variant: 'destructive' });
-        return;
-      }
     }
 
     try {
@@ -332,7 +281,6 @@ export default function ProductDetail() {
         content: reviewContent || undefined,
         guestName: !user ? reviewGuestName.trim() : undefined,
         guestEmail: !user ? reviewGuestEmail.trim() : undefined,
-        captchaToken: !user ? captchaToken || undefined : undefined,
       });
       toast({
         title: 'Yorumunuz alındı',
@@ -344,65 +292,14 @@ export default function ProductDetail() {
       setReviewGuestName('');
       setReviewGuestEmail('');
       setReviewSubmitted(true);
-      resetTurnstile();
     } catch (err: any) {
       toast({
         title: 'Hata',
         description: err?.message || 'Değerlendirme gönderilemedi.',
         variant: 'destructive',
       });
-      resetTurnstile();
     }
   };
-
-  // Turnstile widget'ını misafir formu görünür olduğunda başlat
-  useEffect(() => {
-    if (user || userReview || reviewSubmitted) return;
-    if (!turnstileSiteKey) return;
-    const node = turnstileContainerRef.current;
-    if (!node) return;
-
-    let cancelled = false;
-    let pollId: number | undefined;
-
-    const tryRender = () => {
-      const ts = window.turnstile;
-      if (cancelled) return;
-      if (!ts || typeof ts.render !== 'function') {
-        pollId = window.setTimeout(tryRender, 250);
-        return;
-      }
-      if (turnstileWidgetIdRef.current) return;
-      try {
-        const id = ts.render(node, {
-          sitekey: turnstileSiteKey,
-          callback: (token: string) => setCaptchaToken(token),
-          'expired-callback': () => setCaptchaToken(null),
-          'error-callback': () => setCaptchaToken(null),
-          theme: 'light',
-        });
-        turnstileWidgetIdRef.current = id;
-      } catch (err) {
-        console.warn('[Turnstile] render failed:', err);
-      }
-    };
-
-    tryRender();
-
-    return () => {
-      cancelled = true;
-      if (pollId) clearTimeout(pollId);
-      const ts = window.turnstile;
-      if (ts && turnstileWidgetIdRef.current) {
-        try {
-          ts.remove(turnstileWidgetIdRef.current);
-        } catch (err) {
-          console.warn('[Turnstile] remove failed:', err);
-        }
-        turnstileWidgetIdRef.current = null;
-      }
-    };
-  }, [user, userReview, reviewSubmitted, turnstileSiteKey]);
 
   if (isLoading) {
     return (
@@ -1134,10 +1031,6 @@ export default function ProductDetail() {
                     className="w-full px-4 py-3 bg-white border border-black/12 text-black placeholder:text-black/30 focus:outline-none focus:border-black transition-colors resize-none"
                     data-testid="input-review-content"
                   />
-
-                  {!user && turnstileSiteKey && (
-                    <div ref={turnstileContainerRef} data-testid="turnstile-container" className="min-h-[65px]" />
-                  )}
 
                   {!user && (
                     <p className="text-[11px] text-black/45 leading-relaxed">
